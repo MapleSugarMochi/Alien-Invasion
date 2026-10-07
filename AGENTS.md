@@ -50,3 +50,8 @@ Alien Invasion 是个人独立游戏开发项目。
 - 功能、操作或依赖发生变化时，同步对应说明。
 - 验收证据应能对应开发指南中的功能和结构要求。
 - 用中文说明改动内容、验证结果和尚未解决的问题。
+
+## 已建立的检查命令
+
+- 窗口与基础输入检查：`.\.venv\Scripts\python.exe tools/check_window.py`
+- 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py`
