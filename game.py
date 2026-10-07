@@ -7,7 +7,7 @@ from pygame import Vector2
 
 from entities import Boss, Enemy, Meteor, Pickup, Player
 from geometry import moving_hit
-from weapons import ArcAttack, Missile, Projectile, WeaponController
+from weapons import ArcAttack, Missile, Projectile, SupportController, WeaponController
 from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
 from waves import WaveController
 
@@ -62,6 +62,8 @@ class Game:
         self.hover = Vector2(-1, -1)
         self.commands = []
         self.arc_effects = []
+        self.energy_units = 0
+        self.support = SupportController()
 
     @property
     def targets(self):
@@ -115,6 +117,8 @@ class Game:
         self.input.clear()
         self.pickups.clear()
         self.meteor_warning = None
+        self.support.cancel()
+        self.energy_units = 0
         self.record(result, score=self.score, kills=self.kills)
 
     def next_id(self):
@@ -155,8 +159,8 @@ class Game:
                     elif self.state == "setup":
                         self.to_menu()
                 elif self.state == "playing":
-                    if event.key in (pygame.K_q, pygame.K_e) and event.key not in self.input.keys:
-                        self.commands.append("missile" if event.key == pygame.K_q else "arc")
+                    if event.key in (pygame.K_q, pygame.K_e, pygame.K_x) and event.key not in self.input.keys:
+                        self.commands.append({pygame.K_q: "missile", pygame.K_e: "arc", pygame.K_x: "support"}[event.key])
                     self.input.keys.add(event.key)
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
                     self.restart()
@@ -185,11 +189,16 @@ class Game:
         if not self.running or self.state != "playing":
             return
         self.weapons.expire(self.time)
-        for command in self.commands:
-            if self.weapons.try_activate(command, self.time):
+        self.expire_support()
+        # 同刻 X 先于伤害，避免已启动的支援仍收到当帧回能。
+        for command in sorted(self.commands, key=lambda c: c != "support"):
+            if command == "support":
+                self.try_support()
+            elif self.weapons.try_activate(command, self.time):
                 self.record("weapon_activate", kind=command)
         self.commands.clear()
         self.timed_events()
+        self.update_support()
         self.fire_weapon()
         # 保留整帧时间，以小步处理运动；胜负在整帧最后统一判定。
         remaining = dt
@@ -198,6 +207,7 @@ class Game:
             if self.input.fire and self.input.in_battle and self.weapons.ready_at > self.time + 1e-9:
                 step = min(step, self.weapons.ready_at - self.time)
             deadlines = [self.next_drop]
+            deadlines += self.support.deadlines()
             if self.weapons.active != "bullet":
                 deadlines.append(self.weapons.active_until)
             if self.phase in ("waves", "rest"):
@@ -225,6 +235,8 @@ class Game:
     def _step(self, dt):
         self.time += dt
         self.weapons.expire(self.time)
+        # 支援采用 [start, end)，截止时先清空，再允许该时刻常态伤害回能。
+        self.expire_support()
         self.player.update(dt, self.input.movement, self.input.aim)
         for enemy in self.enemies:
             for direction in enemy.update(dt, self.time, self.player.pos):
@@ -238,6 +250,7 @@ class Game:
                 self.phase = "boss_fight"
         for meteor in self.meteors:
             meteor.update(dt)
+        self.update_support()
         for projectile in self.projectiles:
             self.resolve_projectile(projectile, dt, self.targets + self.meteors)
         for projectile in self.enemy_bullets:
@@ -326,6 +339,34 @@ class Game:
                 else:
                     self.projectiles.append(projectile)
 
+    def try_support(self):
+        if self.energy_units < 1000 or self.support.active:
+            self.support.failed_until = self.time + .3
+            return False
+        self.energy_units = 0
+        self.support.start(self.time)
+        self.record("support_start")
+        return True
+
+    def expire_support(self):
+        if self.support.expire(self.time):
+            self.energy_units = 0
+            self.record("support_end")
+
+    def update_support(self):
+        for event, number, ids in self.support.update(self.time, self.targets, self.input.aim):
+            self.record("support_" + event, round=number, targets=ids)
+            if event == "hit":
+                targets = {t.id: t for t in self.targets}
+                for target_id in ids:
+                    target = targets.get(target_id)
+                    if target and target.damageable and target.on_screen:
+                        amount = target.max_hp // 10 if isinstance(target, Boss) else target.hp
+                        self.apply_damage(target, amount, "support")
+                        self.effects.append((self.time + .4, target.pos.copy(), 45))
+        if self.support.active:
+            self.energy_units = 0
+
     def collect(self, pickup):
         if pickup.kind == "health":
             if self.player.hp >= 100:
@@ -375,18 +416,22 @@ class Game:
             return 0
         actual = min(target.hp, max(1, int(amount)))
         target.hp -= actual
+        if isinstance(target, (Enemy, Boss)) and not self.support.active and source in ("bullet", "missile", "missile_splash", "arc"):
+            self.energy_units = min(1000, self.energy_units + actual)
         if isinstance(target, Boss) and target.sync_phase(self.time):
             self.record("boss_transition", hp=target.hp)
         if isinstance(target, (Enemy, Boss)) and target.hp == 0:
-            self.finalize_kill(target)
+            self.finalize_kill(target, source)
         return actual
 
-    def finalize_kill(self, target):
+    def finalize_kill(self, target, source="bullet"):
         if target.settled:
             return
         target.settled = True
         self.score += {"scout": 100, "shooter": 200, "heavy": 500, "boss": 5000}.get(target.kind, 0)
         self.kills += 1
+        if not self.support.active:
+            self.energy_units = min(1000, self.energy_units + {"scout": 20, "shooter": 40, "heavy": 80}.get(target.kind, 0))
         self.record("kill", id=target.id, kind=target.kind)
 
     def damage_player(self, amount):

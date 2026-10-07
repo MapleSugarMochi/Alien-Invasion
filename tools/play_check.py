@@ -71,6 +71,9 @@ def pilot(game):
                 game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=key),
                                     pygame.event.Event(pygame.KEYUP, key=key)])
                 break
+    if game.energy_units == 1000 and not game.support.active:
+        game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_x),
+                            pygame.event.Event(pygame.KEYUP, key=pygame.K_x)])
 
 
 def main():
@@ -97,6 +100,7 @@ def main():
         output.mkdir(parents=True, exist_ok=True)
         last_phase = None
         saved_weapons = set()
+        saved_support = False
         while game.state == "playing" and game.time < args.seconds:
             if any(e.type == pygame.QUIT for e in pygame.event.get()):
                 break
@@ -104,7 +108,7 @@ def main():
                 pilot(game)
             game.update(1 / 60)
             frames += 1
-            if frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons:
+            if frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons or (game.support.active and not saved_support):
                 renderer.draw(surface, game)
                 pygame.display.flip()
                 if game.phase != last_phase:
@@ -113,6 +117,9 @@ def main():
                 if game.weapons.active not in saved_weapons:
                     pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.weapons.active}.png")
                     saved_weapons.add(game.weapons.active)
+                if game.support.active and not saved_support and any(r.ids for r in game.support.rounds):
+                    pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-support.png")
+                    saved_support = True
         renderer.draw(surface, game)
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
@@ -121,6 +128,7 @@ def main():
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
                   "weapon_activations": [e for e in game.journal if e["event"] == "weapon_activate"],
+                  "support_activations": len([e for e in game.journal if e["event"] == "support_start"]),
                   "events": game.journal, "verification": "automatic input; full rules; accelerated wall clock"}
         (output / f"{args.difficulty}-{args.mode}-run.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
         print(json.dumps({k: v for k, v in result.items() if k != "events"}, ensure_ascii=False))

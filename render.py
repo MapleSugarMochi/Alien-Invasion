@@ -42,9 +42,10 @@ class Renderer:
                                 "Esc 暂停／继续；窗口失焦自动暂停，继续后重新按左键",
                                 "每 7 秒等概率回血／导弹／电弧补给；满容量不消耗",
                                 "完成 12 波并击毁母舰获胜；生命归零失败；重开清空本局",
-                                "Q 导弹 / E 电弧：三格充满后替换武器 5 秒，仍需左键"]
+                                "Q 导弹 / E 电弧：三格充满后替换武器 5 秒，仍需左键",
+                                "X 满能量呼叫五轮支援；支援中不回能；1/2/3 选难度"]
                 for index, line in enumerate(instructions):
-                    self.text(surface, line, (305, 250 + index * 36))
+                    self.text(surface, line, (305, 225 + index * 36))
             self.draw_buttons(surface, game)
             return
         for enemy in game.enemies:
@@ -71,6 +72,23 @@ class Renderer:
             pygame.draw.circle(surface, (255, 205, 132), pos, radius, 1)
         for until, points in game.arc_effects:
             pygame.draw.lines(surface, (180, 147, 255), False, points, 3)
+        targets = {t.id: t for t in game.targets}
+        for round_ in game.support.rounds:
+            if round_.hit:
+                continue
+            for target_id in round_.ids:
+                target = targets.get(target_id)
+                if not target:
+                    continue
+                progress = max(0, min(1, (game.time - round_.start) / .4))
+                radius = target.radius + 22 - progress * 14
+                rect = pygame.Rect(0, 0, radius * 2, radius * 2)
+                rect.center = target.pos
+                pygame.draw.rect(surface, (255, 209, 105), rect, 2)
+                if round_.launched:
+                    flight = max(0, min(1, (game.time - round_.start - .4) / .25))
+                    pos = Vector2(WIDTH + 40, 110).lerp(target.pos, flight)
+                    pygame.draw.line(surface, (255, 209, 105), pos, pos - Vector2(35, -15), 4)
         for pickup in game.pickups:
             color = {"health": (117, 237, 158), "missile": (255, 184, 77), "arc": (180, 147, 255)}[pickup.kind]
             pygame.draw.rect(surface, color, (*tuple(pickup.pos - Vector2(13, 13)), 26, 26), 2)
@@ -86,6 +104,8 @@ class Renderer:
         for index, kind in enumerate(("missile", "arc")):
             color = (255, 112, 88) if game.weapons.failed_until[kind] > game.time else (CYAN if game.weapons.charges[kind] == 3 else (140, 165, 187))
             self.text(surface, f"{'Q' if index == 0 else 'E'}  {'■' * game.weapons.charges[kind]}{'□' * (3 - game.weapons.charges[kind])}", (700 + 180 * index, 21), color)
+        color = (255, 112, 88) if game.support.failed_until > game.time else (CYAN if game.energy_units == 1000 else (140, 165, 187))
+        self.text(surface, f"X  {game.energy_units // 10}%" if not game.support.active else f"支援 {game.support.end_at - game.time:.1f}s", (1070, 21), color)
         self.text(surface, f"WAVE {game.wave.number}/12   {game.phase.upper()}", (24, 83))
         self.text(surface, game.difficulty.label, (1190, 82))
         aim = Vector2(max(0, min(WIDTH, game.input.aim.x)),

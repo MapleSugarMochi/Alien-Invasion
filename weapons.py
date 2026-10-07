@@ -129,3 +129,87 @@ class WeaponController:
         if self.active == "arc":
             return ArcAttack(arc_chain(player, aim if aim is not None else player.pos + player.direction * 300, targets))
         return Projectile(player.pos + player.direction * 24, player.direction * 900)
+
+
+@dataclass
+class SupportRound:
+    number: int
+    start: float
+    ids: list
+    launched: bool = False
+    hit: bool = False
+
+
+class SupportController:
+    """有限五轮任务，稳定 ID 防止失效引用与同轮重复打击。"""
+    def __init__(self):
+        self.active = False
+        self.start_at = 0.0
+        self.end_at = 0.0
+        self.round_count = 0
+        self.rounds = []
+        self.failed_until = 0.0
+
+    def start(self, now):
+        if self.active:
+            return False
+        self.active = True
+        self.start_at, self.end_at = now, now + 7.5
+        self.round_count = 0
+        self.rounds.clear()
+        return True
+
+    def cancel(self):
+        self.active = False
+        self.rounds.clear()
+
+    def expire(self, now):
+        if self.active and now + 1e-9 >= self.end_at:
+            self.cancel()
+            return True
+        return False
+
+    def deadlines(self):
+        if not self.active:
+            return []
+        times = [self.end_at]
+        if self.round_count < 5:
+            times.append(self.start_at + 1.5 * self.round_count)
+        for round_ in self.rounds:
+            if not round_.launched:
+                times.append(round_.start + .4)
+            if not round_.hit:
+                times.append(round_.start + .65)
+        return times
+
+    def update(self, now, candidates, aim):
+        if not self.active:
+            return []
+        events = []
+        while self.round_count < 5 and now + 1e-9 >= self.start_at + self.round_count * 1.5:
+            ids = [t.id for t in nearest_aim(candidates, aim)[:3]]
+            round_ = SupportRound(self.round_count + 1, self.start_at + self.round_count * 1.5, ids)
+            self.rounds.append(round_)
+            self.round_count += 1
+            events.append(("round", round_.number, list(ids)))
+        available = nearest_aim(candidates, aim)
+        valid_ids = {t.id for t in available}
+        for round_ in self.rounds:
+            if not round_.launched and now + 1e-9 >= round_.start + .4:
+                assigned = set(round_.ids) & valid_ids
+                replacement = []
+                for target_id in round_.ids:
+                    if target_id in valid_ids:
+                        replacement.append(target_id)
+                    else:
+                        new = next((t.id for t in available if t.id not in assigned), None)
+                        if new is not None:
+                            assigned.add(new)
+                            replacement.append(new)
+                round_.ids = replacement
+                round_.launched = True
+                events.append(("launch", round_.number, list(replacement)))
+            if not round_.hit and now + 1e-9 >= round_.start + .65:
+                round_.hit = True
+                events.append(("hit", round_.number, [i for i in round_.ids if i in valid_ids]))
+        return events
