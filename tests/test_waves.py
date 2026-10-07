@@ -80,7 +80,7 @@ class WaveTests(unittest.TestCase):
         game.meteor_warning = (1, 500, 22)
         game.timed_events()
         self.assertIsNone(game.meteor_warning)
-        self.assertEqual(game.phase, "boss_ready")
+        self.assertEqual(game.phase, "boss_warning")
         game.update(3)
         self.assertFalse(game.meteors)
 

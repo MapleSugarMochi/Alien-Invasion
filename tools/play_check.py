@@ -30,7 +30,7 @@ def pilot(game):
             desired = min(nearby, key=lambda p: p.pos.distance_squared_to(game.player.pos)).pos.copy()
     hazards = [(p.pos, p.velocity, p.radius + 14) for p in game.enemy_bullets]
     hazards += [(m.pos, m.velocity, m.radius + 14) for m in game.meteors]
-    hazards += [(e.pos, (e.pos - e.previous) * 60, e.radius + 14) for e in game.enemies if e.on_screen]
+    hazards += [(e.pos, (e.pos - e.previous) * 60, e.radius + 14) for e in game.targets if e.on_screen]
     choices = [Vector2(x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)]
 
     def cost(direction):
@@ -55,7 +55,7 @@ def pilot(game):
     if move.y:
         keys.add(pygame.K_s if move.y > 0 else pygame.K_w)
     game.input.keys = keys
-    candidates = [e for e in game.enemies if e.on_screen and e.damageable]
+    candidates = [e for e in game.targets if e.on_screen and e.damageable]
     if candidates:
         enemy = min(candidates, key=lambda e: (e.kind == "scout", e.pos.distance_squared_to(game.player.pos)))
         lead = (enemy.pos - enemy.previous) * 60 * (enemy.pos.distance_to(game.player.pos) / 900)
@@ -81,7 +81,7 @@ def main():
         output = ROOT / "docs/evidence"
         output.mkdir(parents=True, exist_ok=True)
         last_phase = None
-        while game.state == "playing" and game.time < args.seconds and game.phase != "boss_ready":
+        while game.state == "playing" and game.time < args.seconds:
             if any(e.type == pygame.QUIT for e in pygame.event.get()):
                 break
             if args.mode == "pilot":

@@ -2,12 +2,12 @@
   "difficulty": "standard",
   "mode": "pilot",
   "seed": 5,
-  "state": "playing",
-  "phase": "boss_ready",
-  "time": 151.25,
+  "state": "victory",
+  "phase": "boss_fight",
+  "time": 183.817,
   "hp": 100,
-  "score": 21800,
-  "kills": 102,
+  "score": 26800,
+  "kills": 103,
   "spawned": 118,
   "events": [
     {
@@ -2003,7 +2003,58 @@
     },
     {
       "time": 151.25,
-      "event": "boss_ready"
+      "event": "boss_warning"
+    },
+    {
+      "time": 152.75,
+      "event": "boss_spawn"
+    },
+    {
+      "time": 154.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 161.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 164.316667,
+      "event": "boss_transition",
+      "hp": 1600
+    },
+    {
+      "time": 168.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 174.25,
+      "event": "boss_transition",
+      "hp": 790
+    },
+    {
+      "time": 175.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 182.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 183.816667,
+      "event": "kill",
+      "id": 176,
+      "kind": "boss"
+    },
+    {
+      "time": 183.816667,
+      "event": "victory",
+      "score": 26800,
+      "kills": 103
     }
   ],
   "verification": "automatic input; full rules; accelerated wall clock"

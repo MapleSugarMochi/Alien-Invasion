@@ -5,7 +5,7 @@ import random
 import pygame
 from pygame import Vector2
 
-from entities import Enemy, Meteor, Pickup, Player
+from entities import Boss, Enemy, Meteor, Pickup, Player
 from geometry import moving_hit
 from weapons import Projectile, WeaponController
 from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
@@ -57,6 +57,21 @@ class Game:
         self.next_drop = 7.0
         self.pickups = []
         self.journal = []
+        self.boss = None
+
+    @property
+    def targets(self):
+        return self.enemies + ([self.boss] if self.boss and self.boss.hp > 0 else [])
+
+    def restart(self):
+        self.__init__(self.difficulty.id)
+
+    def finish(self, result):
+        self.state = result
+        self.input.clear()
+        self.pickups.clear()
+        self.meteor_warning = None
+        self.record(result, score=self.score, kills=self.kills)
 
     def next_id(self):
         self._entity_id += 1
@@ -85,6 +100,8 @@ class Game:
                         self.resume()
                 elif self.state == "playing":
                     self.input.keys.add(event.key)
+                elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
+                    self.restart()
             elif event.type == pygame.KEYUP:
                 self.input.keys.discard(event.key)
             elif event.type == pygame.MOUSEMOTION:
@@ -118,14 +135,19 @@ class Game:
                     deadlines.append(self.wave.next_spawn)
             if self.phase == "rest":
                 deadlines.append(self.phase_until)
+            if self.phase == "boss_warning":
+                deadlines.append(self.phase_until)
+            if self.boss:
+                deadlines += [self.boss.next_round, self.boss.transition_until] + self.boss.burst
             for deadline in deadlines:
                 if deadline > self.time + 1e-9:
                     step = min(step, deadline - self.time)
             self._step(step)
             remaining -= step
         if self.player.hp <= 0:
-            self.state = "defeat"
-            self.input.clear()
+            self.finish("defeat")
+        elif self.boss and self.boss.hp <= 0:
+            self.finish("victory")
 
     def _step(self, dt):
         self.time += dt
@@ -134,10 +156,16 @@ class Game:
             for direction in enemy.update(dt, self.time, self.player.pos):
                 self.enemy_bullets.append(Projectile(enemy.pos.copy(), direction * enemy.bullet_speed,
                                                      enemy.bullet_damage, 4, "enemy", float("inf")))
+        if self.boss:
+            for direction in self.boss.update(dt, self.time, self.player.pos):
+                self.enemy_bullets.append(Projectile(self.boss.pos.copy(), direction * 240 * self.difficulty.bullet_speed,
+                                                     self.difficulty.hit(15), 4, "enemy", float("inf")))
+            if not self.boss.entering:
+                self.phase = "boss_fight"
         for meteor in self.meteors:
             meteor.update(dt)
         for projectile in self.projectiles:
-            self.resolve_projectile(projectile, dt, self.enemies + self.meteors)
+            self.resolve_projectile(projectile, dt, self.targets + self.meteors)
         for projectile in self.enemy_bullets:
             self.resolve_projectile(projectile, dt, self.meteors + [self.player])
         self.contacts()
@@ -162,6 +190,8 @@ class Game:
         self.fire_weapon()
 
     def timed_events(self):
+        if self.player.hp <= 0 or (self.boss and self.boss.hp <= 0):
+            return
         if self.time + 1e-9 >= self.next_drop:
             x = self.rng.uniform(48, 1232)
             if self.player.pos.distance_to(Vector2(x, 78)) <= 28:
@@ -201,8 +231,13 @@ class Game:
                 if self.wave.number == 12:
                     self.meteor_warning = None
         if self.phase == "meteor_clear" and not self.meteors:
-            self.phase = "boss_ready"
-            self.record("boss_ready")
+            self.phase = "boss_warning"
+            self.phase_until = self.time + 1.5
+            self.record("boss_warning")
+        if self.phase == "boss_warning" and self.time + 1e-9 >= self.phase_until:
+            self.boss = Boss(self.next_id(), self.difficulty)
+            self.phase = "boss_entry"
+            self.record("boss_spawn")
 
     def fire_weapon(self):
         if self.input.fire and self.input.in_battle:
@@ -214,7 +249,7 @@ class Game:
         start, end, fraction, expired = projectile.advance(dt)
         hits = []
         for target in targets:
-            if target.hp <= 0 or (isinstance(target, Enemy) and not target.damageable):
+            if target.hp <= 0 or (isinstance(target, (Enemy, Boss)) and not target.damageable):
                 continue
             target_end = target.previous.lerp(target.pos, fraction)
             hit = moving_hit(start, end, target.previous, target_end, target.radius + projectile.radius)
@@ -239,7 +274,9 @@ class Game:
             return 0
         actual = min(target.hp, max(1, int(amount)))
         target.hp -= actual
-        if isinstance(target, Enemy) and target.hp == 0:
+        if isinstance(target, Boss) and target.sync_phase(self.time):
+            self.record("boss_transition", hp=target.hp)
+        if isinstance(target, (Enemy, Boss)) and target.hp == 0:
             self.finalize_kill(target)
         return actual
 
@@ -247,7 +284,7 @@ class Game:
         if target.settled:
             return
         target.settled = True
-        self.score += {"scout": 100, "shooter": 200, "heavy": 500}.get(target.kind, 0)
+        self.score += {"scout": 100, "shooter": 200, "heavy": 500, "boss": 5000}.get(target.kind, 0)
         self.kills += 1
         self.record("kill", id=target.id, kind=target.kind)
 
@@ -259,7 +296,7 @@ class Game:
         return True
 
     def contacts(self):
-        for target in self.enemies + self.meteors:
+        for target in self.targets + self.meteors:
             if target.hp <= 0:
                 continue
             difference = self.player.pos - target.pos

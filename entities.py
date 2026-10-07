@@ -176,3 +176,94 @@ class Pickup:
     def expired(self, now):
         return self.consumed or now + 1e-9 >= self.born_at + 10 or self.pos.y - self.radius > HEIGHT
 
+
+@dataclass
+class Boss:
+    id: int
+    difficulty: object
+    pos: Vector2 = field(default_factory=lambda: Vector2(640, 4))
+    radius: int = 60
+    kind: str = "boss"
+    hp: int = field(init=False)
+    max_hp: int = field(init=False)
+    previous: Vector2 = field(init=False)
+    entering: bool = True
+    settled: bool = False
+    phase: int = 1
+    transition_until: float = 0
+    horizontal: int = 1
+    next_round: float = float("inf")
+    burst: list = field(default_factory=list)
+    next_fan: bool = True
+
+    def __post_init__(self):
+        self.max_hp = self.hp = self.difficulty.hp(2400)
+        self.previous = self.pos.copy()
+
+    @property
+    def damageable(self):
+        return self.hp > 0 and not self.entering
+
+    @property
+    def on_screen(self):
+        return 0 <= self.pos.x <= WIDTH and HUD_HEIGHT <= self.pos.y <= HEIGHT
+
+    def health_phase(self):
+        return 1 if self.hp * 3 > self.max_hp * 2 else (3 if self.hp * 3 < self.max_hp else 2)
+
+    def interval(self):
+        return {1: 1.4, 2: 1.1, 3: .9}[self.phase] * self.difficulty.fire_interval
+
+    def reset_schedule(self, now):
+        self.next_round = now + self.interval()
+        self.burst.clear()
+        self.next_fan = True
+
+    def sync_phase(self, now):
+        """立即撤销旧 AI；过渡中的后续伤害不能延长截止时间。"""
+        if self.damageable and not self.transition_until and self.health_phase() != self.phase:
+            self.transition_until = now + 1
+            self.burst.clear()
+            self.next_round = float("inf")
+            return True
+        return False
+
+    def warning(self, now):
+        return self.damageable and not self.transition_until and now + 1e-9 >= self.next_round - .6
+
+    def update(self, dt, now, player_pos):
+        self.previous = self.pos.copy()
+        if self.hp <= 0:
+            return []
+        if self.entering:
+            self.pos.y = min(180, self.pos.y + 100 * self.difficulty.movement * dt)
+            if self.pos.y >= 180:
+                self.entering = False
+                self.reset_schedule(now)
+            return []
+        if self.transition_until:
+            if now + 1e-9 >= self.transition_until:
+                self.phase = self.health_phase()
+                self.transition_until = 0
+                self.reset_schedule(now)
+            return []
+        self.pos.x += self.horizontal * 120 * self.difficulty.movement * dt
+        if self.pos.x <= 320 or self.pos.x >= 960:
+            self.pos.x = max(320, min(960, self.pos.x))
+            self.horizontal *= -1
+        directions = []
+        if now + 1e-9 >= self.next_round:
+            if self.phase == 1 or (self.phase == 3 and self.next_fan):
+                angles = (-30, -15, 0, 15, 30) if self.phase == 1 else (-45, -30, -15, 0, 15, 30, 45)
+                directions.extend(Vector2(0, 1).rotate(a) for a in angles)
+            else:
+                self.burst.extend((now, now + .05, now + .1))
+            if self.phase == 3:
+                self.next_fan = not self.next_fan
+            self.next_round = now + self.interval()
+        while self.burst and self.burst[0] <= now + 1e-9:
+            self.burst.pop(0)
+            direction = player_pos - self.pos
+            directions.append(direction.normalize() if direction.length_squared() else Vector2(0, 1))
+        return directions
+

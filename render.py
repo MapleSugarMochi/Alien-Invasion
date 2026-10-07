@@ -31,6 +31,18 @@ class Renderer:
         for enemy in game.enemies:
             colors = {"scout": (240, 124, 110), "shooter": (255, 184, 77), "heavy": (186, 130, 244)}
             self.ship(surface, enemy.pos, Vector2(0, 1), enemy.radius, colors[enemy.kind])
+        if game.boss and game.boss.hp > 0:
+            boss = game.boss
+            pygame.draw.ellipse(surface, (186, 130, 244), (*tuple(boss.pos - Vector2(95, 45)), 190, 90), 3)
+            pygame.draw.rect(surface, (35, 29, 60), (320, 100, 640, 12))
+            pygame.draw.rect(surface, (186, 130, 244), (320, 100, int(640 * boss.hp / boss.max_hp), 12))
+            self.text(surface, f"MOTHERSHIP  {boss.hp}/{boss.max_hp}  PHASE {boss.phase}", (465, 78))
+            if boss.warning(game.time):
+                pygame.draw.circle(surface, (255, 112, 88), boss.pos + Vector2(0, 40), 15, 3)
+            if boss.transition_until:
+                self.text(surface, "PHASE TRANSITION", (530, 250))
+        if game.phase == "boss_warning":
+            self.text(surface, "WARNING — MOTHERSHIP APPROACHING", (425, 300), (255, 112, 88))
         for meteor in game.meteors:
             pygame.draw.circle(surface, (142, 152, 176), meteor.pos, meteor.radius, 2)
         for projectile in game.projectiles + game.enemy_bullets:
@@ -59,5 +71,10 @@ class Renderer:
             overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
             overlay.fill((3, 8, 20, 190))
             surface.blit(overlay, (0, 0))
-            self.text(surface, "PAUSED — Esc to resume" if game.state == "paused" else "DEFEAT", (500, 340))
+            if game.state == "paused":
+                self.text(surface, "PAUSED — Esc to resume", (500, 340))
+            else:
+                self.text(surface, game.state.upper(), (570, 285))
+                self.text(surface, f"Score {game.score}  /  Kills {game.kills}  /  Time {game.time:.1f}s", (440, 330))
+                self.text(surface, "R — new game with same difficulty", (455, 380))
 
