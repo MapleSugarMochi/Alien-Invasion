@@ -33,9 +33,9 @@ class InputState:
 
 
 class Game:
-    def __init__(self, difficulty="standard", seed=None) -> None:
+    def __init__(self, difficulty="standard", seed=None, menu=False) -> None:
         self.running = True
-        self.state = "playing"
+        self.state = "main_menu" if menu else "playing"
         self.input = InputState()
         self.player = Player()
         self.enemies = []
@@ -58,6 +58,8 @@ class Game:
         self.pickups = []
         self.journal = []
         self.boss = None
+        self.selected_difficulty = difficulty
+        self.hover = Vector2(-1, -1)
 
     @property
     def targets(self):
@@ -65,6 +67,46 @@ class Game:
 
     def restart(self):
         self.__init__(self.difficulty.id)
+
+    def start_session(self, difficulty):
+        self.__init__(difficulty)
+        self.record("session_start", difficulty=difficulty)
+
+    def to_menu(self):
+        self.__init__(self.difficulty.id, menu=True)
+
+    def buttons(self):
+        """点击范围与显示共用，避免不同界面的命中区漂移。"""
+        options = {
+            "main_menu": [("setup", "开始游戏"), ("setup", "操作说明与难度"), ("quit", "退出")],
+            "setup": [("easy", "简单"), ("standard", "标准"), ("hard", "困难"),
+                      ("start", "开始战斗"), ("menu", "返回主菜单")],
+            "paused": [("resume", "继续战斗"), ("restart", "重新开始"), ("menu", "返回主菜单")],
+            "victory": [("restart", "同难度再战"), ("menu", "返回主菜单")],
+            "defeat": [("restart", "同难度重开"), ("menu", "返回主菜单")],
+        }.get(self.state, [])
+        if self.state == "setup":
+            rects = [pygame.Rect(350 + i * 200, 460, 180, 48) for i in range(3)]
+            rects += [pygame.Rect(440, 540 + i * 65, 400, 48) for i in range(2)]
+        else:
+            rects = [pygame.Rect(440, 380 + i * 65, 400, 48) for i in range(len(options))]
+        return [(action, label, rect) for (action, label), rect in zip(options, rects)]
+
+    def menu_action(self, action):
+        if action in DIFFICULTIES:
+            self.selected_difficulty = action
+        elif action == "setup":
+            self.state = "setup"
+        elif action == "start":
+            self.start_session(self.selected_difficulty)
+        elif action == "resume":
+            self.resume()
+        elif action == "restart":
+            self.restart()
+        elif action == "menu":
+            self.to_menu()
+        elif action == "quit":
+            self.running = False
 
     def finish(self, result):
         self.state = result
@@ -93,11 +135,21 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if getattr(event, "repeat", False):
+                    continue
+                if self.state == "main_menu" and event.key == pygame.K_RETURN:
+                    self.menu_action("setup")
+                elif self.state == "setup" and event.key in (pygame.K_1, pygame.K_2, pygame.K_3):
+                    self.menu_action({pygame.K_1: "easy", pygame.K_2: "standard", pygame.K_3: "hard"}[event.key])
+                elif self.state == "setup" and event.key == pygame.K_RETURN:
+                    self.menu_action("start")
+                elif event.key == pygame.K_ESCAPE:
                     if self.state == "playing":
                         self.pause()
                     elif self.state == "paused":
                         self.resume()
+                    elif self.state == "setup":
+                        self.to_menu()
                 elif self.state == "playing":
                     self.input.keys.add(event.key)
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
@@ -106,9 +158,16 @@ class Game:
                 self.input.keys.discard(event.key)
             elif event.type == pygame.MOUSEMOTION:
                 self.input.aim.update(event.pos)
+                self.hover.update(event.pos)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.input.fire = self.state == "playing"
-                self.input.aim.update(event.pos)
+                if self.state == "playing":
+                    self.input.fire = True
+                    self.input.aim.update(event.pos)
+                else:
+                    for action, _, rect in self.buttons():
+                        if rect.collidepoint(event.pos):
+                            self.menu_action(action)
+                            break
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self.input.fire = False
             elif event.type == pygame.WINDOWFOCUSLOST:
@@ -139,6 +198,7 @@ class Game:
                 deadlines.append(self.phase_until)
             if self.boss:
                 deadlines += [self.boss.next_round, self.boss.transition_until] + self.boss.burst
+            deadlines += [enemy.next_shot for enemy in self.enemies if enemy.kind != "scout"]
             for deadline in deadlines:
                 if deadline > self.time + 1e-9:
                     step = min(step, deadline - self.time)

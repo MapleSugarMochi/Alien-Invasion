@@ -18,7 +18,7 @@ def run() -> None:
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Alien Invasion")
         clock = pygame.time.Clock()
-        game, renderer = Game(), Renderer()
+        game, renderer = Game(menu=True), Renderer()
         while game.running:
             dt = clock.tick(FPS) / 1000.0
             game.handle_events(pygame.event.get())

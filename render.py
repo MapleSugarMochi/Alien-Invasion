@@ -10,7 +10,9 @@ from settings import BACKGROUND, CYAN, HEIGHT, HUD_HEIGHT, WIDTH
 
 class Renderer:
     def __init__(self) -> None:
-        self.font = pygame.font.Font(None, 26)
+        self.font_path = pygame.font.match_font(["microsoftyahei", "simhei", "simsun"])
+        self.font = pygame.font.Font(self.font_path, 20)
+        self.large_font = pygame.font.Font(self.font_path, 42)
         rng = random.Random(1)
         self.stars = [(rng.randrange(WIDTH), rng.randrange(HEIGHT), rng.uniform(15, 65))
                       for _ in range(160)]
@@ -28,6 +30,23 @@ class Renderer:
         surface.fill(BACKGROUND)
         for x, y, speed in self.stars:
             pygame.draw.circle(surface, (90, 120, 153), (x, int((y + game.time * speed) % HEIGHT)), 1)
+        if game.state in ("main_menu", "setup"):
+            title = "ALIEN INVASION" if game.state == "main_menu" else "出击准备"
+            heading = self.large_font.render(title, True, CYAN)
+            surface.blit(heading, heading.get_rect(center=(640, 155)))
+            if game.state == "main_menu":
+                self.ship(surface, Vector2(640, 280), Vector2(0, -1), 52, CYAN)
+                self.text(surface, "生存 · 12 波敌群 · 外星母舰", (475, 205))
+            else:
+                instructions = ["WASD 按屏幕方向移动，鼠标瞄准，按住左键持续射击",
+                                "Esc 暂停／继续；窗口失焦自动暂停，继续后重新按左键",
+                                "拾取绿色回血补给 +25 生命，每 7 秒生成，满血不消耗",
+                                "完成 12 波并击毁母舰获胜；生命归零失败；重开清空本局",
+                                "选择难度（也可按 1 / 2 / 3），Enter 开始"]
+                for index, line in enumerate(instructions):
+                    self.text(surface, line, (305, 250 + index * 36))
+            self.draw_buttons(surface, game)
+            return
         for enemy in game.enemies:
             colors = {"scout": (240, 124, 110), "shooter": (255, 184, 77), "heavy": (186, 130, 244)}
             self.ship(surface, enemy.pos, Vector2(0, 1), enemy.radius, colors[enemy.kind])
@@ -62,6 +81,7 @@ class Renderer:
         self.text(surface, f"HP {game.player.hp:3}   /   SCORE {game.score}   /   KILLS {game.kills}", (24, 21))
         self.text(surface, "WASD move   /   Mouse aim & fire   /   Esc pause", (650, 21))
         self.text(surface, f"WAVE {game.wave.number}/12   {game.phase.upper()}", (24, 83))
+        self.text(surface, game.difficulty.label, (1190, 82))
         aim = Vector2(max(0, min(WIDTH, game.input.aim.x)),
                       max(HUD_HEIGHT, min(HEIGHT, game.input.aim.y)))
         for offset in (-1, 1):
@@ -72,9 +92,17 @@ class Renderer:
             overlay.fill((3, 8, 20, 190))
             surface.blit(overlay, (0, 0))
             if game.state == "paused":
-                self.text(surface, "PAUSED — Esc to resume", (500, 340))
+                self.text(surface, "战斗暂停 · Esc 继续", (520, 280))
             else:
-                self.text(surface, game.state.upper(), (570, 285))
+                self.text(surface, "任务完成" if game.state == "victory" else "任务失败", (570, 255))
                 self.text(surface, f"Score {game.score}  /  Kills {game.kills}  /  Time {game.time:.1f}s", (440, 330))
-                self.text(surface, "R — new game with same difficulty", (455, 380))
+            self.draw_buttons(surface, game)
+
+    def draw_buttons(self, surface, game):
+        for action, label, rect in game.buttons():
+            active = action == game.selected_difficulty or rect.collidepoint(game.hover)
+            pygame.draw.rect(surface, (24, 63, 80) if active else (17, 33, 52), rect, border_radius=8)
+            pygame.draw.rect(surface, CYAN if active else (63, 94, 113), rect, 2, border_radius=8)
+            text = self.font.render(label, True, CYAN if active else (205, 222, 237))
+            surface.blit(text, text.get_rect(center=rect.center))
 

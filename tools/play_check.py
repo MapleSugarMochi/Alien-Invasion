@@ -76,7 +76,14 @@ def main():
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Alien Invasion — gameplay check")
-        game, renderer = Game(args.difficulty, args.seed), Renderer()
+        game, renderer = Game(args.difficulty, args.seed, menu=True), Renderer()
+        renderer.draw(surface, game)
+        pygame.display.flip()
+        game.menu_action("setup")
+        game.menu_action(args.difficulty)
+        game.menu_action("start")
+        # 注入随机源仅为复现随机序列；游戏数值与流程不变。
+        game.rng.seed(args.seed)
         frames = 0
         output = ROOT / "docs/evidence"
         output.mkdir(parents=True, exist_ok=True)

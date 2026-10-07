@@ -112,7 +112,7 @@ class Enemy:
             self.pos.y += self.speed * dt
         if self.on_screen:
             self.entered = True
-        if self.kind != "scout" and self.on_screen and now >= self.born_at + .5 and now + 1e-9 >= self.next_shot:
+        if self.kind != "scout" and self.on_screen and now + 1e-9 >= self.born_at + .5 and now + 1e-9 >= self.next_shot:
             direction = player_pos - self.pos
             if direction.length_squared():
                 direction = direction.normalize()
