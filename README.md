@@ -8,7 +8,7 @@
 
 ## 当前状态
 
-P0–P7 玩法已实现：完整基础版本（Git 标签 `baseline-p5`）及 Q/E、三种等概率补给、实际伤害回能和 X 五轮支援。阶段记录见 [docs/progress.md](docs/progress.md)。最终美术与声音待 P8。
+P0–P8 已实现：完整基础版本（Git 标签 `baseline-p5`）、Q/E/X 扩展、最终透明精灵与 9 种音效。阶段记录见 [docs/progress.md](docs/progress.md)。整体验收、人工平衡评价与交付整理属于 P9。
 
 ## 依赖安装
 
@@ -52,6 +52,8 @@ py -3.13 -m venv .venv
 
 美术、图标等非代码资源由助手生成，音效由助手设计，BGM 由开发者挑选。图片与音频使用项目相对路径；制作规格见设计文档第 6.11 节。
 
+素材来源与规格见 [assets/manifest.md](assets/manifest.md)，使用内置 imagegen 制作图集和原创代码合成音效。主菜单／暂停菜单可分别调整音效与音乐音量。BGM 未提供，游戏无音乐正常运行；可选文件为 `assets/audio/music/bgm.ogg`，请同时记录来源和许可。音频设备不可用时静音运行。Windows 中文字体按系统安装情况加载，不分发系统字体。
+
 ## 验证
 
 已执行真实 SDL 窗口的显示、输入和退出检查：
@@ -73,3 +75,9 @@ py -3.13 -m venv .venv
 ```
 
 会在 `docs/evidence/` 保存运行事件与截图。
+
+资源与音效检查：
+
+```powershell
+.\.venv\Scripts\python.exe tools/check_resources.py
+```

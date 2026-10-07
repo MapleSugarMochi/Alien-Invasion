@@ -64,28 +64,39 @@ class Game:
         self.arc_effects = []
         self.energy_units = 0
         self.support = SupportController()
+        self.sfx_volume, self.music_volume = .45, .35
+        self.audio_return_state = "main_menu"
+        self.sound_events = []
 
     @property
     def targets(self):
         return self.enemies + ([self.boss] if self.boss and self.boss.hp > 0 else [])
 
     def restart(self):
-        self.__init__(self.difficulty.id)
+        self.reset_session(self.difficulty.id)
+
+    def reset_session(self, difficulty, menu=False):
+        sfx, music = self.sfx_volume, self.music_volume
+        self.support.cancel()
+        self.__init__(difficulty, menu=menu)
+        self.sfx_volume, self.music_volume = sfx, music
 
     def start_session(self, difficulty):
-        self.__init__(difficulty)
+        self.reset_session(difficulty)
         self.record("session_start", difficulty=difficulty)
 
     def to_menu(self):
-        self.__init__(self.difficulty.id, menu=True)
+        self.reset_session(self.difficulty.id, menu=True)
 
     def buttons(self):
         """点击范围与显示共用，避免不同界面的命中区漂移。"""
         options = {
-            "main_menu": [("setup", "开始游戏"), ("setup", "操作说明与难度"), ("quit", "退出")],
+            "main_menu": [("setup", "开始游戏"), ("setup", "操作说明与难度"), ("audio", "声音设置"), ("quit", "退出")],
             "setup": [("easy", "简单"), ("standard", "标准"), ("hard", "困难"),
                       ("start", "开始战斗"), ("menu", "返回主菜单")],
-            "paused": [("resume", "继续战斗"), ("restart", "重新开始"), ("menu", "返回主菜单")],
+            "paused": [("resume", "继续战斗"), ("restart", "重新开始"), ("audio", "声音设置"), ("menu", "返回主菜单")],
+            "audio": [("sfx_down", "音效 -"), ("sfx_up", "音效 +"),
+                      ("music_down", "音乐 -"), ("music_up", "音乐 +"), ("audio_back", "返回")],
             "victory": [("restart", "同难度再战"), ("menu", "返回主菜单")],
             "defeat": [("restart", "同难度重开"), ("menu", "返回主菜单")],
         }.get(self.state, [])
@@ -111,6 +122,15 @@ class Game:
             self.to_menu()
         elif action == "quit":
             self.running = False
+        elif action == "audio":
+            self.audio_return_state = self.state
+            self.state = "audio"
+        elif action == "audio_back":
+            self.state = self.audio_return_state
+        elif action in ("sfx_down", "sfx_up", "music_down", "music_up"):
+            attribute = "sfx_volume" if action.startswith("sfx") else "music_volume"
+            change = .1 if action.endswith("up") else -.1
+            setattr(self, attribute, round(max(0, min(1, getattr(self, attribute) + change)), 2))
 
     def finish(self, result):
         self.state = result
@@ -267,6 +287,7 @@ class Game:
             if not pickup.expired(self.time) and self.player.pos.distance_to(pickup.pos) <= self.player.radius + pickup.radius:
                 if self.collect(pickup):
                     self.record("pickup", kind=pickup.kind)
+                    self.sound_events.append("pickup")
         self.pickups = [p for p in self.pickups if not p.expired(self.time)]
         self.projectiles = [p for p in self.projectiles if p.alive]
         self.enemy_bullets = [p for p in self.enemy_bullets if p.alive]
@@ -330,6 +351,7 @@ class Game:
         if self.player.hp > 0 and not (self.boss and self.boss.hp <= 0) and self.input.fire and self.input.in_battle:
             projectile = self.weapons.try_fire(self.time, self.player, self.input.aim, self.targets)
             if projectile:
+                self.sound_events.append(self.weapons.active)
                 if isinstance(projectile, ArcAttack):
                     points = [self.player.pos.copy()] + [t.pos.copy() for t in projectile.targets]
                     for target, damage in zip(projectile.targets, (18, 13, 10)):
@@ -357,6 +379,8 @@ class Game:
         for event, number, ids in self.support.update(self.time, self.targets, self.input.aim):
             self.record("support_" + event, round=number, targets=ids)
             if event == "hit":
+                if ids:
+                    self.sound_events.append("support")
                 targets = {t.id: t for t in self.targets}
                 for target_id in ids:
                     target = targets.get(target_id)
@@ -364,6 +388,8 @@ class Game:
                         amount = target.max_hp // 10 if isinstance(target, Boss) else target.hp
                         self.apply_damage(target, amount, "support")
                         self.effects.append((self.time + .4, target.pos.copy(), 45))
+            elif event == "round" and ids:
+                self.sound_events.append("lock")
         if self.support.active:
             self.energy_units = 0
 
@@ -402,6 +428,7 @@ class Game:
             else:
                 self.apply_damage(target, projectile.damage, projectile.source)
                 if isinstance(projectile, Missile):
+                    self.sound_events.append("explosion")
                     # 主目标只吃一次直接伤害；其余圆与爆炸圆相交才溅射。
                     for other in self.targets + self.meteors:
                         if other is not target and other.pos.distance_to(projectile.pos) <= 70 + other.radius:
@@ -420,6 +447,7 @@ class Game:
             self.energy_units = min(1000, self.energy_units + actual)
         if isinstance(target, Boss) and target.sync_phase(self.time):
             self.record("boss_transition", hp=target.hp)
+            self.sound_events.append("phase")
         if isinstance(target, (Enemy, Boss)) and target.hp == 0:
             self.finalize_kill(target, source)
         return actual
@@ -439,6 +467,7 @@ class Game:
             return False
         self.player.hp = max(0, self.player.hp - int(amount))
         self.player.invulnerable_until = self.time + .8
+        self.sound_events.append("hurt")
         return True
 
     def contacts(self):

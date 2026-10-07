@@ -1,4 +1,4 @@
-"""P1 几何占位画面；资源由显示层统一管理。"""
+"""精灵、HUD、菜单与反馈；draw 不改变战斗生命或计时。"""
 import math
 import random
 
@@ -6,6 +6,7 @@ import pygame
 from pygame import Vector2
 
 from settings import BACKGROUND, CYAN, HEIGHT, HUD_HEIGHT, WIDTH
+from resources import Resources
 
 
 class Renderer:
@@ -13,6 +14,7 @@ class Renderer:
         self.font_path = pygame.font.match_font(["microsoftyahei", "simhei", "simsun"])
         self.font = pygame.font.Font(self.font_path, 20)
         self.large_font = pygame.font.Font(self.font_path, 42)
+        self.resources = Resources()
         rng = random.Random(1)
         self.stars = [(rng.randrange(WIDTH), rng.randrange(HEIGHT), rng.uniform(15, 65))
                       for _ in range(160)]
@@ -20,23 +22,38 @@ class Renderer:
     def text(self, surface, message, pos, color=(205, 222, 237)) -> None:
         surface.blit(self.font.render(message, True, color), pos)
 
-    def ship(self, surface, pos, direction, size, color) -> None:
-        side = Vector2(-direction.y, direction.x)
-        points = [pos + direction * size, pos - direction * size * .7 + side * size * .8,
-                  pos - direction * size * .35, pos - direction * size * .7 - side * size * .8]
-        pygame.draw.polygon(surface, color, points, 2)
+    def sprite(self, surface, name, pos, angle=0):
+        sprite = self.resources.sprite(name, angle)
+        surface.blit(sprite, sprite.get_rect(center=pos))
+
+    def feedback(self, game):
+        self.resources.set_volumes(game.sfx_volume, game.music_volume)
+        for sound in set(game.sound_events):
+            self.resources.play(sound)
+        game.sound_events.clear()
+        if self.resources.audio_available:
+            if game.state in ("paused", "audio"):
+                pygame.mixer.music.pause()
+            else:
+                pygame.mixer.music.unpause()
 
     def draw(self, surface, game) -> None:
         surface.fill(BACKGROUND)
         for x, y, speed in self.stars:
             pygame.draw.circle(surface, (90, 120, 153), (x, int((y + game.time * speed) % HEIGHT)), 1)
-        if game.state in ("main_menu", "setup"):
-            title = "ALIEN INVASION" if game.state == "main_menu" else "出击准备"
+        if game.state in ("main_menu", "setup", "audio"):
+            title = {"main_menu": "ALIEN INVASION", "setup": "出击准备", "audio": "声音设置"}[game.state]
             heading = self.large_font.render(title, True, CYAN)
             surface.blit(heading, heading.get_rect(center=(640, 155)))
             if game.state == "main_menu":
-                self.ship(surface, Vector2(640, 280), Vector2(0, -1), 52, CYAN)
+                self.sprite(surface, "player", Vector2(640, 290))
                 self.text(surface, "生存 · 12 波敌群 · 外星母舰", (475, 205))
+            elif game.state == "audio":
+                self.text(surface, f"音效 {round(game.sfx_volume * 100)}%    音乐 {round(game.music_volume * 100)}%", (475, 255))
+                status = "已载入 BGM" if self.resources.music_file else "尚未提供 BGM，当前无音乐运行"
+                self.text(surface, status, (455, 300))
+                if not self.resources.audio_available:
+                    self.text(surface, "音频设备不可用：静音运行", (465, 330))
             else:
                 instructions = ["WASD 按屏幕方向移动，鼠标瞄准，按住左键持续射击",
                                 "Esc 暂停／继续；窗口失焦自动暂停，继续后重新按左键",
@@ -49,11 +66,10 @@ class Renderer:
             self.draw_buttons(surface, game)
             return
         for enemy in game.enemies:
-            colors = {"scout": (240, 124, 110), "shooter": (255, 184, 77), "heavy": (186, 130, 244)}
-            self.ship(surface, enemy.pos, Vector2(0, 1), enemy.radius, colors[enemy.kind])
+            self.sprite(surface, enemy.kind, enemy.pos, 180)
         if game.boss and game.boss.hp > 0:
             boss = game.boss
-            pygame.draw.ellipse(surface, (186, 130, 244), (*tuple(boss.pos - Vector2(95, 45)), 190, 90), 3)
+            self.sprite(surface, "boss", boss.pos, 180)
             pygame.draw.rect(surface, (35, 29, 60), (320, 100, 640, 12))
             pygame.draw.rect(surface, (186, 130, 244), (320, 100, int(640 * boss.hp / boss.max_hp), 12))
             self.text(surface, f"MOTHERSHIP  {boss.hp}/{boss.max_hp}  PHASE {boss.phase}", (465, 78))
@@ -64,12 +80,16 @@ class Renderer:
         if game.phase == "boss_warning":
             self.text(surface, "WARNING — MOTHERSHIP APPROACHING", (425, 300), (255, 112, 88))
         for meteor in game.meteors:
-            pygame.draw.circle(surface, (142, 152, 176), meteor.pos, meteor.radius, 2)
+            self.sprite(surface, "meteor_small" if meteor.radius == 22 else "meteor_large", meteor.pos, meteor.angle)
         for projectile in game.projectiles + game.enemy_bullets:
             color = (255, 112, 88) if projectile.source == "enemy" else ((255, 184, 77) if projectile.source == "missile" else CYAN)
-            pygame.draw.circle(surface, color, projectile.pos, projectile.radius)
+            pygame.draw.line(surface, color, projectile.pos - projectile.velocity.normalize() * 9 if projectile.velocity.length_squared() else projectile.pos,
+                             projectile.pos, projectile.radius * 2)
         for until, pos, radius in game.effects:
             pygame.draw.circle(surface, (255, 205, 132), pos, radius, 1)
+            effect = pygame.transform.smoothscale(self.resources.images["explosion"], (min(100, radius * 2), min(100, radius * 2)))
+            effect.set_alpha(155)
+            surface.blit(effect, effect.get_rect(center=pos))
         for until, points in game.arc_effects:
             pygame.draw.lines(surface, (180, 147, 255), False, points, 3)
         targets = {t.id: t for t in game.targets}
@@ -90,22 +110,29 @@ class Renderer:
                     pos = Vector2(WIDTH + 40, 110).lerp(target.pos, flight)
                     pygame.draw.line(surface, (255, 209, 105), pos, pos - Vector2(35, -15), 4)
         for pickup in game.pickups:
-            color = {"health": (117, 237, 158), "missile": (255, 184, 77), "arc": (180, 147, 255)}[pickup.kind]
-            pygame.draw.rect(surface, color, (*tuple(pickup.pos - Vector2(13, 13)), 26, 26), 2)
-            self.text(surface, {"health": "+", "missile": "Q", "arc": "E"}[pickup.kind], pickup.pos - Vector2(7, 12), color)
+            self.sprite(surface, pickup.kind, pickup.pos)
         if game.meteor_warning:
             _, x, _ = game.meteor_warning
             pygame.draw.polygon(surface, (255, 184, 77), [(x - 12, 72), (x + 12, 72), (x, 91)], 2)
         if game.time >= game.player.invulnerable_until or int(game.time * 18) % 2:
-            self.ship(surface, game.player.pos, game.player.direction, 23, CYAN)
+            tail = game.player.pos - game.player.direction * 24
+            pygame.draw.line(surface, (30, 131, 183), tail, tail - game.player.direction * (12 + 5 * math.sin(game.time * 35)), 5)
+            self.sprite(surface, "player", game.player.pos, Vector2(0, -1).angle_to(game.player.direction) * -1)
+            # 核心亮环对应真实碰撞半径，宽翼与尾焰不扩大碰撞。
+            pygame.draw.circle(surface, (61, 148, 183), game.player.pos, game.player.radius, 1)
         pygame.draw.rect(surface, (13, 24, 42), (0, 0, WIDTH, HUD_HEIGHT))
         self.text(surface, f"HP {game.player.hp:3}  分数 {game.score}", (24, 21))
-        self.text(surface, f"武器 {game.weapons.active}  {max(0, game.weapons.active_until-game.time):.1f}s", (320, 21))
+        weapon_name = {"bullet": "基础子弹", "missile": "追踪导弹", "arc": "连锁电弧"}[game.weapons.active]
+        self.text(surface, f"{weapon_name}  {max(0, game.weapons.active_until-game.time):.1f}s", (300, 21))
         for index, kind in enumerate(("missile", "arc")):
             color = (255, 112, 88) if game.weapons.failed_until[kind] > game.time else (CYAN if game.weapons.charges[kind] == 3 else (140, 165, 187))
-            self.text(surface, f"{'Q' if index == 0 else 'E'}  {'■' * game.weapons.charges[kind]}{'□' * (3 - game.weapons.charges[kind])}", (700 + 180 * index, 21), color)
+            self.sprite(surface, kind, (620 + 210 * index, 32))
+            self.text(surface, f"{'Q' if index == 0 else 'E'} {'■' * game.weapons.charges[kind]}{'□' * (3 - game.weapons.charges[kind])}", (650 + 210 * index, 21), color)
         color = (255, 112, 88) if game.support.failed_until > game.time else (CYAN if game.energy_units == 1000 else (140, 165, 187))
         self.text(surface, f"X  {game.energy_units // 10}%" if not game.support.active else f"支援 {game.support.end_at - game.time:.1f}s", (1070, 21), color)
+        self.sprite(surface, "support", (1030, 32))
+        pygame.draw.rect(surface, (23, 46, 66), (24, 52, 200, 4))
+        pygame.draw.rect(surface, (117, 237, 158), (24, 52, game.player.hp * 2, 4))
         self.text(surface, f"WAVE {game.wave.number}/12   {game.phase.upper()}", (24, 83))
         self.text(surface, game.difficulty.label, (1190, 82))
         aim = Vector2(max(0, min(WIDTH, game.input.aim.x)),

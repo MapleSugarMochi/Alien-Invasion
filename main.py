@@ -23,6 +23,7 @@ def run() -> None:
             dt = clock.tick(FPS) / 1000.0
             game.handle_events(pygame.event.get())
             game.update(dt)
+            renderer.feedback(game)
             renderer.draw(screen, game)
             pygame.display.flip()
     finally:

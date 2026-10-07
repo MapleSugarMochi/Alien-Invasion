@@ -107,6 +107,7 @@ def main():
             if args.mode == "pilot":
                 pilot(game)
             game.update(1 / 60)
+            renderer.feedback(game)
             frames += 1
             if frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons or (game.support.active and not saved_support):
                 renderer.draw(surface, game)
