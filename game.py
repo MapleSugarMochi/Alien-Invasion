@@ -1,13 +1,15 @@
 """输入与游戏规则协调；显示层只读取这些状态。"""
 from dataclasses import dataclass, field
+import random
 
 import pygame
 from pygame import Vector2
 
-from entities import Enemy, Meteor, Player
+from entities import Enemy, Meteor, Pickup, Player
 from geometry import moving_hit
 from weapons import Projectile, WeaponController
-from settings import HEIGHT, HUD_HEIGHT, WIDTH
+from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
+from waves import WaveController
 
 
 @dataclass
@@ -31,20 +33,37 @@ class InputState:
 
 
 class Game:
-    def __init__(self) -> None:
+    def __init__(self, difficulty="standard", seed=None) -> None:
         self.running = True
         self.state = "playing"
         self.input = InputState()
         self.player = Player()
-        self.enemies = [Enemy(1, Vector2(640, 180))]
+        self.enemies = []
         self.time = 0.0
         self.weapons = WeaponController()
         self.projectiles = []
         self.enemy_bullets = []
-        self.meteors = [Meteor(2, Vector2(950, 140))]
+        self.meteors = []
         self.score = self.kills = 0
         self.effects = []
-        self._next_demo_shot = 1.5
+        self.difficulty = DIFFICULTIES[difficulty]
+        self.rng = random.Random(seed)
+        self._entity_id = 0
+        self.wave = WaveController(1, 0)
+        self.phase = "waves"
+        self.phase_until = 0.0
+        self.next_meteor = self.difficulty.meteor_interval
+        self.meteor_warning = None
+        self.next_drop = 7.0
+        self.pickups = []
+        self.journal = []
+
+    def next_id(self):
+        self._entity_id += 1
+        return self._entity_id
+
+    def record(self, name, **data):
+        self.journal.append({"time": round(self.time, 6), "event": name, **data})
 
     def pause(self):
         self.state = "paused"
@@ -83,6 +102,7 @@ class Game:
     def update(self, dt: float) -> None:
         if not self.running or self.state != "playing":
             return
+        self.timed_events()
         self.fire_weapon()
         # 保留整帧时间，以小步处理运动；胜负在整帧最后统一判定。
         remaining = dt
@@ -90,6 +110,17 @@ class Game:
             step = min(remaining, 1 / 60)
             if self.input.fire and self.input.in_battle and self.weapons.ready_at > self.time + 1e-9:
                 step = min(step, self.weapons.ready_at - self.time)
+            deadlines = [self.next_drop]
+            if self.phase in ("waves", "rest"):
+                deadlines += [self.next_meteor - .6, self.next_meteor]
+            if self.phase == "waves":
+                if self.wave.queue and len(self.enemies) < self.difficulty.enemy_cap:
+                    deadlines.append(self.wave.next_spawn)
+            if self.phase == "rest":
+                deadlines.append(self.phase_until)
+            for deadline in deadlines:
+                if deadline > self.time + 1e-9:
+                    step = min(step, deadline - self.time)
             self._step(step)
             remaining -= step
         if self.player.hp <= 0:
@@ -100,26 +131,78 @@ class Game:
         self.time += dt
         self.player.update(dt, self.input.movement, self.input.aim)
         for enemy in self.enemies:
-            enemy.previous = enemy.pos.copy()
+            for direction in enemy.update(dt, self.time, self.player.pos):
+                self.enemy_bullets.append(Projectile(enemy.pos.copy(), direction * enemy.bullet_speed,
+                                                     enemy.bullet_damage, 4, "enemy", float("inf")))
         for meteor in self.meteors:
             meteor.update(dt)
-        self.fire_weapon()
-        if self.enemies and self.time >= self._next_demo_shot:
-            direction = self.player.pos - self.enemies[0].pos
-            if direction.length_squared():
-                self.enemy_bullets.append(Projectile(self.enemies[0].pos.copy(), direction.normalize() * 250,
-                                                     10, 4, "enemy", float("inf")))
-            self._next_demo_shot = self.time + 1.5
         for projectile in self.projectiles:
             self.resolve_projectile(projectile, dt, self.enemies + self.meteors)
         for projectile in self.enemy_bullets:
             self.resolve_projectile(projectile, dt, self.meteors + [self.player])
         self.contacts()
-        self.enemies = [e for e in self.enemies if e.hp > 0]
-        self.meteors = [m for m in self.meteors if m.hp > 0 and m.pos.y - m.radius <= HEIGHT]
+        for enemy in self.enemies:
+            if enemy.gone and enemy.hp > 0:
+                self.record("enemy_left", id=enemy.id, kind=enemy.kind)
+        self.enemies = [e for e in self.enemies if e.hp > 0 and not e.gone]
+        self.meteors = [m for m in self.meteors if m.hp > 0 and m.pos.y - m.radius <= HEIGHT
+                        and -m.radius <= m.pos.x <= WIDTH + m.radius]
+        for pickup in self.pickups:
+            pickup.update(dt)
+            if not pickup.expired(self.time) and self.player.pos.distance_to(pickup.pos) <= self.player.radius + pickup.radius:
+                if self.player.hp < 100:
+                    self.player.hp = min(100, self.player.hp + 25)
+                    pickup.consumed = True
+                    self.record("pickup", kind=pickup.kind)
+        self.pickups = [p for p in self.pickups if not p.expired(self.time)]
         self.projectiles = [p for p in self.projectiles if p.alive]
         self.enemy_bullets = [p for p in self.enemy_bullets if p.alive]
         self.effects = [e for e in self.effects if e[0] > self.time]
+        self.timed_events()
+        self.fire_weapon()
+
+    def timed_events(self):
+        if self.time + 1e-9 >= self.next_drop:
+            x = self.rng.uniform(48, 1232)
+            if self.player.pos.distance_to(Vector2(x, 78)) <= 28:
+                x = 48 if self.player.pos.x > 640 else 1232
+            self.pickups.append(Pickup(self.next_id(), Vector2(x, 78), self.time))
+            self.record("drop", kind="health")
+            self.next_drop += 7
+        if self.phase in ("waves", "rest"):
+            if self.meteor_warning is None and self.time + 1e-9 >= self.next_meteor - .6:
+                if len(self.meteors) < self.difficulty.meteor_cap:
+                    radius = self.rng.choice((22, 36))
+                    self.meteor_warning = (self.next_meteor, self.rng.uniform(radius, WIDTH - radius), radius)
+                    self.record("meteor_warning")
+                else:
+                    self.next_meteor = self.time + self.difficulty.meteor_interval + .6
+            if self.meteor_warning and self.time + 1e-9 >= self.meteor_warning[0]:
+                _, x, radius = self.meteor_warning
+                self.meteors.append(Meteor(self.next_id(), Vector2(x, HUD_HEIGHT - radius), radius,
+                                           40 if radius == 22 else 80,
+                                           Vector2(self.rng.uniform(-35, 35), self.rng.uniform(100, 140))))
+                self.record("meteor_spawn")
+                self.meteor_warning = None
+                self.next_meteor = self.time + self.difficulty.meteor_interval
+        if self.phase == "rest" and self.time + 1e-9 >= self.phase_until:
+            self.phase = "waves"
+            self.wave = WaveController(self.wave.number + 1, self.time)
+        if self.phase == "waves":
+            enemy = self.wave.update(self.time, len(self.enemies), self.difficulty, self._entity_id + 1)
+            if enemy:
+                self.next_id()
+                self.enemies.append(enemy)
+                self.record("enemy_spawn", id=enemy.id, kind=enemy.kind, wave=self.wave.number)
+            if not self.wave.queue and not self.enemies:
+                self.record("wave_end", wave=self.wave.number)
+                self.phase = "rest" if self.wave.number < 12 else "meteor_clear"
+                self.phase_until = self.time + 3
+                if self.wave.number == 12:
+                    self.meteor_warning = None
+        if self.phase == "meteor_clear" and not self.meteors:
+            self.phase = "boss_ready"
+            self.record("boss_ready")
 
     def fire_weapon(self):
         if self.input.fire and self.input.in_battle:
@@ -166,6 +249,7 @@ class Game:
         target.settled = True
         self.score += {"scout": 100, "shooter": 200, "heavy": 500}.get(target.kind, 0)
         self.kills += 1
+        self.record("kill", id=target.id, kind=target.kind)
 
     def damage_player(self, amount):
         if self.time + 1e-9 < self.player.invulnerable_until or self.player.hp <= 0:
@@ -182,7 +266,7 @@ class Game:
             minimum = self.player.radius + target.radius
             if difference.length_squared() > minimum * minimum:
                 continue
-            accepted = self.damage_player(25 if isinstance(target, Meteor) else 20)
+            accepted = self.damage_player(self.difficulty.hit(25 if isinstance(target, Meteor) else 20))
             if accepted and isinstance(target, Enemy):
                 self.apply_damage(target, target.hp, "contact")
             direction = difference.normalize() if difference.length_squared() else Vector2(0, 1)

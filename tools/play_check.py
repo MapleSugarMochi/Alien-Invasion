@@ -1,0 +1,112 @@
+"""自动输入的真实规则运行；无跳波、无无敌、无伤害或生命改写。
+
+用于流程回归，不能替代人工手感、声音和难度评价。渲染抽帧且默认
+不按墙钟限速，游戏时间仍严格按 1/60 秒推进。
+"""
+import argparse
+import json
+import math
+import os
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
+import pygame
+from pygame import Vector2
+from game import Game
+from render import Renderer
+from settings import WIDTH, HEIGHT
+
+
+def pilot(game):
+    # 下半场持续移动避开瞄准弹；只有公开移动/瞄准/开火输入。
+    phase = (game.time * 300) % 1840
+    desired = Vector2(180 + (phase if phase < 920 else 1840 - phase), 610)
+    if game.player.hp < 85 and game.pickups:
+        nearby = [p for p in game.pickups if p.pos.y > 220 and p.kind == "health"]
+        if nearby:
+            desired = min(nearby, key=lambda p: p.pos.distance_squared_to(game.player.pos)).pos.copy()
+    hazards = [(p.pos, p.velocity, p.radius + 14) for p in game.enemy_bullets]
+    hazards += [(m.pos, m.velocity, m.radius + 14) for m in game.meteors]
+    hazards += [(e.pos, (e.pos - e.previous) * 60, e.radius + 14) for e in game.enemies if e.on_screen]
+    choices = [Vector2(x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)]
+
+    def cost(direction):
+        velocity = direction.normalize() * 340 if direction.length_squared() else Vector2()
+        score = (game.player.pos + velocity * .3).distance_to(desired) * .04
+        for horizon in (.08, .18, .35, .6):
+            position = game.player.pos + velocity * horizon
+            if not (25 <= position.x <= 1255 and 90 <= position.y <= 695):
+                score += 500
+            for pos, motion, radius in hazards:
+                margin = position.distance_to(pos + motion * horizon) - radius
+                if margin < 0:
+                    score += 2000 + (-margin) * 10
+                elif margin < 150:
+                    score += 2500 / (margin + 10) ** 2
+        return score
+
+    move = min(choices, key=cost)
+    keys = set()
+    if move.x:
+        keys.add(pygame.K_d if move.x > 0 else pygame.K_a)
+    if move.y:
+        keys.add(pygame.K_s if move.y > 0 else pygame.K_w)
+    game.input.keys = keys
+    candidates = [e for e in game.enemies if e.on_screen and e.damageable]
+    if candidates:
+        enemy = min(candidates, key=lambda e: (e.kind == "scout", e.pos.distance_squared_to(game.player.pos)))
+        lead = (enemy.pos - enemy.previous) * 60 * (enemy.pos.distance_to(game.player.pos) / 900)
+        game.input.aim = enemy.pos + lead
+    else:
+        game.input.aim.update(640, 180)
+    game.input.fire = True
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--difficulty", default="standard", choices=("easy", "standard", "hard"))
+    parser.add_argument("--seed", type=int, default=5)
+    parser.add_argument("--seconds", type=float, default=600)
+    parser.add_argument("--mode", choices=("pilot", "idle"), default="pilot")
+    args = parser.parse_args()
+    pygame.init()
+    try:
+        surface = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Alien Invasion — gameplay check")
+        game, renderer = Game(args.difficulty, args.seed), Renderer()
+        frames = 0
+        output = ROOT / "docs/evidence"
+        output.mkdir(parents=True, exist_ok=True)
+        last_phase = None
+        while game.state == "playing" and game.time < args.seconds and game.phase != "boss_ready":
+            if any(e.type == pygame.QUIT for e in pygame.event.get()):
+                break
+            if args.mode == "pilot":
+                pilot(game)
+            game.update(1 / 60)
+            frames += 1
+            if frames % 30 == 0 or game.phase != last_phase:
+                renderer.draw(surface, game)
+                pygame.display.flip()
+                if game.phase != last_phase:
+                    pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.phase}.png")
+                last_phase = game.phase
+        renderer.draw(surface, game)
+        pygame.display.flip()
+        pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
+        result = {"difficulty": args.difficulty, "mode": args.mode, "seed": args.seed,
+                  "state": game.state, "phase": game.phase, "time": round(game.time, 3),
+                  "hp": game.player.hp, "score": game.score, "kills": game.kills,
+                  "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
+                  "events": game.journal, "verification": "automatic input; full rules; accelerated wall clock"}
+        (output / f"{args.difficulty}-{args.mode}-run.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(json.dumps({k: v for k, v in result.items() if k != "events"}, ensure_ascii=False))
+    finally:
+        pygame.quit()
+
+
+if __name__ == "__main__":
+    main()

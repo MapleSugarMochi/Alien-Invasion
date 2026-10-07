@@ -8,7 +8,7 @@
 
 ## 当前状态
 
-P0–P2 已实现：可运行窗口、移动瞄准、基础射击、生命、轨迹碰撞、受击无敌、暂停和失焦暂停。阶段验证记录见 [docs/progress.md](docs/progress.md)。最终美术尚未制作。
+P0–P3 已实现：可运行输入和基础战斗、三类敌机、12 波普通关卡、陨石预警与每 7 秒回血。阶段验证记录见 [docs/progress.md](docs/progress.md)。Boss、菜单和扩展待后续阶段，最终美术尚未制作。
 
 ## 依赖安装
 
@@ -63,4 +63,10 @@ py -3.13 -m venv .venv
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-当前使用少量规则检查对象，完整关卡、Q/E/X 属于后续阶段。
+自动输入流程检查（真实规则，无跳波或无敌；墙钟加速，不能替代人工手感评价）：
+
+```powershell
+.\.venv\Scripts\python.exe tools/play_check.py
+```
+
+会在 `docs/evidence/` 保存运行事件与截图。
