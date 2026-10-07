@@ -35,7 +35,7 @@ def main():
         game.update(.5)
         assert abs(game.player.pos.distance_to(start) - 170) < 1e-6
         game.player.pos = Vector2(-100, 900)
-        game.update(0)
+        game.update(.001)
         assert game.player.pos == Vector2(14, 706)
         game.player.pos = start.copy()
         game.input.clear()
@@ -44,9 +44,29 @@ def main():
         game.update(0)
         assert game.player.direction == old_direction
         game.input.aim.update(640, 180)
+        # P2 场景：真实窗口中走完射击、受伤、暂停和重新按下流程。
+        pygame.event.clear()
+        game.enemies.clear()
+        game.meteors.clear()
+        game.handle_events([pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 180))])
+        game.update(.25)
+        assert len(game.projectiles) >= 2
+        assert game.damage_player(20) and game.player.hp == 80
+        game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)])
+        frozen = game.time
+        game.update(5)
+        assert game.time == frozen
         renderer.draw(surface, game)
         pygame.display.flip()
-        output = ROOT / "docs/evidence/p1-window.png"
+        output = ROOT / "docs/evidence/p2-paused.png"
+        pygame.image.save(surface, output)
+        game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)])
+        assert not game.input.fire
+        from entities import Enemy
+        game.enemies = [Enemy(1, Vector2(640, 180))]
+        renderer.draw(surface, game)
+        pygame.display.flip()
+        output = ROOT / "docs/evidence/p2-window.png"
         output.parent.mkdir(parents=True, exist_ok=True)
         pygame.image.save(surface, output)
         for _ in range(90):

@@ -55,3 +55,4 @@ Alien Invasion 是个人独立游戏开发项目。
 
 - 窗口与基础输入检查：`.\.venv\Scripts\python.exe tools/check_window.py`
 - 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py`
+- 规则测试：`.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v`

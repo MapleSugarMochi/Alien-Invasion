@@ -8,7 +8,7 @@
 
 ## 当前状态
 
-P0–P1 已实现：可运行窗口、滚动星空、玩家与敌机占位图、WASD 移动、鼠标朝向和正常退出。阶段验证记录见 [docs/progress.md](docs/progress.md)。最终美术尚未制作。
+P0–P2 已实现：可运行窗口、移动瞄准、基础射击、生命、轨迹碰撞、受击无敌、暂停和失焦暂停。阶段验证记录见 [docs/progress.md](docs/progress.md)。最终美术尚未制作。
 
 ## 依赖安装
 
@@ -57,4 +57,10 @@ py -3.13 -m venv .venv
 .\.venv\Scripts\python.exe tools/check_window.py
 ```
 
-本检查保存 `docs/evidence/p1-window.png`，验证单向／斜向移动、相反键抵消、朝向、边界与 QUIT。当前尚未实现射击与完整关卡，Q/E/X 等属于后续阶段。
+本检查在真实窗口验证移动、射击、受伤、暂停与 QUIT，保存阶段截图。规则测试命令：
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
+```
+
+当前使用少量规则检查对象，完整关卡、Q/E/X 属于后续阶段。

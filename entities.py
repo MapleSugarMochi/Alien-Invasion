@@ -12,8 +12,11 @@ class Player:
     direction: Vector2 = field(default_factory=lambda: Vector2(0, -1))
     hp: int = PLAYER_HP
     radius: int = PLAYER_RADIUS
+    invulnerable_until: float = 0.0
+    previous: Vector2 = field(default_factory=lambda: Vector2(640, 392))
 
     def update(self, dt: float, movement: Vector2, aim: Vector2) -> None:
+        self.previous = self.pos.copy()
         if movement.length_squared():
             self.pos += movement.normalize() * PLAYER_SPEED * dt
         self.clamp()
@@ -32,4 +35,37 @@ class Enemy:
     pos: Vector2
     radius: int = 16
     hp: int = 20
+    kind: str = "scout"
+    settled: bool = False
+    previous: Vector2 = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.previous = self.pos.copy()
+
+    @property
+    def damageable(self) -> bool:
+        return self.hp > 0
+
+
+@dataclass
+class Meteor:
+    id: int
+    pos: Vector2
+    radius: int = 22
+    hp: int = 40
+    velocity: Vector2 = field(default_factory=lambda: Vector2(0, 120))
+    previous: Vector2 = field(init=False)
+    angle: float = 0.0
+
+    def __post_init__(self) -> None:
+        self.previous = self.pos.copy()
+
+    @property
+    def damageable(self) -> bool:
+        return self.hp > 0
+
+    def update(self, dt: float) -> None:
+        self.previous = self.pos.copy()
+        self.pos += self.velocity * dt
+        self.angle += 25 * dt
 
