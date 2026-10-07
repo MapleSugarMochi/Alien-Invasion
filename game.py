@@ -7,7 +7,7 @@ from pygame import Vector2
 
 from entities import Boss, Enemy, Meteor, Pickup, Player
 from geometry import moving_hit
-from weapons import Projectile, WeaponController
+from weapons import ArcAttack, Missile, Projectile, WeaponController
 from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
 from waves import WaveController
 
@@ -60,6 +60,8 @@ class Game:
         self.boss = None
         self.selected_difficulty = difficulty
         self.hover = Vector2(-1, -1)
+        self.commands = []
+        self.arc_effects = []
 
     @property
     def targets(self):
@@ -125,10 +127,12 @@ class Game:
     def pause(self):
         self.state = "paused"
         self.input.clear()
+        self.commands.clear()
 
     def resume(self):
         self.state = "playing"
         self.input.clear()
+        self.commands.clear()
 
     def handle_events(self, events) -> None:
         for event in events:
@@ -151,6 +155,8 @@ class Game:
                     elif self.state == "setup":
                         self.to_menu()
                 elif self.state == "playing":
+                    if event.key in (pygame.K_q, pygame.K_e) and event.key not in self.input.keys:
+                        self.commands.append("missile" if event.key == pygame.K_q else "arc")
                     self.input.keys.add(event.key)
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
                     self.restart()
@@ -178,6 +184,11 @@ class Game:
     def update(self, dt: float) -> None:
         if not self.running or self.state != "playing":
             return
+        self.weapons.expire(self.time)
+        for command in self.commands:
+            if self.weapons.try_activate(command, self.time):
+                self.record("weapon_activate", kind=command)
+        self.commands.clear()
         self.timed_events()
         self.fire_weapon()
         # 保留整帧时间，以小步处理运动；胜负在整帧最后统一判定。
@@ -187,6 +198,8 @@ class Game:
             if self.input.fire and self.input.in_battle and self.weapons.ready_at > self.time + 1e-9:
                 step = min(step, self.weapons.ready_at - self.time)
             deadlines = [self.next_drop]
+            if self.weapons.active != "bullet":
+                deadlines.append(self.weapons.active_until)
             if self.phase in ("waves", "rest"):
                 deadlines += [self.next_meteor - .6, self.next_meteor]
             if self.phase == "waves":
@@ -211,6 +224,7 @@ class Game:
 
     def _step(self, dt):
         self.time += dt
+        self.weapons.expire(self.time)
         self.player.update(dt, self.input.movement, self.input.aim)
         for enemy in self.enemies:
             for direction in enemy.update(dt, self.time, self.player.pos):
@@ -238,14 +252,13 @@ class Game:
         for pickup in self.pickups:
             pickup.update(dt)
             if not pickup.expired(self.time) and self.player.pos.distance_to(pickup.pos) <= self.player.radius + pickup.radius:
-                if self.player.hp < 100:
-                    self.player.hp = min(100, self.player.hp + 25)
-                    pickup.consumed = True
+                if self.collect(pickup):
                     self.record("pickup", kind=pickup.kind)
         self.pickups = [p for p in self.pickups if not p.expired(self.time)]
         self.projectiles = [p for p in self.projectiles if p.alive]
         self.enemy_bullets = [p for p in self.enemy_bullets if p.alive]
         self.effects = [e for e in self.effects if e[0] > self.time]
+        self.arc_effects = [e for e in self.arc_effects if e[0] > self.time]
         self.timed_events()
         self.fire_weapon()
 
@@ -256,8 +269,9 @@ class Game:
             x = self.rng.uniform(48, 1232)
             if self.player.pos.distance_to(Vector2(x, 78)) <= 28:
                 x = 48 if self.player.pos.x > 640 else 1232
-            self.pickups.append(Pickup(self.next_id(), Vector2(x, 78), self.time))
-            self.record("drop", kind="health")
+            kind = self.rng.choice(("health", "missile", "arc"))
+            self.pickups.append(Pickup(self.next_id(), Vector2(x, 78), self.time, kind))
+            self.record("drop", kind=kind)
             self.next_drop += 7
         if self.phase in ("waves", "rest"):
             if self.meteor_warning is None and self.time + 1e-9 >= self.next_meteor - .6:
@@ -300,12 +314,33 @@ class Game:
             self.record("boss_spawn")
 
     def fire_weapon(self):
-        if self.input.fire and self.input.in_battle:
-            projectile = self.weapons.try_fire(self.time, self.player)
+        if self.player.hp > 0 and not (self.boss and self.boss.hp <= 0) and self.input.fire and self.input.in_battle:
+            projectile = self.weapons.try_fire(self.time, self.player, self.input.aim, self.targets)
             if projectile:
-                self.projectiles.append(projectile)
+                if isinstance(projectile, ArcAttack):
+                    points = [self.player.pos.copy()] + [t.pos.copy() for t in projectile.targets]
+                    for target, damage in zip(projectile.targets, (18, 13, 10)):
+                        self.apply_damage(target, damage, "arc")
+                    if len(points) > 1:
+                        self.arc_effects.append((self.time + .12, points))
+                else:
+                    self.projectiles.append(projectile)
+
+    def collect(self, pickup):
+        if pickup.kind == "health":
+            if self.player.hp >= 100:
+                return False
+            self.player.hp = min(100, self.player.hp + 25)
+        else:
+            if self.weapons.charges[pickup.kind] >= 3:
+                return False
+            self.weapons.charges[pickup.kind] += 1
+        pickup.consumed = True
+        return True
 
     def resolve_projectile(self, projectile, dt, targets):
+        if isinstance(projectile, Missile):
+            projectile.turn(dt, self.targets, self.input.aim)
         start, end, fraction, expired = projectile.advance(dt)
         hits = []
         for target in targets:
@@ -325,6 +360,12 @@ class Game:
                     self.damage_player(projectile.damage)
             else:
                 self.apply_damage(target, projectile.damage, projectile.source)
+                if isinstance(projectile, Missile):
+                    # 主目标只吃一次直接伤害；其余圆与爆炸圆相交才溅射。
+                    for other in self.targets + self.meteors:
+                        if other is not target and other.pos.distance_to(projectile.pos) <= 70 + other.radius:
+                            self.apply_damage(other, 20, "missile_splash")
+                    self.effects.append((self.time + .35, projectile.pos.copy(), 70))
             self.effects.append((self.time + .18, projectile.pos.copy(), 12))
         elif expired:
             projectile.alive = False

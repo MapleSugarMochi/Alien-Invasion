@@ -24,8 +24,10 @@ def pilot(game):
     # 下半场持续移动避开瞄准弹；只有公开移动/瞄准/开火输入。
     phase = (game.time * 300) % 1840
     desired = Vector2(180 + (phase if phase < 920 else 1840 - phase), 610)
-    if game.player.hp < 85 and game.pickups:
-        nearby = [p for p in game.pickups if p.pos.y > 220 and p.kind == "health"]
+    if game.pickups:
+        nearby = [p for p in game.pickups if p.pos.y > 180 and
+                  ((p.kind == "health" and game.player.hp < 85) or
+                   (p.kind != "health" and game.weapons.charges[p.kind] < 3))]
         if nearby:
             desired = min(nearby, key=lambda p: p.pos.distance_squared_to(game.player.pos)).pos.copy()
     hazards = [(p.pos, p.velocity, p.radius + 14) for p in game.enemy_bullets]
@@ -63,6 +65,12 @@ def pilot(game):
     else:
         game.input.aim.update(640, 180)
     game.input.fire = True
+    if game.weapons.active == "bullet":
+        for kind, key in (("missile", pygame.K_q), ("arc", pygame.K_e)):
+            if game.weapons.charges[kind] == 3:
+                game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=key),
+                                    pygame.event.Event(pygame.KEYUP, key=key)])
+                break
 
 
 def main():
@@ -88,6 +96,7 @@ def main():
         output = ROOT / "docs/evidence"
         output.mkdir(parents=True, exist_ok=True)
         last_phase = None
+        saved_weapons = set()
         while game.state == "playing" and game.time < args.seconds:
             if any(e.type == pygame.QUIT for e in pygame.event.get()):
                 break
@@ -95,12 +104,15 @@ def main():
                 pilot(game)
             game.update(1 / 60)
             frames += 1
-            if frames % 30 == 0 or game.phase != last_phase:
+            if frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons:
                 renderer.draw(surface, game)
                 pygame.display.flip()
                 if game.phase != last_phase:
                     pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.phase}.png")
                 last_phase = game.phase
+                if game.weapons.active not in saved_weapons:
+                    pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.weapons.active}.png")
+                    saved_weapons.add(game.weapons.active)
         renderer.draw(surface, game)
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
@@ -108,6 +120,7 @@ def main():
                   "state": game.state, "phase": game.phase, "time": round(game.time, 3),
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
+                  "weapon_activations": [e for e in game.journal if e["event"] == "weapon_activate"],
                   "events": game.journal, "verification": "automatic input; full rules; accelerated wall clock"}
         (output / f"{args.difficulty}-{args.mode}-run.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
         print(json.dumps({k: v for k, v in result.items() if k != "events"}, ensure_ascii=False))
