@@ -74,7 +74,11 @@ py -3.13 -m venv .venv
 
 美术、图标等非代码资源由助手生成，音效由助手设计，BGM 由开发者挑选。图片与音频使用项目相对路径；制作规格见设计文档第 6.11 节。
 
-素材来源与规格见 [assets/manifest.md](assets/manifest.md)，使用内置 imagegen 制作图集和原创代码合成音效。设置页可分别调整音效与音乐音量。BGM 未提供，游戏无音乐正常运行；可选文件为 `assets/audio/music/bgm.ogg`，请同时记录来源和许可。音频设备不可用时静音运行。Windows 中文字体按系统安装情况加载，不分发系统字体。
+2026-10-08 按开发者确认的预览统一为极简精密科幻：白色玩家机、石墨灰敌机、层叠装甲母舰、暗色行星背景与克制的灰青／珊瑚红特效。主菜单、关卡、设置、双语 HUD 和教程同步使用细线界面。规范与已确认参考见 [docs/art-direction.md](docs/art-direction.md)。
+
+素材来源与规格见 [assets/manifest.md](assets/manifest.md)。内置 imagegen 分别制作七张透明精灵和背景，保存在 `assets/images/craft/` 与 `assets/images/space.png`；图标和动态效果由 `art.py`／`render.py` 原生绘图。图片等比适配、相对项目加载，碰撞与玩法参数沿用原值。生成提示见 [docs/art-generation.md](docs/art-generation.md)。
+
+声音仍为原创代码合成音效，设置页可分别调整音效与音乐音量。BGM 未提供，游戏无音乐正常运行；可选文件为 `assets/audio/music/bgm.ogg`，请同时记录来源和许可。音频设备不可用时静音运行。Windows 中文字体优先使用微软雅黑常规版，不分发系统字体。
 
 ## 验证
 

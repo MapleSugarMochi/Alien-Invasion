@@ -16,7 +16,9 @@ def main():
     for directory in ("assets", "tests", "tools", "docs"):
         files += [p for p in (ROOT / directory).rglob("*") if p.is_file() and "__pycache__" not in p.parts]
     files = sorted(set(files))
-    required = ("main.py", "game.py", "requirements.txt", "assets/images/sprite-atlas.png")
+    required = ("main.py", "game.py", "art.py", "requirements.txt", "assets/images/space.png") + tuple(
+        f"assets/images/craft/{name}.png" for name in
+        ("player", "scout", "shooter", "heavy", "boss", "meteor_small", "meteor_large"))
     relative_paths = {p.relative_to(ROOT).as_posix() for p in files}
     if not set(required) <= relative_paths:
         raise RuntimeError("候选包缺少必要源码或资源")

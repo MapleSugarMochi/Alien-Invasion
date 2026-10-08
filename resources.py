@@ -1,41 +1,47 @@
-"""从程序目录读取精灵图集和声音；缓存显示数据，不修改游戏规则。"""
+"""从程序目录读取独立透明精灵、背景和声音；缓存显示数据。"""
 import pygame
 
 from settings import ROOT
+from art import icon
 
 
 class Resources:
-    # 图集由 imagegen 制作；这些矩形依据实际生成的 1280 方图核对。
-    regions = {
-        "player": ((0, 0, 320, 320), (64, 64)),
-        "scout": ((320, 0, 320, 320), (48, 48)),
-        "shooter": ((640, 0, 304, 320), (64, 64)),
-        "heavy": ((944, 0, 336, 320), (96, 96)),
-        "boss": ((0, 320, 744, 320), (256, 160)),
-        "meteor_small": ((752, 336, 208, 304), (64, 64)),
-        "meteor_large": ((968, 320, 312, 320), (96, 96)),
-        "health": ((0, 640, 320, 320), (48, 48)),
-        "missile": ((320, 640, 320, 320), (48, 48)),
-        "arc": ((640, 640, 320, 320), (48, 48)),
-        "support": ((960, 640, 320, 320), (48, 48)),
-        "crosshair": ((0, 960, 320, 320), (32, 32)),
-        "lock": ((320, 960, 320, 320), (48, 48)),
-        "explosion": ((640, 960, 320, 320), (80, 80)),
-        "pulse": ((960, 960, 320, 320), (12, 18)),
-    }
+    # 独立文件不依赖生成图集的网格精度；目标尺寸为外接框，不拉伸船体。
+    sprite_sizes = {"player": (64, 64), "scout": (48, 48), "shooter": (64, 64),
+                    "heavy": (96, 96), "boss": (384, 192),
+                    "meteor_small": (64, 64), "meteor_large": (96, 96)}
+    icon_sizes = {"health": 48, "missile": 48, "arc": 48, "support": 48,
+                  "crosshair": 32, "lock": 48, "explosion": 80, "pulse": 18}
     sound_names = ("bullet", "missile", "explosion", "arc", "pickup", "hurt", "lock", "support", "phase")
 
     def __init__(self):
-        path = ROOT / "assets/images/sprite-atlas.png"
+        self.images = {}
+        for name, size in self.sprite_sizes.items():
+            path = ROOT / f"assets/images/craft/{name}.png"
+            if not path.is_file():
+                raise FileNotFoundError(f"缺少必需精灵：{path}")
+            source = pygame.image.load(str(path))
+            # 母舰生成稿忠实沿用参考图的朝下舰首；加载时统一成朝上原始朝向。
+            if name == "boss":
+                source = pygame.transform.rotate(source, 180)
+            if not source.get_flags() & pygame.SRCALPHA:
+                raise ValueError(f"精灵必须含透明通道：{path}")
+            bounds = source.get_bounding_rect(min_alpha=8)
+            if not bounds.width or not bounds.height:
+                raise ValueError(f"精灵不能为空：{path}")
+            source = source.subsurface(bounds)
+            factor = min((size[0] - 4) / bounds.width, (size[1] - 4) / bounds.height)
+            fitted = pygame.transform.smoothscale(source,
+                       (max(1, round(bounds.width * factor)), max(1, round(bounds.height * factor))))
+            canvas = pygame.Surface(size, pygame.SRCALPHA)
+            canvas.blit(fitted, fitted.get_rect(center=canvas.get_rect().center))
+            self.images[name] = canvas
+        self.images.update({name: icon(name, size) for name, size in self.icon_sizes.items()})
+        path = ROOT / "assets/images/space.png"
         if not path.is_file():
-            raise FileNotFoundError(f"缺少必需精灵图集：{path}")
-        atlas = pygame.image.load(str(path))
-        if atlas.get_width() != atlas.get_height() or atlas.get_width() < 512:
-            raise ValueError(f"精灵图集必须为不小于 512 的正方形：{path}")
-        # 生成工具实际输出 1254×1254；按 1280 参考布局映射，仅在运行时缩放。
-        atlas = pygame.transform.smoothscale(atlas, (1280, 1280))
-        self.images = {name: pygame.transform.smoothscale(atlas.subsurface(rect), size)
-                       for name, (rect, size) in self.regions.items()}
+            raise FileNotFoundError(f"缺少必需星空背景：{path}")
+        self.background = pygame.image.load(str(path))
+        self.scaled_images = {}
         self.rotations = {}
         self.sounds = {}
         self.audio_available = pygame.mixer.get_init() is not None
@@ -67,6 +73,12 @@ class Resources:
         if key not in self.rotations:
             self.rotations[key] = pygame.transform.rotate(self.images[name], key[1])
         return self.rotations[key]
+
+    def scaled(self, name, size):
+        key = (name, size)
+        if key not in self.scaled_images:
+            self.scaled_images[key] = pygame.transform.smoothscale(self.images[name], size)
+        return self.scaled_images[key]
 
     def play(self, name):
         if self.audio_available and name in self.sounds:

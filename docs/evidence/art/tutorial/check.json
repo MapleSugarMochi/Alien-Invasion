@@ -1,0 +1,89 @@
+[
+  {
+    "status": "PASS",
+    "language": "en",
+    "remapped": false,
+    "state": "tutorial_complete",
+    "steps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "time": 70.333,
+    "retries": 0,
+    "injected_mistakes": [],
+    "final_combat_counts": {
+      "scout": 9,
+      "shooter": 2,
+      "heavy": 1
+    },
+    "pause_settings_frozen": true,
+    "display_driver": "windows",
+    "verification": "public injected input; full rules; accelerated wall clock; no progress/health/charge writes"
+  },
+  {
+    "status": "PASS",
+    "language": "zh-CN",
+    "remapped": true,
+    "state": "tutorial_complete",
+    "steps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "time": 70.183,
+    "retries": 0,
+    "injected_mistakes": [],
+    "final_combat_counts": {
+      "scout": 9,
+      "shooter": 2,
+      "heavy": 1
+    },
+    "pause_settings_frozen": true,
+    "display_driver": "windows",
+    "verification": "public injected input; full rules; accelerated wall clock; no progress/health/charge writes"
+  },
+  {
+    "status": "PASS",
+    "language": "en",
+    "remapped": false,
+    "state": "tutorial_complete",
+    "steps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "time": 99.067,
+    "retries": 4,
+    "injected_mistakes": [
+      "arc_out_of_range",
+      "combat_death",
+      "meteor_destroyed",
+      "missile_empty",
+      "supply_expired"
+    ],
+    "final_combat_counts": {
+      "scout": 9,
+      "shooter": 2,
+      "heavy": 1
+    },
+    "pause_settings_frozen": true,
+    "display_driver": "windows",
+    "verification": "public injected input; full rules; accelerated wall clock; no progress/health/charge writes"
+  }
+]

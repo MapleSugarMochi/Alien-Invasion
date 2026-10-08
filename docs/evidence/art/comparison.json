@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "levels": [
+    {
+      "level": 2,
+      "events_identical": true,
+      "event_count": 475,
+      "state": "victory",
+      "time": 162.0,
+      "hp": 100,
+      "score": 27400,
+      "kills": 109,
+      "spawned": 118,
+      "boss_max_hp": 2400
+    },
+    {
+      "level": 3,
+      "events_identical": true,
+      "event_count": 555,
+      "state": "victory",
+      "time": 182.85,
+      "hp": 100,
+      "score": 31900,
+      "kills": 131,
+      "spawned": 142,
+      "boss_max_hp": 3360
+    }
+  ],
+  "tutorial": [
+    {
+      "language": "en",
+      "remapped": false,
+      "steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "retries": 0,
+      "pause_settings_frozen": true
+    },
+    {
+      "language": "zh-CN",
+      "remapped": true,
+      "steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "retries": 0,
+      "pause_settings_frozen": true
+    },
+    {
+      "language": "en",
+      "remapped": false,
+      "steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "retries": 4,
+      "pause_settings_frozen": true
+    }
+  ],
+  "verification": "Windows SDL window checks and public automatic input; no human playtest claim"
+}

@@ -1,4 +1,6 @@
-# 最终图集生成提示
+# 历史图集生成提示（2026-10-07）
+
+当前美术已按开发者确认的极简精密科幻预览重构为独立透明精灵、背景与原生图标；最新提示见 [art-generation.md](art-generation.md)，规范见 [art-direction.md](art-direction.md)。以下保留旧版生成记录，不作为当前资源布局。
 
 工具：内置 image_gen；transparent_background=true。生成图集复制到 assets/images/sprite-atlas.png，原始生成文件保留。以下为使用的提示（工具实际输出为 1254×1254，未改写原图文件）：
 
