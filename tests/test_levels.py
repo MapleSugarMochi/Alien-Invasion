@@ -1,9 +1,10 @@
 import unittest
+from collections import Counter
 
 import pygame
 
 from game import Game
-from settings import DIFFICULTIES, LEVELS
+from settings import DIFFICULTIES, LEVEL_CONFIGS, LEVELS, WAVES
 
 
 def click_button(game, action):
@@ -104,9 +105,9 @@ class LevelTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Game(level=4)
 
-    def test_identical_seed_and_inputs_produce_identical_content_for_all_levels(self):
+    def test_level_one_and_two_preserve_original_content(self):
         runs = []
-        for level in LEVELS:
+        for level in (1, 2):
             game = Game(menu=True)
             click_button(game, "level_select")
             click_button(game, f"level_{level}")
@@ -116,5 +117,41 @@ class LevelTests(unittest.TestCase):
                 game.update(1 / 60)
             runs.append((game.state, game.time, game.player.hp, game.score,
                          game.wave.number, game.phase, game.journal[1:]))
+            self.assertEqual(game.level_config.waves, WAVES)
+            self.assertEqual(game.level_config.boss_base_hp, 2400)
         self.assertEqual(runs[0], runs[1])
-        self.assertEqual(runs[1], runs[2])
+
+    def test_level_configuration_reaches_every_wave_and_boss_without_leaking(self):
+        for difficulty, base_boss_hp in (("easy", 1920), ("standard", 2400), ("hard", 3000)):
+            # 同一实例反复切换，验证关卡 3 的增量不会污染后续关卡 2／1。
+            game = Game(menu=True)
+            for level in (3, 2, 1, 3):
+                with self.subTest(difficulty=difficulty, level=level):
+                    game.start_session(difficulty, level)
+                    game.next_meteor = game.next_drop = float("inf")
+                    totals = Counter()
+                    for number in range(1, 13):
+                        planned = Counter(game.wave.queue) + Counter(e.kind for e in game.enemies)
+                        expected = LEVEL_CONFIGS[level].waves[number - 1]
+                        self.assertEqual(game.wave.number, number)
+                        self.assertEqual(planned, Counter(dict(zip(("scout", "shooter", "heavy"), expected[:3]))))
+                        self.assertEqual(game.wave.interval, WAVES[number - 1][3])
+                        totals.update(planned)
+                        game.wave.queue.clear()
+                        game.enemies.clear()
+                        game.timed_events()
+                        if number < 12:
+                            game.time = game.phase_until
+                            game.timed_events()
+                    self.assertEqual(totals, {"scout": 75, "shooter": 43, "heavy": 24} if level == 3
+                                     else {"scout": 62, "shooter": 36, "heavy": 20})
+                    game.time = game.phase_until
+                    game.timed_events()
+                    self.assertEqual(game.phase, "boss_entry")
+                    expected_hp = base_boss_hp * 14 // 10 if level == 3 else base_boss_hp
+                    self.assertEqual((game.boss.hp, game.boss.max_hp), (expected_hp, expected_hp))
+                    self.assertEqual(game.boss.health_phase(), 1)
+                    game.boss.hp = expected_hp * 2 // 3
+                    self.assertEqual(game.boss.health_phase(), 2)
+                    game.boss.hp = expected_hp // 3 - 1
+                    self.assertEqual(game.boss.health_phase(), 3)

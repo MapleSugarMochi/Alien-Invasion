@@ -195,9 +195,10 @@ class Boss:
     next_round: float = float("inf")
     burst: list = field(default_factory=list)
     next_fan: bool = True
+    base_hp: int = 2400
 
     def __post_init__(self):
-        self.max_hp = self.hp = self.difficulty.hp(2400)
+        self.max_hp = self.hp = self.difficulty.hp(self.base_hp)
         self.previous = self.pos.copy()
 
     @property

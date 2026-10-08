@@ -6,10 +6,10 @@ from settings import WAVES
 
 
 class WaveController:
-    def __init__(self, number, now):
+    def __init__(self, number, now, waves=WAVES):
         self.number = number
-        remaining = list(WAVES[number - 1][:3])
-        self.interval = WAVES[number - 1][3]
+        remaining = list(waves[number - 1][:3])
+        self.interval = waves[number - 1][3]
         self.queue = deque()
         while any(remaining):
             for index, kind in enumerate(("scout", "shooter", "heavy")):

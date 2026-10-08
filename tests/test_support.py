@@ -78,6 +78,26 @@ class SupportTests(unittest.TestCase):
             self.assertEqual(game.energy_units, 0)
             self.assertEqual(len([e for e in game.journal if e["event"] == "support_round"]), 5)
 
+    def test_level_three_support_scales_with_increased_boss_health(self):
+        for difficulty, damage in (("easy", 268), ("standard", 336), ("hard", 420)):
+            with self.subTest(difficulty=difficulty):
+                game = Game(difficulty, level=3)
+                game.phase = "boss_warning"
+                game.timed_events()
+                game.phase = "boss_fight"
+                game.boss.entering = False
+                game.boss.pos.update(640, 180)
+                game.boss.previous = game.boss.pos.copy()
+                game.boss.reset_schedule(0)
+                game.energy_units = 1000
+                self.assertTrue(game.try_support())
+                game.update(7.5)
+                self.assertEqual(game.boss.max_hp // 10, damage)
+                self.assertEqual(game.boss.hp, game.boss.max_hp - damage * 5)
+                self.assertFalse(game.support.active)
+                self.assertEqual(game.energy_units, 0)
+                self.assertEqual(len([e for e in game.journal if e["event"] == "support_hit"]), 5)
+
     def test_support_suppresses_energy_but_not_pickup_or_stats(self):
         game = Game()
         game.energy_units = 999

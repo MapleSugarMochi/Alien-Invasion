@@ -5,40 +5,46 @@ from pygame import Vector2
 
 from entities import Enemy, Pickup
 from game import Game
-from settings import DIFFICULTIES
+from settings import DIFFICULTIES, LEVEL_CONFIGS
 from waves import WaveController
 
 
 class WaveTests(unittest.TestCase):
     def test_all_waves_leave_naturally_with_caps(self):
         for difficulty in DIFFICULTIES.values():
-            counts, total = Counter(), 0
-            now = 0.0
-            for number in range(1, 13):
-                wave = WaveController(number, now)
-                active = []
-                first = wave.update(now, 0, difficulty, total + 1)
-                self.assertIsNotNone(first)
-                active.append(first)
-                total += 1
-                counts[first.kind] += 1
-                # 简单上限为 3，慢速侧面重型入场和 10 秒停留会拉长波次。
-                deadline = now + 120
-                while wave.queue or active:
-                    now += 1 / 60
-                    for enemy in active:
-                        enemy.update(1 / 60, now, Vector2(640, 650))
-                    active = [e for e in active if not e.gone]
-                    enemy = wave.update(now, len(active), difficulty, total + 1)
-                    if enemy:
-                        active.append(enemy)
-                        total += 1
-                        counts[enemy.kind] += 1
-                    self.assertLessEqual(len(active), difficulty.enemy_cap)
-                    self.assertLess(now, deadline, (difficulty.id, number))
-                now += 3
-            self.assertEqual(total, 118)
-            self.assertEqual(counts, {"scout": 62, "shooter": 36, "heavy": 20})
+            for level in (2, 3):
+                with self.subTest(difficulty=difficulty.id, level=level):
+                    self.check_natural_waves(difficulty, level)
+
+    def check_natural_waves(self, difficulty, level):
+        counts, total = Counter(), 0
+        now = 0.0
+        for number in range(1, 13):
+            wave = WaveController(number, now, LEVEL_CONFIGS[level].waves)
+            active = []
+            first = wave.update(now, 0, difficulty, total + 1)
+            self.assertIsNotNone(first)
+            active.append(first)
+            total += 1
+            counts[first.kind] += 1
+            # 简单上限为 3，慢速侧面重型入场和 10 秒停留会拉长波次。
+            deadline = now + 120
+            while wave.queue or active:
+                now += 1 / 60
+                for enemy in active:
+                    enemy.update(1 / 60, now, Vector2(640, 650))
+                active = [e for e in active if not e.gone]
+                enemy = wave.update(now, len(active), difficulty, total + 1)
+                if enemy:
+                    active.append(enemy)
+                    total += 1
+                    counts[enemy.kind] += 1
+                self.assertLessEqual(len(active), difficulty.enemy_cap)
+                self.assertLess(now, deadline, (difficulty.id, number))
+            now += 3
+        self.assertEqual(total, 142 if level == 3 else 118)
+        self.assertEqual(counts, {"scout": 75, "shooter": 43, "heavy": 24} if level == 3
+                         else {"scout": 62, "shooter": 36, "heavy": 20})
 
     def test_full_cap_keeps_queue_and_resets_interval(self):
         wave = WaveController(1, 0)

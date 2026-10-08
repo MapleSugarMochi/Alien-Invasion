@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "level_3": [
+    {
+      "difficulty": "easy",
+      "time": 181.65,
+      "spawned": 142,
+      "counts": {
+        "scout": 75,
+        "shooter": 43,
+        "heavy": 24
+      },
+      "boss_max_hp": 2688,
+      "state": "victory",
+      "source": "easy/easy-pilot-run.json"
+    },
+    {
+      "difficulty": "standard",
+      "time": 182.85,
+      "spawned": 142,
+      "counts": {
+        "scout": 75,
+        "shooter": 43,
+        "heavy": 24
+      },
+      "boss_max_hp": 3360,
+      "state": "victory",
+      "source": "standard-verified/standard-pilot-run.json"
+    },
+    {
+      "difficulty": "hard",
+      "time": 192.133,
+      "spawned": 142,
+      "counts": {
+        "scout": 75,
+        "shooter": 43,
+        "heavy": 24
+      },
+      "boss_max_hp": 4200,
+      "state": "victory",
+      "source": "hard/hard-pilot-run.json"
+    }
+  ],
+  "limitations": [
+    "automatic input; accelerated wall clock; does not replace human playtesting",
+    "One PNG write failure and one interrupted stalled rerun; only completed verified runs used below."
+  ],
+  "level_2": {
+    "status": "UNCHANGED",
+    "all_events_identical": true,
+    "time": 162.0,
+    "spawned": 118,
+    "boss_max_hp": 2400,
+    "baseline": "../levels/flow-level-2/standard-pilot-run.json",
+    "source": "level-2-regression/standard-pilot-run.json"
+  },
+  "natural_defeat": {
+    "time": 29.4,
+    "hp": 0,
+    "state": "defeat"
+  }
+}

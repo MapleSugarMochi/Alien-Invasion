@@ -10,7 +10,7 @@ from geometry import moving_hit
 from localization import DEFAULT_LANGUAGE, TEXT, translate
 from preferences import DEFAULT_BINDINGS, Preferences, key_name, valid_key
 from weapons import ArcAttack, Missile, Projectile, SupportController, WeaponController
-from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, LEVELS, WIDTH
+from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, LEVEL_CONFIGS, LEVELS, WIDTH
 from waves import WaveController
 
 
@@ -59,9 +59,11 @@ class Game:
         self.score = self.kills = 0
         self.effects = []
         self.difficulty = DIFFICULTIES[difficulty]
+        self.level = level
+        self.level_config = LEVEL_CONFIGS[level]
         self.rng = random.Random(seed)
         self._entity_id = 0
-        self.wave = WaveController(1, 0)
+        self.wave = WaveController(1, 0, self.level_config.waves)
         self.phase = "waves"
         self.phase_until = 0.0
         self.next_meteor = self.difficulty.meteor_interval
@@ -71,7 +73,6 @@ class Game:
         self.journal = []
         self.boss = None
         self.selected_difficulty = difficulty
-        self.level = level
         self.hover = Vector2(-1, -1)
         self.commands = []
         self.arc_effects = []
@@ -470,7 +471,7 @@ class Game:
                 self.next_meteor = self.time + self.difficulty.meteor_interval
         if self.phase == "rest" and self.time + 1e-9 >= self.phase_until:
             self.phase = "waves"
-            self.wave = WaveController(self.wave.number + 1, self.time)
+            self.wave = WaveController(self.wave.number + 1, self.time, self.level_config.waves)
         if self.phase == "waves":
             enemy = self.wave.update(self.time, len(self.enemies), self.difficulty, self._entity_id + 1)
             if enemy:
@@ -488,7 +489,7 @@ class Game:
             self.phase_until = self.time + 1.5
             self.record("boss_warning")
         if self.phase == "boss_warning" and self.time + 1e-9 >= self.phase_until:
-            self.boss = Boss(self.next_id(), self.difficulty)
+            self.boss = Boss(self.next_id(), self.difficulty, base_hp=self.level_config.boss_base_hp)
             self.phase = "boss_entry"
             self.record("boss_spawn")
 

@@ -6,7 +6,6 @@ import math
 ROOT = Path(__file__).resolve().parent
 WIDTH, HEIGHT, HUD_HEIGHT = 1280, 720, 64
 FPS = 60
-# 三个关卡入口暂时共用 WAVES 与母舰规则；编号不改变战斗参数。
 LEVELS = (1, 2, 3)
 PLAYER_SPEED, PLAYER_RADIUS, PLAYER_HP = 340.0, 14, 100
 BACKGROUND = (5, 10, 23)
@@ -49,4 +48,24 @@ WAVES = (
     (5, 3, 1, .8), (5, 3, 2, .8), (4, 4, 2, .75), (4, 4, 2, .75),
     (5, 4, 2, .7), (4, 4, 3, .65), (4, 5, 3, .6), (4, 4, 4, .6),
 )
+
+
+@dataclass(frozen=True)
+class LevelConfig:
+    waves: tuple
+    boss_base_hp: int = 2400
+
+
+# 关卡 1 暂保留原内容，教程方案审阅后再实现；关卡 2 为原战斗基线。
+# 关卡 3 合计 round(118 * 1.2) = 142 架；按原机型比例取整为 75/43/24。
+# 增量分散到原有 12 波，生成间隔、路线及难度的场内上限保持原值。
+LEVEL_CONFIGS = {
+    1: LevelConfig(WAVES),
+    2: LevelConfig(WAVES),
+    3: LevelConfig((
+        (10, 0, 0, .9), (8, 1, 0, .9), (7, 2, 0, .85), (7, 2, 1, .85),
+        (6, 3, 1, .8), (6, 4, 2, .8), (5, 5, 2, .75), (5, 5, 2, .75),
+        (6, 5, 3, .7), (5, 5, 4, .65), (5, 6, 4, .6), (5, 5, 5, .6),
+    ), boss_base_hp=3360),
+}
 

@@ -143,10 +143,12 @@ def main():
                   "state": game.state, "phase": game.phase, "time": round(game.time, 3),
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
+                  "boss_max_hp": game.boss.max_hp if game.boss else None,
                   "weapon_activations": [e for e in game.journal if e["event"] == "weapon_activate"],
                   "support_activations": len([e for e in game.journal if e["event"] == "support_start"]),
                   "events": game.journal, "verification": "automatic input; full rules; " + ("real time" if args.realtime else "accelerated wall clock"),
                   "python": sys.version.split()[0], "pygame": pygame.version.ver, "platform": platform.platform(),
+                  "display_driver": pygame.display.get_driver(),
                   "wall_seconds": round(time.perf_counter() - wall_start, 3),
                   "frames": frames, "average_fps": round(frames / (time.perf_counter() - wall_start), 2) if args.realtime else None,
                   "compute_ms_p95": round(sorted(compute_times)[int(.95 * (len(compute_times) - 1))], 3) if compute_times else None}
