@@ -42,12 +42,19 @@ def main():
             renderer.resources.play(name)
             pygame.event.pump()
             pygame.time.wait(550)
-        game.menu_action("audio")
-        game.menu_action("sfx_down")
-        game.menu_action("music_up")
+        game.menu_action("settings")
+        for attribute, value in (("sfx_volume", .35), ("music_volume", .45)):
+            rect = next(rect for name, rect in game.sliders() if name == attribute)
+            position = (round(rect.left + rect.width * value), rect.centery)
+            game.handle_events([pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=position),
+                                pygame.event.Event(pygame.MOUSEBUTTONUP, button=1, pos=position)])
         renderer.feedback(game)
         assert (game.sfx_volume, game.music_volume) == (.35, .45)
-        game.menu_action("audio_back")
+        if renderer.resources.audio_available:
+            renderer.resources.play("bullet")
+            assert abs(renderer.resources.channels["bullet"].get_volume() - .35) < .01
+            assert abs(pygame.mixer.music.get_volume() - .45) < .01
+        game.menu_action("settings_back")
         game.start_session("standard")
         assert (game.sfx_volume, game.music_volume) == (.35, .45)
         renderer.draw(surface, game)

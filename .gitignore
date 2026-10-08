@@ -5,3 +5,5 @@ __pycache__/
 tmp/
 dist/
 *.log
+user_settings.json
+user_settings.json.tmp

@@ -1,0 +1,3133 @@
+{
+  "difficulty": "hard",
+  "language": "en",
+  "mode": "pilot",
+  "seed": 5,
+  "state": "victory",
+  "phase": "boss_fight",
+  "time": 165.55,
+  "hp": 59,
+  "score": 26600,
+  "kills": 101,
+  "spawned": 118,
+  "weapon_activations": [
+    {
+      "time": 104.133333,
+      "event": "weapon_activate",
+      "kind": "arc"
+    },
+    {
+      "time": 138.133333,
+      "event": "weapon_activate",
+      "kind": "missile"
+    }
+  ],
+  "support_activations": 7,
+  "events": [
+    {
+      "time": 0.0,
+      "event": "session_start",
+      "difficulty": "hard"
+    },
+    {
+      "time": 0.0,
+      "event": "enemy_spawn",
+      "id": 1,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 0.65,
+      "event": "kill",
+      "id": 1,
+      "kind": "scout"
+    },
+    {
+      "time": 0.9,
+      "event": "enemy_spawn",
+      "id": 2,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 1.766667,
+      "event": "kill",
+      "id": 2,
+      "kind": "scout"
+    },
+    {
+      "time": 1.8,
+      "event": "enemy_spawn",
+      "id": 3,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 2.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 2.616667,
+      "event": "kill",
+      "id": 3,
+      "kind": "scout"
+    },
+    {
+      "time": 2.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 2.7,
+      "event": "enemy_spawn",
+      "id": 5,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 3.55,
+      "event": "kill",
+      "id": 5,
+      "kind": "scout"
+    },
+    {
+      "time": 3.6,
+      "event": "enemy_spawn",
+      "id": 6,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 4.5,
+      "event": "enemy_spawn",
+      "id": 7,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 4.65,
+      "event": "kill",
+      "id": 6,
+      "kind": "scout"
+    },
+    {
+      "time": 4.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 5.316667,
+      "event": "kill",
+      "id": 7,
+      "kind": "scout"
+    },
+    {
+      "time": 5.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 5.4,
+      "event": "enemy_spawn",
+      "id": 9,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 6.133333,
+      "event": "kill",
+      "id": 9,
+      "kind": "scout"
+    },
+    {
+      "time": 6.3,
+      "event": "enemy_spawn",
+      "id": 10,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 7.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 7.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 7.56,
+      "event": "kill",
+      "id": 10,
+      "kind": "scout"
+    },
+    {
+      "time": 7.56,
+      "event": "wave_end",
+      "wave": 1
+    },
+    {
+      "time": 8.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 10.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 10.56,
+      "event": "enemy_spawn",
+      "id": 13,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 10.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 11.4,
+      "event": "kill",
+      "id": 13,
+      "kind": "scout"
+    },
+    {
+      "time": 11.46,
+      "event": "enemy_spawn",
+      "id": 15,
+      "kind": "shooter",
+      "wave": 2
+    },
+    {
+      "time": 12.36,
+      "event": "enemy_spawn",
+      "id": 16,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 12.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 13.26,
+      "event": "enemy_spawn",
+      "id": 17,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 13.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 14.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 14.16,
+      "event": "enemy_spawn",
+      "id": 20,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 14.28,
+      "event": "kill",
+      "id": 17,
+      "kind": "scout"
+    },
+    {
+      "time": 14.833333,
+      "event": "kill",
+      "id": 15,
+      "kind": "shooter"
+    },
+    {
+      "time": 15.06,
+      "event": "enemy_spawn",
+      "id": 21,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 15.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 15.6,
+      "event": "kill",
+      "id": 16,
+      "kind": "scout"
+    },
+    {
+      "time": 15.84,
+      "event": "kill",
+      "id": 21,
+      "kind": "scout"
+    },
+    {
+      "time": 15.96,
+      "event": "enemy_spawn",
+      "id": 22,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 16.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 16.65,
+      "event": "kill",
+      "id": 20,
+      "kind": "scout"
+    },
+    {
+      "time": 16.86,
+      "event": "enemy_spawn",
+      "id": 24,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 17.333333,
+      "event": "kill",
+      "id": 22,
+      "kind": "scout"
+    },
+    {
+      "time": 18.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 18.1,
+      "event": "kill",
+      "id": 24,
+      "kind": "scout"
+    },
+    {
+      "time": 18.1,
+      "event": "wave_end",
+      "wave": 2
+    },
+    {
+      "time": 18.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 20.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 21.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 21.1,
+      "event": "enemy_spawn",
+      "id": 27,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 21.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 21.95,
+      "event": "enemy_spawn",
+      "id": 29,
+      "kind": "shooter",
+      "wave": 3
+    },
+    {
+      "time": 22.8,
+      "event": "enemy_spawn",
+      "id": 30,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 23.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 23.65,
+      "event": "enemy_spawn",
+      "id": 31,
+      "kind": "shooter",
+      "wave": 3
+    },
+    {
+      "time": 24.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 24.3,
+      "event": "enemy_left",
+      "id": 27,
+      "kind": "scout"
+    },
+    {
+      "time": 24.5,
+      "event": "enemy_spawn",
+      "id": 33,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 25.05,
+      "event": "kill",
+      "id": 29,
+      "kind": "shooter"
+    },
+    {
+      "time": 25.05,
+      "event": "kill",
+      "id": 31,
+      "kind": "shooter"
+    },
+    {
+      "time": 25.05,
+      "event": "support_start"
+    },
+    {
+      "time": 25.05,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        33,
+        30
+      ]
+    },
+    {
+      "time": 25.35,
+      "event": "enemy_spawn",
+      "id": 34,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 25.45,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        33,
+        30
+      ]
+    },
+    {
+      "time": 25.5,
+      "event": "kill",
+      "id": 33,
+      "kind": "scout"
+    },
+    {
+      "time": 25.7,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        30
+      ]
+    },
+    {
+      "time": 25.7,
+      "event": "kill",
+      "id": 30,
+      "kind": "scout"
+    },
+    {
+      "time": 26.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 26.183333,
+      "event": "kill",
+      "id": 34,
+      "kind": "scout"
+    },
+    {
+      "time": 26.2,
+      "event": "enemy_spawn",
+      "id": 35,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 26.55,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        35
+      ]
+    },
+    {
+      "time": 26.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 26.95,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        35
+      ]
+    },
+    {
+      "time": 27.05,
+      "event": "enemy_spawn",
+      "id": 37,
+      "kind": "scout",
+      "wave": 3
+    },
+    {
+      "time": 27.2,
+      "event": "support_hit",
+      "round": 2,
+      "targets": [
+        35
+      ]
+    },
+    {
+      "time": 27.2,
+      "event": "kill",
+      "id": 35,
+      "kind": "scout"
+    },
+    {
+      "time": 28.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 28.05,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        37
+      ]
+    },
+    {
+      "time": 28.45,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        37
+      ]
+    },
+    {
+      "time": 28.7,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        37
+      ]
+    },
+    {
+      "time": 28.7,
+      "event": "kill",
+      "id": 37,
+      "kind": "scout"
+    },
+    {
+      "time": 28.7,
+      "event": "wave_end",
+      "wave": 3
+    },
+    {
+      "time": 28.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 29.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 29.55,
+      "event": "support_round",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 29.95,
+      "event": "support_launch",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 30.2,
+      "event": "support_hit",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 31.05,
+      "event": "support_round",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 31.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 31.45,
+      "event": "support_launch",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 31.7,
+      "event": "support_hit",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 31.7,
+      "event": "enemy_spawn",
+      "id": 40,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 32.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 32.55,
+      "event": "support_end"
+    },
+    {
+      "time": 32.55,
+      "event": "enemy_spawn",
+      "id": 42,
+      "kind": "shooter",
+      "wave": 4
+    },
+    {
+      "time": 32.816667,
+      "event": "kill",
+      "id": 40,
+      "kind": "scout"
+    },
+    {
+      "time": 33.4,
+      "event": "enemy_spawn",
+      "id": 43,
+      "kind": "heavy",
+      "wave": 4
+    },
+    {
+      "time": 34.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 34.25,
+      "event": "enemy_spawn",
+      "id": 44,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 34.366667,
+      "event": "kill",
+      "id": 42,
+      "kind": "shooter"
+    },
+    {
+      "time": 34.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 35.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 35.1,
+      "event": "enemy_spawn",
+      "id": 47,
+      "kind": "shooter",
+      "wave": 4
+    },
+    {
+      "time": 35.95,
+      "event": "enemy_spawn",
+      "id": 48,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 36.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 36.8,
+      "event": "enemy_spawn",
+      "id": 49,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 37.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 37.366667,
+      "event": "kill",
+      "id": 43,
+      "kind": "heavy"
+    },
+    {
+      "time": 37.45,
+      "event": "enemy_left",
+      "id": 44,
+      "kind": "scout"
+    },
+    {
+      "time": 37.65,
+      "event": "enemy_spawn",
+      "id": 51,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 38.383333,
+      "event": "kill",
+      "id": 47,
+      "kind": "shooter"
+    },
+    {
+      "time": 38.5,
+      "event": "enemy_spawn",
+      "id": 52,
+      "kind": "scout",
+      "wave": 4
+    },
+    {
+      "time": 38.7,
+      "event": "kill",
+      "id": 51,
+      "kind": "scout"
+    },
+    {
+      "time": 39.15,
+      "event": "enemy_left",
+      "id": 48,
+      "kind": "scout"
+    },
+    {
+      "time": 39.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 40.0,
+      "event": "enemy_left",
+      "id": 49,
+      "kind": "scout"
+    },
+    {
+      "time": 40.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 40.483333,
+      "event": "kill",
+      "id": 52,
+      "kind": "scout"
+    },
+    {
+      "time": 40.483333,
+      "event": "wave_end",
+      "wave": 4
+    },
+    {
+      "time": 42.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 42.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 42.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 43.483333,
+      "event": "enemy_spawn",
+      "id": 56,
+      "kind": "scout",
+      "wave": 5
+    },
+    {
+      "time": 44.233333,
+      "event": "kill",
+      "id": 56,
+      "kind": "scout"
+    },
+    {
+      "time": 44.283333,
+      "event": "enemy_spawn",
+      "id": 57,
+      "kind": "shooter",
+      "wave": 5
+    },
+    {
+      "time": 44.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 45.083333,
+      "event": "enemy_spawn",
+      "id": 58,
+      "kind": "heavy",
+      "wave": 5
+    },
+    {
+      "time": 45.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 45.75,
+      "event": "kill",
+      "id": 57,
+      "kind": "shooter"
+    },
+    {
+      "time": 45.883333,
+      "event": "enemy_spawn",
+      "id": 60,
+      "kind": "scout",
+      "wave": 5
+    },
+    {
+      "time": 46.25,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 46.683333,
+      "event": "enemy_spawn",
+      "id": 61,
+      "kind": "shooter",
+      "wave": 5
+    },
+    {
+      "time": 47.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 47.483333,
+      "event": "enemy_spawn",
+      "id": 62,
+      "kind": "scout",
+      "wave": 5
+    },
+    {
+      "time": 48.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 48.233333,
+      "event": "kill",
+      "id": 58,
+      "kind": "heavy"
+    },
+    {
+      "time": 48.283333,
+      "event": "enemy_spawn",
+      "id": 64,
+      "kind": "shooter",
+      "wave": 5
+    },
+    {
+      "time": 48.933333,
+      "event": "support_start"
+    },
+    {
+      "time": 48.933333,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        64,
+        60,
+        62
+      ]
+    },
+    {
+      "time": 49.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 49.083333,
+      "event": "enemy_spawn",
+      "id": 66,
+      "kind": "scout",
+      "wave": 5
+    },
+    {
+      "time": 49.333333,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        64,
+        66,
+        62
+      ]
+    },
+    {
+      "time": 49.35,
+      "event": "kill",
+      "id": 61,
+      "kind": "shooter"
+    },
+    {
+      "time": 49.4,
+      "event": "enemy_left",
+      "id": 60,
+      "kind": "scout"
+    },
+    {
+      "time": 49.583333,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        64,
+        66,
+        62
+      ]
+    },
+    {
+      "time": 49.583333,
+      "event": "kill",
+      "id": 64,
+      "kind": "shooter"
+    },
+    {
+      "time": 49.583333,
+      "event": "kill",
+      "id": 66,
+      "kind": "scout"
+    },
+    {
+      "time": 49.583333,
+      "event": "kill",
+      "id": 62,
+      "kind": "scout"
+    },
+    {
+      "time": 49.883333,
+      "event": "enemy_spawn",
+      "id": 67,
+      "kind": "scout",
+      "wave": 5
+    },
+    {
+      "time": 50.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 50.433333,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        67
+      ]
+    },
+    {
+      "time": 50.586667,
+      "event": "kill",
+      "id": 67,
+      "kind": "scout"
+    },
+    {
+      "time": 50.586667,
+      "event": "wave_end",
+      "wave": 5
+    },
+    {
+      "time": 50.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 50.833333,
+      "event": "support_launch",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 51.083333,
+      "event": "support_hit",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 51.933333,
+      "event": "support_round",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 52.333333,
+      "event": "support_launch",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 52.583333,
+      "event": "support_hit",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 52.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 53.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 53.433333,
+      "event": "support_round",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 53.586667,
+      "event": "enemy_spawn",
+      "id": 70,
+      "kind": "scout",
+      "wave": 6
+    },
+    {
+      "time": 53.833333,
+      "event": "support_launch",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 54.083333,
+      "event": "support_hit",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 54.386667,
+      "event": "enemy_spawn",
+      "id": 71,
+      "kind": "shooter",
+      "wave": 6
+    },
+    {
+      "time": 54.616667,
+      "event": "kill",
+      "id": 70,
+      "kind": "scout"
+    },
+    {
+      "time": 54.933333,
+      "event": "support_round",
+      "round": 5,
+      "targets": [
+        71
+      ]
+    },
+    {
+      "time": 55.186667,
+      "event": "enemy_spawn",
+      "id": 72,
+      "kind": "heavy",
+      "wave": 6
+    },
+    {
+      "time": 55.333333,
+      "event": "support_launch",
+      "round": 5,
+      "targets": [
+        71
+      ]
+    },
+    {
+      "time": 55.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 55.583333,
+      "event": "support_hit",
+      "round": 5,
+      "targets": [
+        71
+      ]
+    },
+    {
+      "time": 55.583333,
+      "event": "kill",
+      "id": 71,
+      "kind": "shooter"
+    },
+    {
+      "time": 55.986667,
+      "event": "enemy_spawn",
+      "id": 73,
+      "kind": "scout",
+      "wave": 6
+    },
+    {
+      "time": 56.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 56.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 56.433333,
+      "event": "support_end"
+    },
+    {
+      "time": 56.786667,
+      "event": "enemy_spawn",
+      "id": 76,
+      "kind": "shooter",
+      "wave": 6
+    },
+    {
+      "time": 57.586667,
+      "event": "enemy_spawn",
+      "id": 77,
+      "kind": "heavy",
+      "wave": 6
+    },
+    {
+      "time": 58.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 58.386667,
+      "event": "enemy_spawn",
+      "id": 78,
+      "kind": "scout",
+      "wave": 6
+    },
+    {
+      "time": 58.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 59.183333,
+      "event": "enemy_left",
+      "id": 73,
+      "kind": "scout"
+    },
+    {
+      "time": 59.186667,
+      "event": "enemy_spawn",
+      "id": 80,
+      "kind": "shooter",
+      "wave": 6
+    },
+    {
+      "time": 59.986667,
+      "event": "enemy_spawn",
+      "id": 81,
+      "kind": "scout",
+      "wave": 6
+    },
+    {
+      "time": 60.566667,
+      "event": "kill",
+      "id": 76,
+      "kind": "shooter"
+    },
+    {
+      "time": 60.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 60.786667,
+      "event": "enemy_spawn",
+      "id": 82,
+      "kind": "scout",
+      "wave": 6
+    },
+    {
+      "time": 61.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 61.433333,
+      "event": "kill",
+      "id": 72,
+      "kind": "heavy"
+    },
+    {
+      "time": 61.583333,
+      "event": "enemy_left",
+      "id": 78,
+      "kind": "scout"
+    },
+    {
+      "time": 62.416667,
+      "event": "kill",
+      "id": 77,
+      "kind": "heavy"
+    },
+    {
+      "time": 63.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 63.133333,
+      "event": "kill",
+      "id": 80,
+      "kind": "shooter"
+    },
+    {
+      "time": 63.183333,
+      "event": "enemy_left",
+      "id": 81,
+      "kind": "scout"
+    },
+    {
+      "time": 63.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 63.883333,
+      "event": "kill",
+      "id": 82,
+      "kind": "scout"
+    },
+    {
+      "time": 63.883333,
+      "event": "wave_end",
+      "wave": 6
+    },
+    {
+      "time": 64.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 66.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 66.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 66.883333,
+      "event": "enemy_spawn",
+      "id": 87,
+      "kind": "scout",
+      "wave": 7
+    },
+    {
+      "time": 67.283333,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 67.603333,
+      "event": "kill",
+      "id": 87,
+      "kind": "scout"
+    },
+    {
+      "time": 67.633333,
+      "event": "enemy_spawn",
+      "id": 88,
+      "kind": "shooter",
+      "wave": 7
+    },
+    {
+      "time": 68.383333,
+      "event": "enemy_spawn",
+      "id": 89,
+      "kind": "heavy",
+      "wave": 7
+    },
+    {
+      "time": 68.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 69.0,
+      "event": "kill",
+      "id": 88,
+      "kind": "shooter"
+    },
+    {
+      "time": 69.133333,
+      "event": "enemy_spawn",
+      "id": 90,
+      "kind": "scout",
+      "wave": 7
+    },
+    {
+      "time": 69.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 69.883333,
+      "event": "enemy_spawn",
+      "id": 92,
+      "kind": "shooter",
+      "wave": 7
+    },
+    {
+      "time": 70.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 70.633333,
+      "event": "enemy_spawn",
+      "id": 94,
+      "kind": "heavy",
+      "wave": 7
+    },
+    {
+      "time": 71.116667,
+      "event": "kill",
+      "id": 89,
+      "kind": "heavy"
+    },
+    {
+      "time": 71.116667,
+      "event": "support_start"
+    },
+    {
+      "time": 71.116667,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        94,
+        92,
+        90
+      ]
+    },
+    {
+      "time": 71.383333,
+      "event": "enemy_spawn",
+      "id": 95,
+      "kind": "scout",
+      "wave": 7
+    },
+    {
+      "time": 71.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 71.516667,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        94,
+        92,
+        90
+      ]
+    },
+    {
+      "time": 71.766667,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        94,
+        92,
+        90
+      ]
+    },
+    {
+      "time": 71.766667,
+      "event": "kill",
+      "id": 94,
+      "kind": "heavy"
+    },
+    {
+      "time": 71.766667,
+      "event": "kill",
+      "id": 92,
+      "kind": "shooter"
+    },
+    {
+      "time": 71.766667,
+      "event": "kill",
+      "id": 90,
+      "kind": "scout"
+    },
+    {
+      "time": 72.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 72.133333,
+      "event": "enemy_spawn",
+      "id": 97,
+      "kind": "shooter",
+      "wave": 7
+    },
+    {
+      "time": 72.616667,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        97,
+        95
+      ]
+    },
+    {
+      "time": 72.883333,
+      "event": "enemy_spawn",
+      "id": 98,
+      "kind": "scout",
+      "wave": 7
+    },
+    {
+      "time": 73.016667,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        97,
+        95
+      ]
+    },
+    {
+      "time": 73.266667,
+      "event": "support_hit",
+      "round": 2,
+      "targets": [
+        97,
+        95
+      ]
+    },
+    {
+      "time": 73.266667,
+      "event": "kill",
+      "id": 97,
+      "kind": "shooter"
+    },
+    {
+      "time": 73.266667,
+      "event": "kill",
+      "id": 95,
+      "kind": "scout"
+    },
+    {
+      "time": 73.633333,
+      "event": "enemy_spawn",
+      "id": 99,
+      "kind": "shooter",
+      "wave": 7
+    },
+    {
+      "time": 74.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 74.116667,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        99,
+        98
+      ]
+    },
+    {
+      "time": 74.516667,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        99,
+        98
+      ]
+    },
+    {
+      "time": 74.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 74.766667,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        99,
+        98
+      ]
+    },
+    {
+      "time": 74.766667,
+      "event": "kill",
+      "id": 99,
+      "kind": "shooter"
+    },
+    {
+      "time": 74.766667,
+      "event": "kill",
+      "id": 98,
+      "kind": "scout"
+    },
+    {
+      "time": 74.766667,
+      "event": "wave_end",
+      "wave": 7
+    },
+    {
+      "time": 75.616667,
+      "event": "support_round",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 76.016667,
+      "event": "support_launch",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 76.266667,
+      "event": "support_hit",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 76.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 77.0,
+      "event": "drop",
+      "kind": "missile"
+    },
+    {
+      "time": 77.116667,
+      "event": "support_round",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 77.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 77.516667,
+      "event": "support_launch",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 77.766667,
+      "event": "support_hit",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 77.766667,
+      "event": "enemy_spawn",
+      "id": 103,
+      "kind": "scout",
+      "wave": 8
+    },
+    {
+      "time": 78.516667,
+      "event": "enemy_spawn",
+      "id": 104,
+      "kind": "shooter",
+      "wave": 8
+    },
+    {
+      "time": 78.616667,
+      "event": "support_end"
+    },
+    {
+      "time": 78.716667,
+      "event": "kill",
+      "id": 103,
+      "kind": "scout"
+    },
+    {
+      "time": 79.266667,
+      "event": "enemy_spawn",
+      "id": 105,
+      "kind": "heavy",
+      "wave": 8
+    },
+    {
+      "time": 79.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 80.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 80.016667,
+      "event": "enemy_spawn",
+      "id": 107,
+      "kind": "scout",
+      "wave": 8
+    },
+    {
+      "time": 80.766667,
+      "event": "enemy_spawn",
+      "id": 108,
+      "kind": "shooter",
+      "wave": 8
+    },
+    {
+      "time": 81.516667,
+      "event": "enemy_spawn",
+      "id": 109,
+      "kind": "heavy",
+      "wave": 8
+    },
+    {
+      "time": 81.916667,
+      "event": "kill",
+      "id": 108,
+      "kind": "shooter"
+    },
+    {
+      "time": 82.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 82.266667,
+      "event": "enemy_spawn",
+      "id": 110,
+      "kind": "scout",
+      "wave": 8
+    },
+    {
+      "time": 82.55,
+      "event": "kill",
+      "id": 105,
+      "kind": "heavy"
+    },
+    {
+      "time": 82.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 83.016667,
+      "event": "enemy_spawn",
+      "id": 112,
+      "kind": "shooter",
+      "wave": 8
+    },
+    {
+      "time": 83.05,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 83.203333,
+      "event": "enemy_left",
+      "id": 107,
+      "kind": "scout"
+    },
+    {
+      "time": 83.75,
+      "event": "kill",
+      "id": 104,
+      "kind": "shooter"
+    },
+    {
+      "time": 83.766667,
+      "event": "enemy_spawn",
+      "id": 113,
+      "kind": "scout",
+      "wave": 8
+    },
+    {
+      "time": 84.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 84.516667,
+      "event": "enemy_spawn",
+      "id": 115,
+      "kind": "shooter",
+      "wave": 8
+    },
+    {
+      "time": 84.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 85.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 85.466667,
+      "event": "enemy_left",
+      "id": 110,
+      "kind": "scout"
+    },
+    {
+      "time": 85.95,
+      "event": "kill",
+      "id": 115,
+      "kind": "shooter"
+    },
+    {
+      "time": 86.683333,
+      "event": "kill",
+      "id": 109,
+      "kind": "heavy"
+    },
+    {
+      "time": 86.966667,
+      "event": "enemy_left",
+      "id": 113,
+      "kind": "scout"
+    },
+    {
+      "time": 87.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 87.983333,
+      "event": "kill",
+      "id": 112,
+      "kind": "shooter"
+    },
+    {
+      "time": 87.983333,
+      "event": "wave_end",
+      "wave": 8
+    },
+    {
+      "time": 88.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 90.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 90.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 90.983333,
+      "event": "enemy_spawn",
+      "id": 119,
+      "kind": "scout",
+      "wave": 9
+    },
+    {
+      "time": 91.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 91.683333,
+      "event": "enemy_spawn",
+      "id": 121,
+      "kind": "shooter",
+      "wave": 9
+    },
+    {
+      "time": 91.816667,
+      "event": "kill",
+      "id": 119,
+      "kind": "scout"
+    },
+    {
+      "time": 92.383333,
+      "event": "enemy_spawn",
+      "id": 122,
+      "kind": "heavy",
+      "wave": 9
+    },
+    {
+      "time": 92.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 92.95,
+      "event": "support_start"
+    },
+    {
+      "time": 92.95,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        121,
+        122
+      ]
+    },
+    {
+      "time": 93.083333,
+      "event": "enemy_spawn",
+      "id": 123,
+      "kind": "scout",
+      "wave": 9
+    },
+    {
+      "time": 93.166667,
+      "event": "kill",
+      "id": 121,
+      "kind": "shooter"
+    },
+    {
+      "time": 93.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 93.35,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        123,
+        122
+      ]
+    },
+    {
+      "time": 93.6,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        123,
+        122
+      ]
+    },
+    {
+      "time": 93.6,
+      "event": "kill",
+      "id": 123,
+      "kind": "scout"
+    },
+    {
+      "time": 93.6,
+      "event": "kill",
+      "id": 122,
+      "kind": "heavy"
+    },
+    {
+      "time": 93.783333,
+      "event": "enemy_spawn",
+      "id": 125,
+      "kind": "shooter",
+      "wave": 9
+    },
+    {
+      "time": 94.45,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        125
+      ]
+    },
+    {
+      "time": 94.483333,
+      "event": "enemy_spawn",
+      "id": 126,
+      "kind": "heavy",
+      "wave": 9
+    },
+    {
+      "time": 94.85,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        125
+      ]
+    },
+    {
+      "time": 94.883333,
+      "event": "kill",
+      "id": 125,
+      "kind": "shooter"
+    },
+    {
+      "time": 95.1,
+      "event": "support_hit",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 95.183333,
+      "event": "enemy_spawn",
+      "id": 127,
+      "kind": "scout",
+      "wave": 9
+    },
+    {
+      "time": 95.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 95.883333,
+      "event": "enemy_spawn",
+      "id": 128,
+      "kind": "shooter",
+      "wave": 9
+    },
+    {
+      "time": 95.95,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        126,
+        127
+      ]
+    },
+    {
+      "time": 96.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 96.35,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        126,
+        127
+      ]
+    },
+    {
+      "time": 96.583333,
+      "event": "enemy_spawn",
+      "id": 130,
+      "kind": "scout",
+      "wave": 9
+    },
+    {
+      "time": 96.6,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        126,
+        127
+      ]
+    },
+    {
+      "time": 96.6,
+      "event": "kill",
+      "id": 126,
+      "kind": "heavy"
+    },
+    {
+      "time": 96.6,
+      "event": "kill",
+      "id": 127,
+      "kind": "scout"
+    },
+    {
+      "time": 97.283333,
+      "event": "enemy_spawn",
+      "id": 131,
+      "kind": "shooter",
+      "wave": 9
+    },
+    {
+      "time": 97.45,
+      "event": "support_round",
+      "round": 4,
+      "targets": [
+        130,
+        128,
+        131
+      ]
+    },
+    {
+      "time": 97.85,
+      "event": "support_launch",
+      "round": 4,
+      "targets": [
+        130,
+        128,
+        131
+      ]
+    },
+    {
+      "time": 97.983333,
+      "event": "enemy_spawn",
+      "id": 132,
+      "kind": "scout",
+      "wave": 9
+    },
+    {
+      "time": 98.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 98.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 98.1,
+      "event": "support_hit",
+      "round": 4,
+      "targets": [
+        130,
+        128,
+        131
+      ]
+    },
+    {
+      "time": 98.1,
+      "event": "kill",
+      "id": 130,
+      "kind": "scout"
+    },
+    {
+      "time": 98.1,
+      "event": "kill",
+      "id": 128,
+      "kind": "shooter"
+    },
+    {
+      "time": 98.1,
+      "event": "kill",
+      "id": 131,
+      "kind": "shooter"
+    },
+    {
+      "time": 98.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 98.733333,
+      "event": "kill",
+      "id": 132,
+      "kind": "scout"
+    },
+    {
+      "time": 98.733333,
+      "event": "wave_end",
+      "wave": 9
+    },
+    {
+      "time": 98.95,
+      "event": "support_round",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 99.35,
+      "event": "support_launch",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 99.6,
+      "event": "support_hit",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 100.45,
+      "event": "support_end"
+    },
+    {
+      "time": 100.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 101.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 101.733333,
+      "event": "enemy_spawn",
+      "id": 136,
+      "kind": "scout",
+      "wave": 10
+    },
+    {
+      "time": 102.383333,
+      "event": "enemy_spawn",
+      "id": 137,
+      "kind": "shooter",
+      "wave": 10
+    },
+    {
+      "time": 103.033333,
+      "event": "enemy_spawn",
+      "id": 138,
+      "kind": "heavy",
+      "wave": 10
+    },
+    {
+      "time": 103.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 103.683333,
+      "event": "enemy_spawn",
+      "id": 139,
+      "kind": "scout",
+      "wave": 10
+    },
+    {
+      "time": 103.816667,
+      "event": "kill",
+      "id": 137,
+      "kind": "shooter"
+    },
+    {
+      "time": 104.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 104.133333,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 104.133333,
+      "event": "weapon_activate",
+      "kind": "arc"
+    },
+    {
+      "time": 104.333333,
+      "event": "enemy_spawn",
+      "id": 141,
+      "kind": "shooter",
+      "wave": 10
+    },
+    {
+      "time": 104.983333,
+      "event": "enemy_spawn",
+      "id": 142,
+      "kind": "heavy",
+      "wave": 10
+    },
+    {
+      "time": 105.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 105.633333,
+      "event": "enemy_spawn",
+      "id": 144,
+      "kind": "scout",
+      "wave": 10
+    },
+    {
+      "time": 105.833333,
+      "event": "enemy_left",
+      "id": 136,
+      "kind": "scout"
+    },
+    {
+      "time": 106.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 106.283333,
+      "event": "enemy_spawn",
+      "id": 145,
+      "kind": "shooter",
+      "wave": 10
+    },
+    {
+      "time": 106.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 106.933333,
+      "event": "enemy_spawn",
+      "id": 147,
+      "kind": "heavy",
+      "wave": 10
+    },
+    {
+      "time": 107.583333,
+      "event": "enemy_spawn",
+      "id": 148,
+      "kind": "scout",
+      "wave": 10
+    },
+    {
+      "time": 107.783333,
+      "event": "enemy_left",
+      "id": 139,
+      "kind": "scout"
+    },
+    {
+      "time": 108.233333,
+      "event": "enemy_spawn",
+      "id": 149,
+      "kind": "shooter",
+      "wave": 10
+    },
+    {
+      "time": 108.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 109.016667,
+      "event": "pickup",
+      "kind": "health"
+    },
+    {
+      "time": 109.083333,
+      "event": "kill",
+      "id": 141,
+      "kind": "shooter"
+    },
+    {
+      "time": 109.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 109.733333,
+      "event": "enemy_left",
+      "id": 144,
+      "kind": "scout"
+    },
+    {
+      "time": 111.1,
+      "event": "kill",
+      "id": 149,
+      "kind": "shooter"
+    },
+    {
+      "time": 111.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 111.683333,
+      "event": "enemy_left",
+      "id": 148,
+      "kind": "scout"
+    },
+    {
+      "time": 112.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 112.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 113.133333,
+      "event": "kill",
+      "id": 145,
+      "kind": "shooter"
+    },
+    {
+      "time": 114.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 114.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 115.133333,
+      "event": "kill",
+      "id": 142,
+      "kind": "heavy"
+    },
+    {
+      "time": 115.666667,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 115.933333,
+      "event": "kill",
+      "id": 138,
+      "kind": "heavy"
+    },
+    {
+      "time": 116.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 116.783333,
+      "event": "support_start"
+    },
+    {
+      "time": 116.783333,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        147
+      ]
+    },
+    {
+      "time": 117.0,
+      "event": "kill",
+      "id": 147,
+      "kind": "heavy"
+    },
+    {
+      "time": 117.0,
+      "event": "wave_end",
+      "wave": 10
+    },
+    {
+      "time": 117.183333,
+      "event": "support_launch",
+      "round": 1,
+      "targets": []
+    },
+    {
+      "time": 117.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 117.433333,
+      "event": "support_hit",
+      "round": 1,
+      "targets": []
+    },
+    {
+      "time": 118.283333,
+      "event": "support_round",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 118.683333,
+      "event": "support_launch",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 118.933333,
+      "event": "support_hit",
+      "round": 2,
+      "targets": []
+    },
+    {
+      "time": 119.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 119.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 119.783333,
+      "event": "support_round",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 120.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 120.0,
+      "event": "enemy_spawn",
+      "id": 157,
+      "kind": "scout",
+      "wave": 11
+    },
+    {
+      "time": 120.183333,
+      "event": "support_launch",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 120.433333,
+      "event": "support_hit",
+      "round": 3,
+      "targets": []
+    },
+    {
+      "time": 120.6,
+      "event": "enemy_spawn",
+      "id": 158,
+      "kind": "shooter",
+      "wave": 11
+    },
+    {
+      "time": 121.2,
+      "event": "enemy_spawn",
+      "id": 159,
+      "kind": "heavy",
+      "wave": 11
+    },
+    {
+      "time": 121.283333,
+      "event": "support_round",
+      "round": 4,
+      "targets": [
+        158,
+        157
+      ]
+    },
+    {
+      "time": 121.683333,
+      "event": "support_launch",
+      "round": 4,
+      "targets": [
+        158,
+        157
+      ]
+    },
+    {
+      "time": 121.8,
+      "event": "enemy_spawn",
+      "id": 160,
+      "kind": "scout",
+      "wave": 11
+    },
+    {
+      "time": 121.933333,
+      "event": "support_hit",
+      "round": 4,
+      "targets": [
+        158,
+        157
+      ]
+    },
+    {
+      "time": 121.933333,
+      "event": "kill",
+      "id": 158,
+      "kind": "shooter"
+    },
+    {
+      "time": 121.933333,
+      "event": "kill",
+      "id": 157,
+      "kind": "scout"
+    },
+    {
+      "time": 122.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 122.4,
+      "event": "enemy_spawn",
+      "id": 161,
+      "kind": "shooter",
+      "wave": 11
+    },
+    {
+      "time": 122.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 122.783333,
+      "event": "support_round",
+      "round": 5,
+      "targets": [
+        161,
+        160,
+        159
+      ]
+    },
+    {
+      "time": 123.0,
+      "event": "enemy_spawn",
+      "id": 163,
+      "kind": "heavy",
+      "wave": 11
+    },
+    {
+      "time": 123.183333,
+      "event": "support_launch",
+      "round": 5,
+      "targets": [
+        161,
+        160,
+        159
+      ]
+    },
+    {
+      "time": 123.433333,
+      "event": "support_hit",
+      "round": 5,
+      "targets": [
+        161,
+        160,
+        159
+      ]
+    },
+    {
+      "time": 123.433333,
+      "event": "kill",
+      "id": 161,
+      "kind": "shooter"
+    },
+    {
+      "time": 123.433333,
+      "event": "kill",
+      "id": 160,
+      "kind": "scout"
+    },
+    {
+      "time": 123.433333,
+      "event": "kill",
+      "id": 159,
+      "kind": "heavy"
+    },
+    {
+      "time": 123.6,
+      "event": "enemy_spawn",
+      "id": 164,
+      "kind": "scout",
+      "wave": 11
+    },
+    {
+      "time": 124.2,
+      "event": "enemy_spawn",
+      "id": 165,
+      "kind": "shooter",
+      "wave": 11
+    },
+    {
+      "time": 124.283333,
+      "event": "support_end"
+    },
+    {
+      "time": 124.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 124.8,
+      "event": "enemy_spawn",
+      "id": 166,
+      "kind": "heavy",
+      "wave": 11
+    },
+    {
+      "time": 125.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 125.4,
+      "event": "enemy_spawn",
+      "id": 168,
+      "kind": "scout",
+      "wave": 11
+    },
+    {
+      "time": 125.5,
+      "event": "kill",
+      "id": 163,
+      "kind": "heavy"
+    },
+    {
+      "time": 126.0,
+      "event": "drop",
+      "kind": "missile"
+    },
+    {
+      "time": 126.0,
+      "event": "enemy_spawn",
+      "id": 170,
+      "kind": "shooter",
+      "wave": 11
+    },
+    {
+      "time": 126.6,
+      "event": "enemy_spawn",
+      "id": 171,
+      "kind": "shooter",
+      "wave": 11
+    },
+    {
+      "time": 126.8,
+      "event": "enemy_left",
+      "id": 164,
+      "kind": "scout"
+    },
+    {
+      "time": 127.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 127.616667,
+      "event": "kill",
+      "id": 170,
+      "kind": "shooter"
+    },
+    {
+      "time": 128.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 128.6,
+      "event": "enemy_left",
+      "id": 168,
+      "kind": "scout"
+    },
+    {
+      "time": 129.1,
+      "event": "kill",
+      "id": 171,
+      "kind": "shooter"
+    },
+    {
+      "time": 130.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 130.233333,
+      "event": "kill",
+      "id": 165,
+      "kind": "shooter"
+    },
+    {
+      "time": 130.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 131.983333,
+      "event": "kill",
+      "id": 166,
+      "kind": "heavy"
+    },
+    {
+      "time": 131.983333,
+      "event": "wave_end",
+      "wave": 11
+    },
+    {
+      "time": 132.033333,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 132.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 133.0,
+      "event": "drop",
+      "kind": "missile"
+    },
+    {
+      "time": 133.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 134.983333,
+      "event": "enemy_spawn",
+      "id": 176,
+      "kind": "scout",
+      "wave": 12
+    },
+    {
+      "time": 135.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 135.583333,
+      "event": "enemy_spawn",
+      "id": 177,
+      "kind": "shooter",
+      "wave": 12
+    },
+    {
+      "time": 135.683333,
+      "event": "kill",
+      "id": 176,
+      "kind": "scout"
+    },
+    {
+      "time": 136.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 136.183333,
+      "event": "enemy_spawn",
+      "id": 179,
+      "kind": "heavy",
+      "wave": 12
+    },
+    {
+      "time": 136.733333,
+      "event": "kill",
+      "id": 177,
+      "kind": "shooter"
+    },
+    {
+      "time": 136.783333,
+      "event": "enemy_spawn",
+      "id": 180,
+      "kind": "scout",
+      "wave": 12
+    },
+    {
+      "time": 137.383333,
+      "event": "enemy_spawn",
+      "id": 181,
+      "kind": "shooter",
+      "wave": 12
+    },
+    {
+      "time": 137.983333,
+      "event": "enemy_spawn",
+      "id": 182,
+      "kind": "heavy",
+      "wave": 12
+    },
+    {
+      "time": 138.066667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 138.133333,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 138.133333,
+      "event": "weapon_activate",
+      "kind": "missile"
+    },
+    {
+      "time": 138.583333,
+      "event": "enemy_spawn",
+      "id": 183,
+      "kind": "scout",
+      "wave": 12
+    },
+    {
+      "time": 138.666667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 139.116667,
+      "event": "kill",
+      "id": 181,
+      "kind": "shooter"
+    },
+    {
+      "time": 139.116667,
+      "event": "support_start"
+    },
+    {
+      "time": 139.116667,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        182,
+        179,
+        183
+      ]
+    },
+    {
+      "time": 139.183333,
+      "event": "enemy_spawn",
+      "id": 185,
+      "kind": "shooter",
+      "wave": 12
+    },
+    {
+      "time": 139.516667,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        182,
+        179,
+        183
+      ]
+    },
+    {
+      "time": 139.766667,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        182,
+        179,
+        183
+      ]
+    },
+    {
+      "time": 139.766667,
+      "event": "kill",
+      "id": 182,
+      "kind": "heavy"
+    },
+    {
+      "time": 139.766667,
+      "event": "kill",
+      "id": 179,
+      "kind": "heavy"
+    },
+    {
+      "time": 139.766667,
+      "event": "kill",
+      "id": 183,
+      "kind": "scout"
+    },
+    {
+      "time": 139.783333,
+      "event": "enemy_spawn",
+      "id": 186,
+      "kind": "heavy",
+      "wave": 12
+    },
+    {
+      "time": 139.983333,
+      "event": "enemy_left",
+      "id": 180,
+      "kind": "scout"
+    },
+    {
+      "time": 140.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 140.383333,
+      "event": "enemy_spawn",
+      "id": 188,
+      "kind": "scout",
+      "wave": 12
+    },
+    {
+      "time": 140.616667,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        185,
+        188,
+        186
+      ]
+    },
+    {
+      "time": 140.65,
+      "event": "kill",
+      "id": 185,
+      "kind": "shooter"
+    },
+    {
+      "time": 140.733333,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 140.983333,
+      "event": "enemy_spawn",
+      "id": 189,
+      "kind": "shooter",
+      "wave": 12
+    },
+    {
+      "time": 141.016667,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        188,
+        186
+      ]
+    },
+    {
+      "time": 141.266667,
+      "event": "support_hit",
+      "round": 2,
+      "targets": [
+        188,
+        186
+      ]
+    },
+    {
+      "time": 141.266667,
+      "event": "kill",
+      "id": 188,
+      "kind": "scout"
+    },
+    {
+      "time": 141.266667,
+      "event": "kill",
+      "id": 186,
+      "kind": "heavy"
+    },
+    {
+      "time": 141.333333,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 141.583333,
+      "event": "enemy_spawn",
+      "id": 191,
+      "kind": "heavy",
+      "wave": 12
+    },
+    {
+      "time": 142.116667,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        189,
+        191
+      ]
+    },
+    {
+      "time": 142.516667,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        189,
+        191
+      ]
+    },
+    {
+      "time": 142.733333,
+      "event": "kill",
+      "id": 189,
+      "kind": "shooter"
+    },
+    {
+      "time": 142.766667,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        191
+      ]
+    },
+    {
+      "time": 142.766667,
+      "event": "kill",
+      "id": 191,
+      "kind": "heavy"
+    },
+    {
+      "time": 142.766667,
+      "event": "wave_end",
+      "wave": 12
+    },
+    {
+      "time": 143.183333,
+      "event": "boss_warning"
+    },
+    {
+      "time": 143.616667,
+      "event": "support_round",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 144.016667,
+      "event": "support_launch",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 144.266667,
+      "event": "support_hit",
+      "round": 4,
+      "targets": []
+    },
+    {
+      "time": 144.683333,
+      "event": "boss_spawn"
+    },
+    {
+      "time": 145.116667,
+      "event": "support_round",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 145.516667,
+      "event": "support_launch",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 145.766667,
+      "event": "support_hit",
+      "round": 5,
+      "targets": []
+    },
+    {
+      "time": 145.766667,
+      "event": "pickup",
+      "kind": "health"
+    },
+    {
+      "time": 146.616667,
+      "event": "support_end"
+    },
+    {
+      "time": 147.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 154.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 158.433333,
+      "event": "boss_transition",
+      "hp": 2000
+    },
+    {
+      "time": 158.9,
+      "event": "support_start"
+    },
+    {
+      "time": 158.9,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 159.3,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 159.55,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 160.4,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 160.466667,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 160.8,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 161.0,
+      "event": "drop",
+      "kind": "missile"
+    },
+    {
+      "time": 161.05,
+      "event": "support_hit",
+      "round": 2,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 161.9,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 162.3,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 162.55,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 162.55,
+      "event": "boss_transition",
+      "hp": 780
+    },
+    {
+      "time": 163.4,
+      "event": "support_round",
+      "round": 4,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 163.8,
+      "event": "support_launch",
+      "round": 4,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 164.05,
+      "event": "support_hit",
+      "round": 4,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 164.9,
+      "event": "support_round",
+      "round": 5,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 165.3,
+      "event": "support_launch",
+      "round": 5,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 165.55,
+      "event": "support_hit",
+      "round": 5,
+      "targets": [
+        192
+      ]
+    },
+    {
+      "time": 165.55,
+      "event": "kill",
+      "id": 192,
+      "kind": "boss"
+    },
+    {
+      "time": 165.55,
+      "event": "victory",
+      "score": 26600,
+      "kills": 101
+    }
+  ],
+  "verification": "automatic input; full rules; accelerated wall clock",
+  "python": "3.13.9",
+  "pygame": "2.6.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 2.745,
+  "frames": 9933,
+  "average_fps": null,
+  "compute_ms_p95": 0.428
+}

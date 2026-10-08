@@ -18,6 +18,7 @@ os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
 import pygame
 from pygame import Vector2
 from game import Game
+from localization import DEFAULT_LANGUAGE, TEXT
 from render import Renderer
 from settings import WIDTH, HEIGHT
 
@@ -55,9 +56,9 @@ def pilot(game):
     move = min(choices, key=cost)
     keys = set()
     if move.x:
-        keys.add(pygame.K_d if move.x > 0 else pygame.K_a)
+        keys.add(game.preferences.bindings["move_right" if move.x > 0 else "move_left"])
     if move.y:
-        keys.add(pygame.K_s if move.y > 0 else pygame.K_w)
+        keys.add(game.preferences.bindings["move_down" if move.y > 0 else "move_up"])
     game.input.keys = keys
     candidates = [e for e in game.targets if e.on_screen and e.damageable]
     if candidates:
@@ -68,19 +69,22 @@ def pilot(game):
         game.input.aim.update(640, 180)
     game.input.fire = True
     if game.weapons.active == "bullet":
-        for kind, key in (("missile", pygame.K_q), ("arc", pygame.K_e)):
+        for kind in ("missile", "arc"):
+            key = game.preferences.bindings[kind]
             if game.weapons.charges[kind] == 3:
                 game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=key),
                                     pygame.event.Event(pygame.KEYUP, key=key)])
                 break
     if game.energy_units == 1000 and not game.support.active:
-        game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_x),
-                            pygame.event.Event(pygame.KEYUP, key=pygame.K_x)])
+        key = game.preferences.bindings["support"]
+        game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=key),
+                            pygame.event.Event(pygame.KEYUP, key=key)])
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--difficulty", default="standard", choices=("easy", "standard", "hard"))
+    parser.add_argument("--language", default=DEFAULT_LANGUAGE, choices=tuple(TEXT))
     parser.add_argument("--seed", type=int, default=5)
     parser.add_argument("--seconds", type=float, default=600)
     parser.add_argument("--mode", choices=("pilot", "idle"), default="pilot")
@@ -91,7 +95,7 @@ def main():
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Alien Invasion — gameplay check")
-        game, renderer = Game(args.difficulty, args.seed, menu=True), Renderer()
+        game, renderer = Game(args.difficulty, args.seed, menu=True, language=args.language), Renderer()
         renderer.draw(surface, game)
         pygame.display.flip()
         game.menu_action("setup")
@@ -134,7 +138,7 @@ def main():
         renderer.draw(surface, game)
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
-        result = {"difficulty": args.difficulty, "mode": args.mode, "seed": args.seed,
+        result = {"difficulty": args.difficulty, "language": game.language, "mode": args.mode, "seed": args.seed,
                   "state": game.state, "phase": game.phase, "time": round(game.time, 3),
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),

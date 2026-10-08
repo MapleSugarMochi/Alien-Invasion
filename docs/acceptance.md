@@ -21,7 +21,7 @@
 | U11 暂停与重开 | test_rules.py、test_boss.py、test_menu_difficulty.py、test_support.py | 通过已列自动场景 |
 | U12 难度 | test_menu_difficulty.py、test_waves.py | 通过 |
 
-目前 40 项测试通过，日志为 evidence/final-tests.txt；不将用例编号数量解释为课程评分分值。测试覆盖具体边界，完整计划中的人工体验仍单独登记。
+2026-10-07 的 40 项测试通过，日志为 evidence/final-tests.txt；2026-10-08 加入语言回归后为 45 项，设置扩展后共 56 项通过，最新日志为 evidence/settings/tests.txt。不将用例编号数量解释为课程评分分值。测试覆盖具体边界，完整计划中的人工体验仍单独登记。
 
 ## 窗口与完整规则运行
 
@@ -52,8 +52,8 @@
 | F02 对象 | render.py、精灵图集、p1-window 与最终波次／Boss 截图 |
 | F03 交互 | Game.handle_events、InputState、窗口检查、Q/E/X 激活记录 |
 | F04 难度 | settings.DIFFICULTIES、Enemy.create、同波次和测试 |
-| F05 扩展 | baseline-p5 与 P6–P7 提交、WeaponController、SupportController |
-| S01 模块化 | main→game/render；game→entities/weapons/waves/settings；render→resources |
+| F05 扩展 | baseline-p5 与 P6–P7 提交、WeaponController、SupportController；后续设置与语言扩展见下文 |
+| S01 模块化 | main→game/render/preferences；game→entities/weapons/waves/settings/localization/preferences；render→resources |
 | S02 复用 | Enemy.create、WeaponController.switch、apply_damage/finalize_kill、moving_hit |
 | S03 结构 | dataclass 状态、有限波次／支援、Boss 状态转换 |
 | S04 数据 | 稳定对象 ID、各控制器局部状态、单局 reset_session |
@@ -63,6 +63,39 @@
 | S08 注释 | 冷却、支援半开区间、Boss 任务撤销、轨迹／屏幕回收注释 |
 
 已实际查看原评分 PDF 两页。50% 功能／50% 结构及演示表述沿用原件，不计算逐项分数、额外组件分值或星级。原件涉及教材代码，而项目没有收到教材代码，不能声称这一项已通过。
+
+## 2026-10-08 首版语言扩展验证（历史证据）
+
+本节为设置扩展前的记录。最新需求已移除 F1／其他菜单的语言入口，启动改为沿用本地偏好；当前验收以下节为准。
+
+语言切换属于开发者后续确认的界面扩展，超出 baseline-p5 基础范围，不作为评分材料规定的功能或分值。默认英语，点击任意菜单右上角语言按钮或按 F1 切换英语／简体中文；重开与回菜单保留，退出程序后下次默认英语。
+
+| 检查 | 证据与结果 |
+|---|---|
+| 默认、按钮、F1、跨状态保留、战斗不变 | tests/test_language.py；全套 45 项测试通过，evidence/language/tests.txt |
+| 真实窗口、中文字体、文字／按钮边界、基本输入与退出 | tools/check_language.py；Windows SDL 后端，微软雅黑字形检查通过，evidence/language/check.json |
+| 双语界面排版 | evidence/language/en-*.png、zh-CN-*.png 共 16 张；已查看两种语言的说明、HUD 与母舰画面 |
+| 英语完整胜利 | evidence/language/flow-en/standard-pilot-run.json；162.000 游戏秒，27400 分，109 击杀，生成 118 架普通敌机 |
+| 中文完整胜利 | evidence/language/flow-zh-CN/standard-pilot-run.json；同种子下结果与全部事件日志和英语一致 |
+| 中文自然失败 | evidence/language/flow-zh-CN/standard-idle-run.json；29.450 游戏秒，正常进入失败结算 |
+
+上述完整流程使用自动输入与加速墙钟，未替代人工手感和平衡验收。窗口截图中的部分菜单和 Boss 场景用于单独检查排版；完整规则流程证据以两种语言的运行 JSON 为准。
+
+## 2026-10-08 设置与键位扩展验证（当前）
+
+最新约定：语言仅在设置页手动切换；设置不含难度，每次开始或重开前选择难度。键位表格可点击右列后按任意单键绑定，共享键同时触发对应行为并柔和红色闪烁；重置功能只保留“重置键位”，保留语言和音量。偏好本地保存，首次默认英语，之后沿用。本功能属于开发者确认的界面扩展，不是新增评分条款。
+
+| 检查 | 证据与结果 |
+|---|---|
+| 键位捕获、共享动作、独立重置、滑块、冻结与保存 | tests/test_settings.py、test_language.py；全套 56 项通过，evidence/settings/tests.txt |
+| 真实窗口操作与冲突提示 | tools/check_settings.py；evidence/settings/check.json 与 *.png，红色缓慢变化、表格和按钮无溢出 |
+| 设置页语言选择、无 F1 切换、字体及双语排版 | tools/check_language.py；evidence/settings/language/check.json 与 16 张截图 |
+| 基础输入、对象显示、退出及资源 | check_window.py、check_resources.py 通过，当前截图见 evidence/settings/base/；本次音频设备不可用，静音回退正常 |
+| 音效／音乐滑块传到播放通道 | SDL dummy 音频后端，check_resources.py 通道音量读回检查通过，evidence/settings/audio-channel-check.txt；不能替代真实试听 |
+| 三难度完整自动胜利 | evidence/settings/flow-en/*-pilot-run.json；简单 157.900／标准 162.000／困难 165.550 游戏秒，均生成 118 架普通敌机 |
+| 标准中文完整自动胜利与失败 | evidence/settings/flow-zh-CN/*-run.json；胜利 162.000 游戏秒，事件日志与英语一致；自然失败 29.450 游戏秒 |
+
+已实际查看中英文设置页、键位等待、冲突提示、出击准备和 HUD 截图。设置检查中的部分画面用于单独验证控件；完整战斗以运行 JSON 为准。自动输入与虚拟音频后端不替代人工手感、平衡与试听。
 
 ## 待完成项目
 

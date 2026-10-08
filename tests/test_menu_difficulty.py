@@ -18,6 +18,7 @@ class MenuDifficultyTests(unittest.TestCase):
         game.pause()
         game.menu_action("restart")
         self.assertEqual((game.difficulty.id, game.player.hp, game.time), ("hard", 100, 0))
+        self.assertEqual(game.state, "setup")
         game.menu_action("menu")
         self.assertEqual(game.state, "main_menu")
         self.assertFalse(game.enemies)

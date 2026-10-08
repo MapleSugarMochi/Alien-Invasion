@@ -54,10 +54,12 @@ Alien Invasion 是个人独立游戏开发项目。
 ## 已建立的检查命令
 
 - 窗口与基础输入检查：`.\.venv\Scripts\python.exe tools/check_window.py`
-- 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py`
+- 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py localization.py preferences.py`
 - 规则测试：`.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v`
 - 自动输入流程检查：`.\.venv\Scripts\python.exe tools/play_check.py`（不能替代人工手感验收）。
 - 资源／音效加载检查：`.\.venv\Scripts\python.exe tools/check_resources.py`。
 - 同波次难度检查：`.\.venv\Scripts\python.exe tools/compare_difficulty.py`。
 - 实时性能检查：`.\.venv\Scripts\python.exe tools/play_check.py --realtime --output docs/evidence/realtime`。
 - 制作候选源码包：`.\.venv\Scripts\python.exe tools/build_release.py`。
+- 双语窗口与输入检查：`.\.venv\Scripts\python.exe tools/check_language.py`。
+- 设置、改键、音量拖动与保存检查：`.\.venv\Scripts\python.exe tools/check_settings.py`。

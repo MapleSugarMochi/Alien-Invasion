@@ -7,6 +7,8 @@ from pygame import Vector2
 
 from entities import Boss, Enemy, Meteor, Pickup, Player
 from geometry import moving_hit
+from localization import DEFAULT_LANGUAGE, TEXT, translate
+from preferences import DEFAULT_BINDINGS, Preferences, key_name, valid_key
 from weapons import ArcAttack, Missile, Projectile, SupportController, WeaponController
 from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
 from waves import WaveController
@@ -17,11 +19,12 @@ class InputState:
     keys: set[int] = field(default_factory=set)
     aim: Vector2 = field(default_factory=lambda: Vector2(640, 180))
     fire: bool = False
+    bindings: dict = field(default_factory=lambda: DEFAULT_BINDINGS.copy())
 
     @property
     def movement(self) -> Vector2:
-        return Vector2(int(pygame.K_d in self.keys) - int(pygame.K_a in self.keys),
-                       int(pygame.K_s in self.keys) - int(pygame.K_w in self.keys))
+        return Vector2(int(self.bindings["move_right"] in self.keys) - int(self.bindings["move_left"] in self.keys),
+                       int(self.bindings["move_down"] in self.keys) - int(self.bindings["move_up"] in self.keys))
 
     @property
     def in_battle(self) -> bool:
@@ -37,10 +40,13 @@ class InputState:
 
 
 class Game:
-    def __init__(self, difficulty="standard", seed=None, menu=False) -> None:
+    def __init__(self, difficulty="standard", seed=None, menu=False, language=DEFAULT_LANGUAGE, preferences=None) -> None:
+        if language not in TEXT:
+            raise ValueError(f"Unsupported language: {language}")
+        self.preferences = preferences if preferences is not None else Preferences(language=language)
         self.running = True
         self.state = "main_menu" if menu else "playing"
-        self.input = InputState()
+        self.input = InputState(bindings=self.preferences.bindings)
         self.player = Player()
         self.enemies = []
         self.time = 0.0
@@ -68,22 +74,49 @@ class Game:
         self.arc_effects = []
         self.energy_units = 0
         self.support = SupportController()
-        self.sfx_volume, self.music_volume = .45, .35
-        self.audio_return_state = "main_menu"
+        self.settings_return_state = "main_menu"
+        self.editing_binding = None
+        self.dragging_slider = None
+        self.save_failed = False
+        self.ui_time = 0.0
         self.sound_events = []
+
+    @property
+    def language(self):
+        return self.preferences.language
+
+    @language.setter
+    def language(self, value):
+        self.preferences.language = value
+
+    @property
+    def sfx_volume(self):
+        return self.preferences.sfx_volume
+
+    @sfx_volume.setter
+    def sfx_volume(self, value):
+        self.preferences.sfx_volume = value
+
+    @property
+    def music_volume(self):
+        return self.preferences.music_volume
+
+    @music_volume.setter
+    def music_volume(self, value):
+        self.preferences.music_volume = value
 
     @property
     def targets(self):
         return self.enemies + ([self.boss] if self.boss and self.boss.hp > 0 else [])
 
     def restart(self):
-        self.reset_session(self.difficulty.id)
+        self.reset_session(self.difficulty.id, menu=True)
+        self.state = "setup"
 
     def reset_session(self, difficulty, menu=False):
-        sfx, music = self.sfx_volume, self.music_volume
+        preferences = self.preferences
         self.support.cancel()
-        self.__init__(difficulty, menu=menu)
-        self.sfx_volume, self.music_volume = sfx, music
+        self.__init__(difficulty, menu=menu, preferences=preferences)
 
     def start_session(self, difficulty):
         self.reset_session(difficulty)
@@ -92,32 +125,80 @@ class Game:
     def to_menu(self):
         self.reset_session(self.difficulty.id, menu=True)
 
+    def text(self, key, **values):
+        return translate(self.language, key, **values)
+
+    def binding_name(self, action):
+        return key_name(self.preferences.bindings[action])
+
+    def control_rows(self):
+        """两列表格与点击范围共用；鼠标瞄准和射击为固定操作。"""
+        rows = []
+        for index, action in enumerate((*DEFAULT_BINDINGS, "aim", "fire")):
+            label = self.binding_name(action) if action in DEFAULT_BINDINGS else self.text("mouse_move" if action == "aim" else "mouse_left")
+            rows.append((action, self.text("action_" + action), label,
+                         pygame.Rect(380, 170 + index * 38, 250, 38)))
+        return rows
+
+    def sliders(self):
+        return [("sfx_volume", pygame.Rect(720, 325, 440, 24)),
+                ("music_volume", pygame.Rect(720, 435, 440, 24))]
+
+    def save_preferences(self):
+        self.save_failed = not self.preferences.save()
+
+    def set_slider(self, attribute, x):
+        rect = next(rect for name, rect in self.sliders() if name == attribute)
+        setattr(self, attribute, round(max(0, min(1, (x - rect.left) / rect.width)), 2))
+
+    def open_settings(self):
+        if self.state not in ("main_menu", "paused", "setup"):
+            return
+        self.settings_return_state = self.state
+        self.state = "settings"
+        self.input.clear()
+        self.commands.clear()
+        self.editing_binding = self.dragging_slider = None
+
+    def close_settings(self):
+        self.save_preferences()
+        self.state = self.settings_return_state
+        self.editing_binding = self.dragging_slider = None
+        self.input.clear()
+
     def buttons(self):
         """点击范围与显示共用，避免不同界面的命中区漂移。"""
         options = {
-            "main_menu": [("setup", "开始游戏"), ("setup", "操作说明与难度"), ("audio", "声音设置"), ("quit", "退出")],
-            "setup": [("easy", "简单"), ("standard", "标准"), ("hard", "困难"),
-                      ("start", "开始战斗"), ("menu", "返回主菜单")],
-            "paused": [("resume", "继续战斗"), ("restart", "重新开始"), ("audio", "声音设置"), ("menu", "返回主菜单")],
-            "audio": [("sfx_down", "音效 -"), ("sfx_up", "音效 +"),
-                      ("music_down", "音乐 -"), ("music_up", "音乐 +"), ("audio_back", "返回")],
-            "victory": [("restart", "同难度再战"), ("menu", "返回主菜单")],
-            "defeat": [("restart", "同难度重开"), ("menu", "返回主菜单")],
+            "main_menu": [("setup", "start_game"), ("settings", "settings"), ("quit", "quit")],
+            "setup": [("easy", "easy"), ("standard", "standard"), ("hard", "hard"),
+                      ("start", "start_battle"), ("settings", "settings"), ("menu", "menu")],
+            "paused": [("resume", "resume"), ("restart", "restart"), ("settings", "settings"), ("menu", "menu")],
+            "settings": [("language_en", "english"), ("language_zh-CN", "chinese"),
+                         ("reset_keys", "reset_keys"), ("settings_back", "back")],
+            "victory": [("restart", "play_again"), ("menu", "menu")],
+            "defeat": [("restart", "retry"), ("menu", "menu")],
         }.get(self.state, [])
         if self.state == "setup":
-            rects = [pygame.Rect(350 + i * 200, 460, 180, 48) for i in range(3)]
-            rects += [pygame.Rect(440, 540 + i * 65, 400, 48) for i in range(2)]
+            rects = [pygame.Rect(690 + i * 170, 435, 150, 48) for i in range(3)]
+            rects += [pygame.Rect(700, 505, 480, 48), pygame.Rect(700, 568, 230, 48), pygame.Rect(950, 568, 230, 48)]
+        elif self.state == "settings":
+            rects = [pygame.Rect(700, 205, 230, 48), pygame.Rect(950, 205, 230, 48),
+                     pygame.Rect(80, 625, 250, 48), pygame.Rect(920, 625, 280, 48)]
         else:
             rects = [pygame.Rect(440, 380 + i * 65, 400, 48) for i in range(len(options))]
-        return [(action, label, rect) for (action, label), rect in zip(options, rects)]
+        buttons = [(action, self.text(key), rect) for (action, key), rect in zip(options, rects)]
+        return buttons
 
     def menu_action(self, action):
         if action in DIFFICULTIES:
-            self.selected_difficulty = action
+            if self.state == "setup":
+                self.selected_difficulty = action
         elif action == "setup":
-            self.state = "setup"
+            if self.state == "main_menu":
+                self.state = "setup"
         elif action == "start":
-            self.start_session(self.selected_difficulty)
+            if self.state == "setup":
+                self.start_session(self.selected_difficulty)
         elif action == "resume":
             self.resume()
         elif action == "restart":
@@ -125,17 +206,24 @@ class Game:
         elif action == "menu":
             self.to_menu()
         elif action == "quit":
+            self.save_preferences()
             self.running = False
             self.clear_battle_resources()
-        elif action == "audio":
-            self.audio_return_state = self.state
-            self.state = "audio"
-        elif action == "audio_back":
-            self.state = self.audio_return_state
-        elif action in ("sfx_down", "sfx_up", "music_down", "music_up"):
-            attribute = "sfx_volume" if action.startswith("sfx") else "music_volume"
-            change = .1 if action.endswith("up") else -.1
-            setattr(self, attribute, round(max(0, min(1, getattr(self, attribute) + change)), 2))
+        elif action == "settings":
+            self.open_settings()
+        elif self.state == "settings":
+            if action in ("language_en", "language_zh-CN"):
+                self.language = action.removeprefix("language_")
+            elif action == "settings_back":
+                self.close_settings()
+                return
+            elif action == "reset_keys":
+                self.preferences.reset_keys()
+            else:
+                return
+            self.editing_binding = None
+            self.dragging_slider = None
+            self.save_preferences()
 
     def finish(self, result):
         self.state = result
@@ -167,6 +255,15 @@ class Game:
         self.input.clear()
         self.commands.clear()
 
+    def activate_commands(self):
+        # 共享键可触发多个动作，仍遵守武器互斥、能量和支援优先的规则。
+        for command in sorted(self.commands, key=lambda c: c != "support"):
+            if command == "support":
+                self.try_support()
+            elif self.weapons.try_activate(command, self.time):
+                self.record("weapon_activate", kind=command)
+        self.commands.clear()
+
     def handle_events(self, events) -> None:
         for event in events:
             if event.type == pygame.QUIT:
@@ -174,23 +271,34 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if getattr(event, "repeat", False):
                     continue
+                if self.state == "settings":
+                    if self.editing_binding is not None and valid_key(event.key):
+                        self.preferences.bindings[self.editing_binding] = event.key
+                        self.editing_binding = None
+                        self.save_preferences()
+                    elif self.editing_binding is None and event.key == pygame.K_ESCAPE:
+                        self.close_settings()
+                    continue
                 if self.state == "main_menu" and event.key == pygame.K_RETURN:
                     self.menu_action("setup")
                 elif self.state == "setup" and event.key in (pygame.K_1, pygame.K_2, pygame.K_3):
                     self.menu_action({pygame.K_1: "easy", pygame.K_2: "standard", pygame.K_3: "hard"}[event.key])
                 elif self.state == "setup" and event.key == pygame.K_RETURN:
                     self.menu_action("start")
-                elif event.key == pygame.K_ESCAPE:
-                    if self.state == "playing":
-                        self.pause()
-                    elif self.state == "paused":
-                        self.resume()
-                    elif self.state == "setup":
-                        self.to_menu()
                 elif self.state == "playing":
-                    if event.key in (pygame.K_q, pygame.K_e, pygame.K_x) and event.key not in self.input.keys:
-                        self.commands.append({pygame.K_q: "missile", pygame.K_e: "arc", pygame.K_x: "support"}[event.key])
+                    fresh = event.key not in self.input.keys
                     self.input.keys.add(event.key)
+                    if fresh:
+                        for action in ("missile", "arc", "support"):
+                            if event.key == self.preferences.bindings[action]:
+                                self.commands.append(action)
+                        if event.key == self.preferences.bindings["pause"]:
+                            self.activate_commands()
+                            self.pause()
+                elif self.state == "paused" and event.key == self.preferences.bindings["pause"]:
+                    self.resume()
+                elif self.state == "setup" and event.key == pygame.K_ESCAPE:
+                    self.to_menu()
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
                     self.restart()
             elif event.type == pygame.KEYUP:
@@ -198,34 +306,55 @@ class Game:
             elif event.type == pygame.MOUSEMOTION:
                 self.input.aim.update(event.pos)
                 self.hover.update(event.pos)
+                if self.state == "settings" and self.dragging_slider:
+                    self.set_slider(self.dragging_slider, event.pos[0])
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.state == "playing":
                     self.input.fire = True
                     self.input.aim.update(event.pos)
                 else:
+                    if self.state == "settings":
+                        self.editing_binding = None
+                        for action, _, _, rect in self.control_rows():
+                            if action in DEFAULT_BINDINGS and rect.collidepoint(event.pos):
+                                self.editing_binding = action
+                                break
+                        if self.editing_binding is not None:
+                            continue
+                        for attribute, rect in self.sliders():
+                            if rect.inflate(24, 24).collidepoint(event.pos):
+                                self.dragging_slider = attribute
+                                self.set_slider(attribute, event.pos[0])
+                                break
+                        if self.dragging_slider:
+                            continue
                     for action, _, rect in self.buttons():
                         if rect.collidepoint(event.pos):
                             self.menu_action(action)
                             break
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self.input.fire = False
+                if self.dragging_slider:
+                    self.set_slider(self.dragging_slider, event.pos[0])
+                    self.dragging_slider = None
+                    self.save_preferences()
             elif event.type == pygame.WINDOWFOCUSLOST:
                 if self.state == "playing":
                     self.pause()
+                if self.dragging_slider:
+                    self.dragging_slider = None
+                    self.save_preferences()
+                self.editing_binding = None
                 self.input.clear()
 
     def update(self, dt: float) -> None:
+        self.ui_time += max(0, dt)
         if not self.running or self.state != "playing":
             return
         self.weapons.expire(self.time)
         self.expire_support()
         # 同刻 X 先于伤害，避免已启动的支援仍收到当帧回能。
-        for command in sorted(self.commands, key=lambda c: c != "support"):
-            if command == "support":
-                self.try_support()
-            elif self.weapons.try_activate(command, self.time):
-                self.record("weapon_activate", kind=command)
-        self.commands.clear()
+        self.activate_commands()
         self.timed_events()
         self.update_support()
         self.fire_weapon()

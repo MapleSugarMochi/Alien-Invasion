@@ -1,0 +1,1 @@
+PASS: sprites, alpha, sound formats/peaks, independent volume, no-BGM; font C:\WINDOWS\Fonts\msyhl.ttc audio True peaks {'bullet': 0.267, 'missile': 0.302, 'explosion': 0.313, 'arc': 0.289, 'pickup': 0.292, 'hurt': 0.292, 'lock': 0.298, 'support': 0.301, 'phase': 0.311}

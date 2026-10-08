@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "driver": "windows",
+  "font": "C:\\WINDOWS\\Fonts\\msyhl.ttc",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "checked_texts": 266,
+  "screenshots": 16,
+  "checks": "menu clicks, F1, Chinese glyphs, text bounds, HUD, Boss, audio, results, movement, shooting, pause, restart, quit"
+}
