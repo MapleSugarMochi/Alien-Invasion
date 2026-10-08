@@ -34,6 +34,23 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(circle_hit(Vector2(), Vector2(), Vector2(), 1), 0)
         self.assertIsNone(circle_hit(Vector2(), Vector2(), Vector2(20, 0), 1))
 
+    def test_offscreen_muzzle_is_recycled_before_collision(self):
+        game = self.scene()
+        enemy = Enemy(1, Vector2(-16, 200))
+        shot = Projectile(Vector2(-1, 200), Vector2(-900, 0))
+        game.resolve_projectile(shot, .1, [enemy])
+        self.assertEqual(enemy.hp, 20)
+        self.assertFalse(shot.alive)
+
+    def test_hud_aim_is_clamped_for_heading_but_never_fires(self):
+        game = self.scene()
+        game.input.aim.update(100, 5)
+        game.input.fire = True
+        game.update(.01)
+        expected = (Vector2(100, 64) - game.player.pos).normalize()
+        self.assertLess(game.player.direction.distance_to(expected), 1e-8)
+        self.assertIsNone(game.weapons.last_shot_at)
+
     def test_enemy_bullet_absorbed_by_meteor(self):
         game = self.scene()
         game.player.pos.update(300, 200)

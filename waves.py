@@ -47,6 +47,10 @@ def wave_spawn(entity_id, kind, wave, index, difficulty, now):
         route = "diagonal_left" if x < 640 else "diagonal_right"
     if wave == 4 and kind == "heavy":
         x = 640
+    elif wave == 8 and kind == "heavy":
+        x = (480, 800)[index // 3 % 2]
+    elif wave == 12 and kind == "heavy":
+        x = (160, 480, 800, 1120)[index // 3 % 4]
     if wave == 10:
         side = 1 if index % 2 == 0 else -1
     radius = {"scout": 16, "shooter": 22, "heavy": 30}[kind]

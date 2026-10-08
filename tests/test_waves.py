@@ -49,6 +49,18 @@ class WaveTests(unittest.TestCase):
         self.assertIsNone(wave.update(10, 2, easy, 2))
         self.assertEqual(len(wave.queue), 7)
 
+    def test_heavy_pressure_positions_match_wave_plan(self):
+        for number, expected in ((8, [480, 800]), (12, [160, 480, 800, 1120])):
+            wave = WaveController(number, 0)
+            positions = []
+            now = 0
+            while wave.queue:
+                enemy = wave.update(now, 0, DIFFICULTIES["standard"], len(positions) + 1)
+                if enemy.kind == "heavy":
+                    positions.append(enemy.pos.x)
+                now += wave.interval
+            self.assertEqual(positions, expected)
+
     def test_drop_boundaries_full_health_and_expiry(self):
         game = Game(seed=1)
         game.update(6.999)

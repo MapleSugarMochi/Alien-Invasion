@@ -27,6 +27,10 @@ class InputState:
     def in_battle(self) -> bool:
         return 0 <= self.aim.x <= WIDTH and HUD_HEIGHT <= self.aim.y <= HEIGHT
 
+    @property
+    def display_aim(self):
+        return Vector2(max(0, min(WIDTH, self.aim.x)), max(HUD_HEIGHT, min(HEIGHT, self.aim.y)))
+
     def clear(self) -> None:
         self.keys.clear()
         self.fire = False
@@ -122,6 +126,7 @@ class Game:
             self.to_menu()
         elif action == "quit":
             self.running = False
+            self.clear_battle_resources()
         elif action == "audio":
             self.audio_return_state = self.state
             self.state = "audio"
@@ -134,12 +139,16 @@ class Game:
 
     def finish(self, result):
         self.state = result
+        self.clear_battle_resources()
+        self.record(result, score=self.score, kills=self.kills)
+
+    def clear_battle_resources(self):
         self.input.clear()
+        self.commands.clear()
         self.pickups.clear()
         self.meteor_warning = None
         self.support.cancel()
         self.energy_units = 0
-        self.record(result, score=self.score, kills=self.kills)
 
     def next_id(self):
         self._entity_id += 1
@@ -161,7 +170,7 @@ class Game:
     def handle_events(self, events) -> None:
         for event in events:
             if event.type == pygame.QUIT:
-                self.running = False
+                self.menu_action("quit")
             elif event.type == pygame.KEYDOWN:
                 if getattr(event, "repeat", False):
                     continue
@@ -257,7 +266,7 @@ class Game:
         self.weapons.expire(self.time)
         # 支援采用 [start, end)，截止时先清空，再允许该时刻常态伤害回能。
         self.expire_support()
-        self.player.update(dt, self.input.movement, self.input.aim)
+        self.player.update(dt, self.input.movement, self.input.display_aim)
         for enemy in self.enemies:
             for direction in enemy.update(dt, self.time, self.player.pos):
                 self.enemy_bullets.append(Projectile(enemy.pos.copy(), direction * enemy.bullet_speed,
@@ -349,7 +358,7 @@ class Game:
 
     def fire_weapon(self):
         if self.player.hp > 0 and not (self.boss and self.boss.hp <= 0) and self.input.fire and self.input.in_battle:
-            projectile = self.weapons.try_fire(self.time, self.player, self.input.aim, self.targets)
+            projectile = self.weapons.try_fire(self.time, self.player, self.input.display_aim, self.targets)
             if projectile:
                 self.sound_events.append(self.weapons.active)
                 if isinstance(projectile, ArcAttack):
@@ -376,7 +385,7 @@ class Game:
             self.record("support_end")
 
     def update_support(self):
-        for event, number, ids in self.support.update(self.time, self.targets, self.input.aim):
+        for event, number, ids in self.support.update(self.time, self.targets, self.input.display_aim):
             self.record("support_" + event, round=number, targets=ids)
             if event == "hit":
                 if ids:
@@ -406,8 +415,11 @@ class Game:
         return True
 
     def resolve_projectile(self, projectile, dt, targets):
+        if not projectile.alive or not (0 <= projectile.pos.x <= WIDTH and 0 <= projectile.pos.y <= HEIGHT):
+            projectile.alive = False
+            return
         if isinstance(projectile, Missile):
-            projectile.turn(dt, self.targets, self.input.aim)
+            projectile.turn(dt, self.targets, self.input.display_aim)
         start, end, fraction, expired = projectile.advance(dt)
         hits = []
         for target in targets:

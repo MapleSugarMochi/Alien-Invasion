@@ -9,6 +9,8 @@ import math
 import os
 from pathlib import Path
 import sys
+import platform
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -82,6 +84,8 @@ def main():
     parser.add_argument("--seed", type=int, default=5)
     parser.add_argument("--seconds", type=float, default=600)
     parser.add_argument("--mode", choices=("pilot", "idle"), default="pilot")
+    parser.add_argument("--realtime", action="store_true", help="每帧显示并按真实墙钟更新，记录 FPS")
+    parser.add_argument("--output", type=Path, default=ROOT / "docs/evidence")
     args = parser.parse_args()
     pygame.init()
     try:
@@ -96,20 +100,25 @@ def main():
         # 注入随机源仅为复现随机序列；游戏数值与流程不变。
         game.rng.seed(args.seed)
         frames = 0
-        output = ROOT / "docs/evidence"
+        output = args.output
         output.mkdir(parents=True, exist_ok=True)
         last_phase = None
         saved_weapons = set()
         saved_support = False
+        clock = pygame.time.Clock()
+        wall_start = time.perf_counter()
+        compute_times = []
         while game.state == "playing" and game.time < args.seconds:
+            dt = clock.tick(60) / 1000 if args.realtime else 1 / 60
+            compute_start = time.perf_counter()
             if any(e.type == pygame.QUIT for e in pygame.event.get()):
                 break
             if args.mode == "pilot":
                 pilot(game)
-            game.update(1 / 60)
+            game.update(dt)
             renderer.feedback(game)
             frames += 1
-            if frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons or (game.support.active and not saved_support):
+            if args.realtime or frames % 30 == 0 or game.phase != last_phase or game.weapons.active not in saved_weapons or (game.support.active and not saved_support):
                 renderer.draw(surface, game)
                 pygame.display.flip()
                 if game.phase != last_phase:
@@ -121,6 +130,7 @@ def main():
                 if game.support.active and not saved_support and any(r.ids for r in game.support.rounds):
                     pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-support.png")
                     saved_support = True
+            compute_times.append((time.perf_counter() - compute_start) * 1000)
         renderer.draw(surface, game)
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
@@ -130,7 +140,11 @@ def main():
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
                   "weapon_activations": [e for e in game.journal if e["event"] == "weapon_activate"],
                   "support_activations": len([e for e in game.journal if e["event"] == "support_start"]),
-                  "events": game.journal, "verification": "automatic input; full rules; accelerated wall clock"}
+                  "events": game.journal, "verification": "automatic input; full rules; " + ("real time" if args.realtime else "accelerated wall clock"),
+                  "python": sys.version.split()[0], "pygame": pygame.version.ver, "platform": platform.platform(),
+                  "wall_seconds": round(time.perf_counter() - wall_start, 3),
+                  "frames": frames, "average_fps": round(frames / (time.perf_counter() - wall_start), 2) if args.realtime else None,
+                  "compute_ms_p95": round(sorted(compute_times)[int(.95 * (len(compute_times) - 1))], 3) if compute_times else None}
         (output / f"{args.difficulty}-{args.mode}-run.json").write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
         print(json.dumps({k: v for k, v in result.items() if k != "events"}, ensure_ascii=False))
     finally:

@@ -115,3 +115,42 @@ class SupportTests(unittest.TestCase):
         game.update(.01)
         self.assertFalse(game.support.active)
         self.assertEqual(game.energy_units, 10)
+
+    def test_quit_cancels_all_support_resources(self):
+        for via_event in (False, True):
+            game = Game()
+            game.energy_units = 1000
+            game.try_support()
+            game.pickups.append(Pickup(1, Vector2(), 0, "arc"))
+            game.commands.append("arc")
+            if via_event:
+                game.handle_events([pygame.event.Event(pygame.QUIT)])
+            else:
+                game.menu_action("quit")
+            self.assertFalse(game.running)
+            self.assertFalse(game.support.active)
+            self.assertFalse(game.pickups)
+            self.assertFalse(game.commands)
+            self.assertEqual(game.energy_units, 0)
+
+    def test_pause_freezes_special_support_and_boss_deadlines(self):
+        game = Game()
+        game.phase = "boss_fight"
+        game.boss = Boss(1, game.difficulty)
+        game.boss.entering = False
+        game.boss.pos.update(640, 180)
+        game.boss.reset_schedule(0)
+        game.weapons.charges["missile"] = 3
+        game.weapons.try_activate("missile", 0)
+        game.energy_units = 1000
+        game.try_support()
+        game.update(.3)
+        game.pause()
+        before = (game.time, game.weapons.active_until, game.weapons.ready_at,
+                  game.support.end_at, game.support.round_count, game.boss.next_round,
+                  game.next_drop, game.next_meteor, game.boss.pos.copy())
+        game.update(60)
+        after = (game.time, game.weapons.active_until, game.weapons.ready_at,
+                 game.support.end_at, game.support.round_count, game.boss.next_round,
+                 game.next_drop, game.next_meteor, game.boss.pos.copy())
+        self.assertEqual(before, after)

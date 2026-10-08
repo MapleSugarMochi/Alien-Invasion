@@ -135,8 +135,7 @@ class Renderer:
         pygame.draw.rect(surface, (117, 237, 158), (24, 52, game.player.hp * 2, 4))
         self.text(surface, f"WAVE {game.wave.number}/12   {game.phase.upper()}", (24, 83))
         self.text(surface, game.difficulty.label, (1190, 82))
-        aim = Vector2(max(0, min(WIDTH, game.input.aim.x)),
-                      max(HUD_HEIGHT, min(HEIGHT, game.input.aim.y)))
+        aim = game.input.display_aim
         for offset in (-1, 1):
             pygame.draw.line(surface, CYAN, aim + Vector2(offset * 5, 0), aim + Vector2(offset * 13, 0))
             pygame.draw.line(surface, CYAN, aim + Vector2(0, offset * 5), aim + Vector2(0, offset * 13))

@@ -10,6 +10,8 @@
 
 P0–P8 已实现：完整基础版本（Git 标签 `baseline-p5`）、Q/E/X 扩展、最终透明精灵与 9 种音效。阶段记录见 [docs/progress.md](docs/progress.md)。整体验收、人工平衡评价与交付整理属于 P9。
 
+P9 工程检查已覆盖 40 项测试、新环境安装、三难度完整自动胜负和实时运行；人工平衡、试听和报告／演示尚待完成，未标为完整交付。实际证据与限制见 [docs/acceptance.md](docs/acceptance.md)。
+
 ## 依赖安装
 
 在 Windows 安装 Python 3.13.x 后，在项目根目录的 PowerShell 中执行：
@@ -81,3 +83,18 @@ py -3.13 -m venv .venv
 ```powershell
 .\.venv\Scripts\python.exe tools/check_resources.py
 ```
+
+同波次难度对照与实时性能检查：
+
+```powershell
+.\.venv\Scripts\python.exe tools/compare_difficulty.py
+.\.venv\Scripts\python.exe tools/play_check.py --realtime --output docs/evidence/realtime
+```
+
+## 候选交付包
+
+```powershell
+.\.venv\Scripts\python.exe tools/build_release.py
+```
+
+生成 `dist/Alien-Invasion-candidate.zip` 与 SHA256，包含源码、依赖、资源、测试、说明和证据；解压后按本文创建 Python 3.13 环境启动，不含本机 `.venv`。候选包用于审核，不表示 P9 人工验收已通过。

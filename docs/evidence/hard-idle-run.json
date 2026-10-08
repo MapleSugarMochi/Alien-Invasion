@@ -9,6 +9,8 @@
   "score": 0,
   "kills": 0,
   "spawned": 16,
+  "weapon_activations": [],
+  "support_activations": 0,
   "events": [
     {
       "time": 0.0,
@@ -283,7 +285,7 @@
     {
       "time": 21.0,
       "event": "drop",
-      "kind": "health"
+      "kind": "arc"
     },
     {
       "time": 21.333333,
@@ -302,5 +304,12 @@
       "kills": 0
     }
   ],
-  "verification": "automatic input; full rules; accelerated wall clock"
+  "verification": "automatic input; full rules; accelerated wall clock",
+  "python": "3.13.9",
+  "pygame": "2.6.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 0.216,
+  "frames": 1334,
+  "average_fps": null,
+  "compute_ms_p95": 0.073
 }

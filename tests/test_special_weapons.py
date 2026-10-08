@@ -106,3 +106,19 @@ class SpecialWeaponTests(unittest.TestCase):
             game.timed_events()
             self.assertEqual(game.rng.asserted, ("health", "missile", "arc"))
             self.assertEqual(game.pickups[0].kind, kind)
+
+    def test_key_hold_never_queues_second_activation(self):
+        import pygame
+        game = Game()
+        game.weapons.charges["arc"] = 3
+        press = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_e)
+        game.handle_events([press, press, press])
+        self.assertEqual(game.commands, ["arc"])
+        game.update(0)
+        self.assertEqual(game.weapons.active, "arc")
+        game.weapons.charges["arc"] = 3
+        game.time = 5
+        game.handle_events([press])
+        game.update(0)
+        self.assertEqual(game.weapons.active, "bullet")
+        self.assertEqual(game.weapons.charges["arc"], 3)
