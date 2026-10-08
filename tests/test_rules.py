@@ -11,7 +11,7 @@ from weapons import Projectile
 
 class RuleTests(unittest.TestCase):
     def scene(self):
-        game = Game()
+        game = Game(level=2)
         game.enemies.clear()
         game.meteors.clear()
         return game

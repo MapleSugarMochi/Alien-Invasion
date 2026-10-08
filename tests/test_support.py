@@ -12,14 +12,14 @@ from weapons import SupportRound
 class SupportTests(unittest.TestCase):
     def test_support_render_at_fractional_launch_boundary(self):
         pygame.font.init()
-        game = Game()
+        game = Game(level=2)
         game.enemies = [Enemy(1, Vector2(200, 200))]
         game.time = 2.8
         game.support.rounds = [SupportRound(1, 2.4, [1], launched=True)]
         Renderer().draw(pygame.Surface((1280, 720)), game)
 
     def test_actual_damage_and_contact_rewards(self):
-        game = Game()
+        game = Game(level=2)
         enemy = Enemy(1, Vector2(200, 200))
         game.apply_damage(enemy, 60, "missile")
         self.assertEqual((game.energy_units, game.score, game.kills), (40, 100, 1))
@@ -62,7 +62,7 @@ class SupportTests(unittest.TestCase):
 
     def test_full_boss_loses_half_for_all_difficulties(self):
         for difficulty, damage in (("easy", 192), ("standard", 240), ("hard", 300)):
-            game = Game(difficulty)
+            game = Game(difficulty, level=2)
             game.phase = "boss_fight"
             game.boss = Boss(1, game.difficulty)
             game.boss.entering = False
@@ -99,7 +99,7 @@ class SupportTests(unittest.TestCase):
                 self.assertEqual(len([e for e in game.journal if e["event"] == "support_hit"]), 5)
 
     def test_support_suppresses_energy_but_not_pickup_or_stats(self):
-        game = Game()
+        game = Game(level=2)
         game.energy_units = 999
         self.assertFalse(game.try_support())
         self.assertEqual(game.energy_units, 999)
@@ -123,7 +123,7 @@ class SupportTests(unittest.TestCase):
         self.assertFalse(old_support.active)
 
     def test_end_timestamp_clears_before_new_damage(self):
-        game = Game()
+        game = Game(level=2)
         game.phase = "boss_fight"
         game.energy_units = 1000
         game.try_support()
@@ -138,7 +138,7 @@ class SupportTests(unittest.TestCase):
 
     def test_quit_cancels_all_support_resources(self):
         for via_event in (False, True):
-            game = Game()
+            game = Game(level=2)
             game.energy_units = 1000
             game.try_support()
             game.pickups.append(Pickup(1, Vector2(), 0, "arc"))
@@ -154,7 +154,7 @@ class SupportTests(unittest.TestCase):
             self.assertEqual(game.energy_units, 0)
 
     def test_pause_freezes_special_support_and_boss_deadlines(self):
-        game = Game()
+        game = Game(level=2)
         game.phase = "boss_fight"
         game.boss = Boss(1, game.difficulty)
         game.boss.entering = False

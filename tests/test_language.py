@@ -9,7 +9,7 @@ from localization import TEXT
 
 class LanguageTests(unittest.TestCase):
     def test_default_english_and_catalog_formats_match(self):
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         self.assertEqual(game.language, "en")
         self.assertEqual(game.buttons()[0][1], "Start Game")
         self.assertEqual(set(TEXT["en"]), set(TEXT["zh-CN"]))
@@ -26,17 +26,17 @@ class LanguageTests(unittest.TestCase):
         self.assertEqual(game.text("result", score=123, kills=4, seconds=5.25),
                          "Score 123  /  Kills 4  /  Time 5.2s")
         with self.assertRaises(ValueError):
-            Game(language="unsupported")
+            Game(language="unsupported", level=2)
 
     def test_language_selection_is_only_available_in_settings(self):
         for state in ("main_menu", "level_select", "paused", "victory", "defeat", "playing"):
             with self.subTest(state=state):
-                game = Game(menu=True)
+                game = Game(menu=True, level=2)
                 game.state = state
                 self.assertFalse(any(action.startswith("language") for action, _, _ in game.buttons()))
                 game.menu_action("language_zh-CN")
                 self.assertEqual(game.language, "en")
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         game.menu_action("settings")
         before = [(action, rect) for action, _, rect in game.buttons()]
         for language in ("zh-CN", "en"):
@@ -48,7 +48,7 @@ class LanguageTests(unittest.TestCase):
     def test_f1_does_not_switch_language_in_any_screen(self):
         for state in ("main_menu", "level_select", "settings", "playing", "paused", "victory", "defeat"):
             with self.subTest(state=state):
-                game = Game()
+                game = Game(level=2)
                 game.state = state
                 game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_F1),
                                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_F1, repeat=True)])
@@ -56,34 +56,34 @@ class LanguageTests(unittest.TestCase):
                 self.assertEqual(game.state, state)
 
     def test_language_survives_session_transitions(self):
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         game.menu_action("settings")
         game.menu_action("language_zh-CN")
         game.menu_action("settings_back")
         game.menu_action("level_select")
         game.menu_action("hard")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual((game.language, game.difficulty.id), ("zh-CN", "hard"))
         game.pause()
         game.menu_action("settings")
         game.menu_action("settings_back")
         game.menu_action("restart")
         self.assertEqual((game.language, game.state), ("zh-CN", "level_select"))
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         for result in ("victory", "defeat"):
             game.finish(result)
             game.menu_action("restart")
             self.assertEqual(game.language, "zh-CN")
-            game.menu_action("level_1")
+            game.menu_action("level_2")
         game.menu_action("menu")
         game.menu_action("level_select")
         game.menu_action("easy")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual((game.language, game.difficulty.id), ("zh-CN", "easy"))
-        self.assertEqual(Game(menu=True).language, "en")
+        self.assertEqual(Game(menu=True, level=2).language, "en")
 
     def test_switch_during_special_weapon_and_support_preserves_battle(self):
-        game = Game(seed=5)
+        game = Game(seed=5, level=2)
         game.weapons.charges["missile"] = 3
         game.energy_units = 1000
         game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_q),

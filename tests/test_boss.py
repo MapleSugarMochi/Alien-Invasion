@@ -9,7 +9,7 @@ from weapons import Projectile
 
 class BossTests(unittest.TestCase):
     def scene(self):
-        game = Game()
+        game = Game(level=2)
         game.phase = "boss_fight"
         game.boss = Boss(999, game.difficulty)
         game.boss.entering = False
@@ -19,7 +19,7 @@ class BossTests(unittest.TestCase):
         return game
 
     def test_entry_and_health_boundaries(self):
-        game = Game()
+        game = Game(level=2)
         boss = Boss(1, game.difficulty)
         self.assertEqual(game.apply_damage(boss, 100, "bullet"), 0)
         self.assertEqual(boss.update(1, 1, game.player.pos), [])

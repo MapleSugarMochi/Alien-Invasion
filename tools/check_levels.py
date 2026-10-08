@@ -1,5 +1,6 @@
 """真实 SDL 窗口验证三关卡入口、双语排版、输入、重开与返回。"""
 import json
+import argparse
 import os
 from pathlib import Path
 import sys
@@ -21,7 +22,9 @@ def main():
         assert pygame.display.get_driver() == "windows", "需要 Windows 真实 SDL 窗口"
         pygame.display.set_caption("Alien Invasion - levels check")
         renderer = Renderer()
-        output = ROOT / "docs/evidence/levels"
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--output", type=Path, default=ROOT / "docs/evidence/levels")
+        output = parser.parse_args().output
         output.mkdir(parents=True, exist_ok=True)
         original_text = renderer.text
         original_controls = renderer.draw_controls
@@ -66,8 +69,11 @@ def main():
             for level in LEVELS:
                 button(game, "hard")
                 button(game, f"level_{level}")
-                assert (game.state, game.level, game.difficulty.id) == ("playing", level, "hard")
+                assert (game.state, game.level, game.difficulty.id) == ("playing", level, "standard" if level == 1 else "hard")
                 assert not game.input.fire
+                if level == 1:
+                    button(game, "tutorial_continue")
+                    game.update(.9)
                 start = game.player.pos.copy()
                 events(game, pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d),
                        pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 180)))

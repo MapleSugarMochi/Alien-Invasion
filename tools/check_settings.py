@@ -108,7 +108,7 @@ def main():
             button(game, "level_select")
             button(game, "hard")
             capture(game, "choose-difficulty")
-            button(game, "level_1")
+            button(game, "level_2")
             game.weapons.charges["missile"] = 3
             old = game.player.pos.copy()
             game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_z),
@@ -130,7 +130,7 @@ def main():
             button(game, "restart")
             assert game.state == "level_select"
             button(game, "easy")
-            button(game, "level_1")
+            button(game, "level_2")
             assert game.difficulty.id == "easy"
             game.pause()
             button(game, "settings")

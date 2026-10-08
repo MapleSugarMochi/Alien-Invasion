@@ -1,0 +1,28 @@
+[
+  {
+    "level": 2,
+    "status": "PASS",
+    "all_events_identical": true,
+    "event_count": 475,
+    "counts": {
+      "scout": 62,
+      "shooter": 36,
+      "heavy": 20
+    },
+    "boss_max_hp": 2400,
+    "time": 162.0
+  },
+  {
+    "level": 3,
+    "status": "PASS",
+    "all_events_identical": true,
+    "event_count": 555,
+    "counts": {
+      "scout": 75,
+      "shooter": 43,
+      "heavy": 24
+    },
+    "boss_max_hp": 3360,
+    "time": 182.85
+  }
+]

@@ -56,7 +56,7 @@ Alien Invasion 是个人独立游戏开发项目。
 ## 已建立的检查命令
 
 - 窗口与基础输入检查：`.\.venv\Scripts\python.exe tools/check_window.py`
-- 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py localization.py preferences.py`
+- 语法检查：`.\.venv\Scripts\python.exe -m compileall -q main.py game.py entities.py render.py settings.py localization.py preferences.py tutorial.py waves.py weapons.py geometry.py resources.py tests tools`
 - 规则测试：`.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v`
 - 自动输入流程检查：`.\.venv\Scripts\python.exe tools/play_check.py`（不能替代人工手感验收）。
 - 资源／音效加载检查：`.\.venv\Scripts\python.exe tools/check_resources.py`。
@@ -66,4 +66,5 @@ Alien Invasion 是个人独立游戏开发项目。
 - 双语窗口与输入检查：`.\.venv\Scripts\python.exe tools/check_language.py`。
 - 设置、改键、音量拖动与保存检查：`.\.venv\Scripts\python.exe tools/check_settings.py`。
 - 三关卡入口与双语窗口检查：`.\.venv\Scripts\python.exe tools/check_levels.py`。
+- 八步教程、中文改键与错误恢复的真实窗口检查：`.\.venv\Scripts\python.exe tools/check_tutorial.py`（公开注入输入，不能替代人工新手试玩）。
 - 指定关卡的完整自动流程：`.\.venv\Scripts\python.exe tools/play_check.py --level 2 --output docs/evidence/levels/flow-level-2`（`--level` 可选 1／2／3）。

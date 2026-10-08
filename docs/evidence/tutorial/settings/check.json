@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "driver": "windows",
+  "font": "C:\\WINDOWS\\Fonts\\msyhl.ttc",
+  "checked_texts": 282,
+  "conflict_pixel_red": [
+    33,
+    45
+  ],
+  "checks": "two-column table, capture, duplicate actions, soft 4s pulse, sliders, persistence, keys-only reset, removed-button area inactive, paused settings, new-game difficulty, HUD, quit"
+}

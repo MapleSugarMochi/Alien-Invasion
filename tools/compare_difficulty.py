@@ -21,7 +21,7 @@ def main():
         renderer = Renderer()
         records = []
         for difficulty in ("easy", "standard", "hard"):
-            game = Game(difficulty, seed=5)
+            game = Game(difficulty, seed=5, level=2)
             wave_start = None
             while game.state == "playing" and game.time < 120:
                 pygame.event.pump()

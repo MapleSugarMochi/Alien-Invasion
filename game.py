@@ -10,8 +10,9 @@ from geometry import moving_hit
 from localization import DEFAULT_LANGUAGE, TEXT, translate
 from preferences import DEFAULT_BINDINGS, Preferences, key_name, valid_key
 from weapons import ArcAttack, Missile, Projectile, SupportController, WeaponController
-from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, LEVEL_CONFIGS, LEVELS, WIDTH
+from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, LEVEL_CONFIGS, LEVELS, TUTORIAL_DIFFICULTY, WIDTH
 from waves import WaveController
+from tutorial import TutorialController
 
 
 @dataclass
@@ -58,7 +59,7 @@ class Game:
         self.meteors = []
         self.score = self.kills = 0
         self.effects = []
-        self.difficulty = DIFFICULTIES[difficulty]
+        self.difficulty = TUTORIAL_DIFFICULTY if level == 1 and not menu else DIFFICULTIES[difficulty]
         self.level = level
         self.level_config = LEVEL_CONFIGS[level]
         self.rng = random.Random(seed)
@@ -84,6 +85,7 @@ class Game:
         self.save_failed = False
         self.ui_time = 0.0
         self.sound_events = []
+        self.tutorial = TutorialController(self) if level == 1 and not menu else None
 
     @property
     def language(self):
@@ -114,7 +116,7 @@ class Game:
         return self.enemies + ([self.boss] if self.boss and self.boss.hp > 0 else [])
 
     def restart(self):
-        self.reset_session(self.difficulty.id, menu=True)
+        self.reset_session(self.selected_difficulty, menu=True)
         self.state = "level_select"
 
     def reset_session(self, difficulty, menu=False, level=None):
@@ -125,10 +127,10 @@ class Game:
 
     def start_session(self, difficulty, level=None):
         self.reset_session(difficulty, level=level)
-        self.record("session_start", difficulty=difficulty, level=self.level)
+        self.journal.insert(0, {"time": 0.0, "event": "session_start", "difficulty": difficulty, "level": self.level})
 
     def to_menu(self):
-        self.reset_session(self.difficulty.id, menu=True)
+        self.reset_session(self.selected_difficulty, menu=True)
 
     def text(self, key, **values):
         return translate(self.language, key, **values)
@@ -182,11 +184,21 @@ class Game:
                          ("reset_keys", "reset_keys"), ("settings_back", "back")],
             "victory": [("restart", "play_again"), ("menu", "menu")],
             "defeat": [("restart", "retry"), ("menu", "menu")],
+            "tutorial_complete": [("tutorial_level_2", "tutorial_go_level_2"),
+                                  ("tutorial_restart", "tutorial_restart"), ("tutorial_levels", "tutorial_levels")],
+            "tutorial_retry": [("tutorial_retry", "tutorial_retry_button"),
+                               ("tutorial_restart", "tutorial_restart"), ("tutorial_levels", "tutorial_levels")],
         }.get(self.state, [])
+        if self.state == "playing" and self.tutorial and not self.tutorial.transitioning:
+            options = [("tutorial_settings", "settings")]
+            if self.tutorial.step == 1:
+                options.insert(0, ("tutorial_continue", "tutorial_continue"))
         if self.state == "level_select":
             rects = [pygame.Rect(100 + i * 370, 190, 340, 310) for i in range(len(LEVELS))]
             rects += [pygame.Rect(390 + i * 170, 545, 150, 48) for i in range(3)]
             rects += [pygame.Rect(440, 625, 400, 48)]
+        elif self.state == "playing" and self.tutorial:
+            rects = [pygame.Rect(1020, 120 + i * 54, 220, 44) for i in range(len(options))]
         elif self.state == "settings":
             rects = [pygame.Rect(700, 205, 230, 48), pygame.Rect(950, 205, 230, 48),
                      pygame.Rect(80, 625, 250, 48), pygame.Rect(920, 625, 280, 48)]
@@ -198,6 +210,23 @@ class Game:
         return buttons
 
     def menu_action(self, action):
+        if action.startswith("tutorial_"):
+            if not self.tutorial:
+                return
+            if action == "tutorial_continue" and self.state == "playing":
+                self.tutorial.continue_intro(self)
+            elif action == "tutorial_settings" and self.state == "playing":
+                self.pause()
+                self.open_settings()
+            elif action == "tutorial_retry" and self.state == "tutorial_retry":
+                self.tutorial.retry(self, "tutorial_reset")
+            elif action == "tutorial_restart" and self.state in ("tutorial_retry", "tutorial_complete"):
+                self.start_session(self.selected_difficulty, 1)
+            elif action in ("tutorial_level_2", "tutorial_levels") and self.state in ("tutorial_retry", "tutorial_complete"):
+                selected = 2 if action == "tutorial_level_2" else 1
+                self.reset_session(self.selected_difficulty, menu=True, level=selected)
+                self.state = "level_select"
+            return
         if action in DIFFICULTIES:
             if self.state == "level_select":
                 self.selected_difficulty = action
@@ -270,6 +299,8 @@ class Game:
                 self.try_support()
             elif self.weapons.try_activate(command, self.time):
                 self.record("weapon_activate", kind=command)
+                if self.tutorial:
+                    self.tutorial.on_activation(self, command)
         self.commands.clear()
 
     def handle_events(self, events) -> None:
@@ -309,6 +340,8 @@ class Game:
                     self.to_menu()
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
                     self.restart()
+                elif self.state == "tutorial_retry" and event.key == pygame.K_r:
+                    self.menu_action("tutorial_retry")
             elif event.type == pygame.KEYUP:
                 self.input.keys.discard(event.key)
             elif event.type == pygame.MOUSEMOTION:
@@ -318,8 +351,12 @@ class Game:
                     self.set_slider(self.dragging_slider, event.pos[0])
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.state == "playing":
-                    self.input.fire = True
-                    self.input.aim.update(event.pos)
+                    button = next((action for action, _, rect in self.buttons() if rect.collidepoint(event.pos)), None)
+                    if button:
+                        self.menu_action(button)
+                    elif not self.tutorial or not self.tutorial.transitioning:
+                        self.input.fire = True
+                        self.input.aim.update(event.pos)
                 else:
                     if self.state == "settings":
                         self.editing_binding = None
@@ -357,13 +394,21 @@ class Game:
 
     def update(self, dt: float) -> None:
         self.ui_time += max(0, dt)
+        if self.tutorial and self.tutorial.transitioning and self.state != "playing":
+            # 设置动画仍使用 UI 时间，但教学过渡必须和战斗一样暂停。
+            self.tutorial.transition_until += max(0, dt)
         if not self.running or self.state != "playing":
+            return
+        if self.tutorial and self.tutorial.transitioning:
+            self.tutorial.advance_transition(self)
             return
         self.weapons.expire(self.time)
         self.expire_support()
         # 同刻 X 先于伤害，避免已启动的支援仍收到当帧回能。
         self.activate_commands()
         self.timed_events()
+        if self.tutorial and (self.tutorial.transitioning or self.state != "playing"):
+            return
         self.update_support()
         self.fire_weapon()
         # 保留整帧时间，以小步处理运动；胜负在整帧最后统一判定。
@@ -393,8 +438,13 @@ class Game:
                     step = min(step, deadline - self.time)
             self._step(step)
             remaining -= step
+            if self.tutorial and (self.tutorial.transitioning or self.state != "playing"):
+                break
         if self.player.hp <= 0:
-            self.finish("defeat")
+            if self.tutorial:
+                self.tutorial.update(self)
+            else:
+                self.finish("defeat")
         elif self.boss and self.boss.hp <= 0:
             self.finish("victory")
 
@@ -443,16 +493,13 @@ class Game:
         self.fire_weapon()
 
     def timed_events(self):
+        if self.tutorial:
+            self.tutorial.update(self)
+            return
         if self.player.hp <= 0 or (self.boss and self.boss.hp <= 0):
             return
         if self.time + 1e-9 >= self.next_drop:
-            x = self.rng.uniform(48, 1232)
-            if self.player.pos.distance_to(Vector2(x, 78)) <= 28:
-                x = 48 if self.player.pos.x > 640 else 1232
-            kind = self.rng.choice(("health", "missile", "arc"))
-            self.pickups.append(Pickup(self.next_id(), Vector2(x, 78), self.time, kind))
-            self.record("drop", kind=kind)
-            self.next_drop += 7
+            self.drop_supply()
         if self.phase in ("waves", "rest"):
             if self.meteor_warning is None and self.time + 1e-9 >= self.next_meteor - .6:
                 if len(self.meteors) < self.difficulty.meteor_cap:
@@ -493,12 +540,28 @@ class Game:
             self.phase = "boss_entry"
             self.record("boss_spawn")
 
+    def drop_supply(self):
+        """教程实战和正式关卡复用同一随机补给规则及随机源顺序。"""
+        x = self.rng.uniform(48, 1232)
+        if self.player.pos.distance_to(Vector2(x, 78)) <= 28:
+            x = 48 if self.player.pos.x > 640 else 1232
+        kind = self.rng.choice(("health", "missile", "arc"))
+        self.pickups.append(Pickup(self.next_id(), Vector2(x, 78), self.time, kind))
+        self.record("drop", kind=kind)
+        self.next_drop += 7
+
     def fire_weapon(self):
+        if self.tutorial and (self.tutorial.transitioning or self.tutorial.step == 1 or self.state != "playing"):
+            return
         if self.player.hp > 0 and not (self.boss and self.boss.hp <= 0) and self.input.fire and self.input.in_battle:
             projectile = self.weapons.try_fire(self.time, self.player, self.input.display_aim, self.targets)
             if projectile:
+                if self.tutorial:
+                    self.tutorial.last_fire = self.time
                 self.sound_events.append(self.weapons.active)
                 if isinstance(projectile, ArcAttack):
+                    if self.tutorial:
+                        self.tutorial.on_arc(self, projectile.targets)
                     points = [self.player.pos.copy()] + [t.pos.copy() for t in projectile.targets]
                     for target, damage in zip(projectile.targets, (18, 13, 10)):
                         self.apply_damage(target, damage, "arc")
@@ -508,18 +571,26 @@ class Game:
                     self.projectiles.append(projectile)
 
     def try_support(self):
+        if self.tutorial and self.tutorial.step == 7 and self.tutorial.progress < 5:
+            self.support.failed_until = self.time + .3
+            return False
         if self.energy_units < 1000 or self.support.active:
             self.support.failed_until = self.time + .3
             return False
         self.energy_units = 0
         self.support.start(self.time)
         self.record("support_start")
+        if self.tutorial and self.tutorial.step == 7:
+            self.tutorial.support_seen = True
+            self.tutorial.objective(self, "support_started")
         return True
 
     def expire_support(self):
         if self.support.expire(self.time):
             self.energy_units = 0
             self.record("support_end")
+            if self.tutorial and self.tutorial.step == 7:
+                self.tutorial.support_ended = True
 
     def update_support(self):
         for event, number, ids in self.support.update(self.time, self.targets, self.input.display_aim):
@@ -549,6 +620,8 @@ class Game:
                 return False
             self.weapons.charges[pickup.kind] += 1
         pickup.consumed = True
+        if self.tutorial:
+            self.tutorial.on_pickup(self, pickup)
         return True
 
     def resolve_projectile(self, projectile, dt, targets):
@@ -610,6 +683,8 @@ class Game:
         if not self.support.active:
             self.energy_units = min(1000, self.energy_units + {"scout": 20, "shooter": 40, "heavy": 80}.get(target.kind, 0))
         self.record("kill", id=target.id, kind=target.kind)
+        if self.tutorial and isinstance(target, Enemy):
+            self.tutorial.on_kill(self, target, source)
 
     def damage_player(self, amount):
         if self.time + 1e-9 < self.player.invulnerable_until or self.player.hp <= 0:
@@ -628,6 +703,8 @@ class Game:
             if difference.length_squared() > minimum * minimum:
                 continue
             accepted = self.damage_player(self.difficulty.hit(25 if isinstance(target, Meteor) else 20))
+            if accepted and self.tutorial and self.tutorial.step == 3 and target is self.tutorial.meteor:
+                self.tutorial.meteor_contact = True
             if accepted and isinstance(target, Enemy):
                 self.apply_damage(target, target.hp, "contact")
             direction = difference.normalize() if difference.length_squared() else Vector2(0, 1)

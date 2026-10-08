@@ -22,10 +22,10 @@ def main():
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Alien Invasion — window check")
-        game, renderer = Game(), Renderer()
+        game, renderer = Game(level=2), Renderer()
         evidence = args.output
         evidence.mkdir(parents=True, exist_ok=True)
-        menu_game = Game(menu=True)
+        menu_game = Game(menu=True, level=2)
         renderer.draw(surface, menu_game)
         pygame.display.flip()
         pygame.image.save(surface, evidence / "p5-menu.png")
@@ -35,7 +35,7 @@ def main():
         pygame.display.flip()
         pygame.image.save(surface, evidence / "levels.png")
         menu_game.menu_action("easy")
-        menu_game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_1),
+        menu_game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_2),
                                  pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
         assert menu_game.state == "playing" and menu_game.difficulty.id == "easy"
         pygame.event.clear()

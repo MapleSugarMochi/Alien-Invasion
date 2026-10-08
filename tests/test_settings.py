@@ -20,7 +20,7 @@ def press(game, key, **attributes):
 
 class SettingsTests(unittest.TestCase):
     def settings_game(self):
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         game.menu_action("settings")
         return game
 
@@ -52,7 +52,7 @@ class SettingsTests(unittest.TestCase):
         self.rebind(game, "pause", pygame.K_p)
         game.menu_action("settings_back")
         game.menu_action("level_select")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         press(game, pygame.K_d)
         self.assertEqual(game.input.movement, Vector2())
         press(game, pygame.K_RIGHT)
@@ -80,7 +80,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(game.preferences.bindings["move_left"], pygame.K_a)
         game.menu_action("settings_back")
         game.menu_action("level_select")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         game.weapons.charges.update(missile=3, arc=3)
         game.energy_units = 1000
         press(game, pygame.K_z)
@@ -96,7 +96,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(game.input.movement, Vector2())
 
     def test_pause_shared_with_weapon_activates_weapon_before_freezing(self):
-        game = Game()
+        game = Game(level=2)
         game.preferences.bindings["missile"] = pygame.K_ESCAPE
         game.weapons.charges["missile"] = 3
         press(game, pygame.K_ESCAPE)
@@ -138,13 +138,13 @@ class SettingsTests(unittest.TestCase):
             self.assertEqual(Preferences.load(path).sfx_volume, .5)
 
     def test_difficulty_is_only_selected_before_each_new_battle(self):
-        game = Game("hard")
+        game = Game("hard", level=2)
         original = game.difficulty
         game.pause()
         game.menu_action("settings")
         self.assertFalse(any(action in ("easy", "standard", "hard") for action, _, _ in game.buttons()))
         game.menu_action("easy")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual(game.state, "settings")
         self.assertIs(game.difficulty, original)
         self.assertEqual(game.selected_difficulty, "hard")
@@ -152,7 +152,7 @@ class SettingsTests(unittest.TestCase):
         game.menu_action("restart")
         self.assertEqual(game.state, "level_select")
         game.menu_action("easy")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual((game.state, game.difficulty.id), ("playing", "easy"))
         game.finish("victory")
         press(game, pygame.K_r)

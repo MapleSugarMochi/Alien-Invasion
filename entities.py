@@ -53,6 +53,8 @@ class Enemy:
     horizontal: int = 1
     origin_x: float = field(init=False)
     side_entry: int = 0
+    training: bool = False
+    training_sway: bool = False
 
     def __post_init__(self) -> None:
         self.previous = self.pos.copy()
@@ -74,6 +76,11 @@ class Enemy:
     def update(self, dt, now, player_pos):
         self.previous = self.pos.copy()
         self.age += dt
+        if self.training:
+            # 靶机仍使用真实伤害和碰撞，仅停止攻击／离场；导弹靶轻微横移。
+            if self.training_sway:
+                self.pos.x = self.origin_x + 40 * math.sin(self.age)
+            return []
         shots = []
         if self.side_entry and self.mode == "entering" and self.kind != "scout":
             destination = Vector2(240 if self.side_entry == 1 else 1040,

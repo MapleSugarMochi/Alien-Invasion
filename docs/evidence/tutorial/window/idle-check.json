@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "verification": "isolated render scenes; hint timer set for layout only, not a public-input flow",
+  "scenes": [
+    {
+      "language": "en",
+      "step": 2,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 3,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 4,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 5,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 6,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 7,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "en",
+      "step": 8,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 2,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 3,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 4,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 5,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 6,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 7,
+      "idle_aids_rendered": true
+    },
+    {
+      "language": "zh-CN",
+      "step": 8,
+      "idle_aids_rendered": true
+    }
+  ]
+}

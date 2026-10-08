@@ -44,7 +44,7 @@ def main():
         chinese = sorted({char for text in TEXT["zh-CN"].values() for char in text
                           if "\u4e00" <= char <= "\u9fff"})
         assert all(metric is not None for metric in renderer.font.metrics("".join(chinese))), "中文字体缺少字形"
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         assert game.language == "en"
         for language in TEXT:
             if game.language != language:
@@ -82,7 +82,7 @@ def main():
             game.to_menu()
             assert game.language == language
         game.menu_action("level_select")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_F1),
                             pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d),
                             pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 180))])

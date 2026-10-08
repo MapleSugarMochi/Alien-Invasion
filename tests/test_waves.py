@@ -68,7 +68,7 @@ class WaveTests(unittest.TestCase):
             self.assertEqual(positions, expected)
 
     def test_drop_boundaries_full_health_and_expiry(self):
-        game = Game(seed=1)
+        game = Game(seed=1, level=2)
         game.update(6.999)
         self.assertFalse(any(e["event"] == "drop" for e in game.journal))
         game.update(.001)
@@ -92,7 +92,7 @@ class WaveTests(unittest.TestCase):
         self.assertTrue(Pickup(1, Vector2(), 0).expired(10))
 
     def test_boss_clear_cancels_reserved_meteor(self):
-        game = Game()
+        game = Game(level=2)
         game.wave = WaveController(12, 0)
         game.wave.queue.clear()
         game.meteor_warning = (1, 500, 22)

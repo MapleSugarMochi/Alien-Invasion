@@ -26,7 +26,7 @@ class SpecialWeaponTests(unittest.TestCase):
         self.assertIsNone(weapons.try_fire(5.199, player))
 
     def test_pickup_capacity_and_recharging_during_active(self):
-        game = Game()
+        game = Game(level=2)
         for _ in range(3):
             self.assertTrue(game.collect(Pickup(1, Vector2(), 0, "missile")))
         excess = Pickup(2, Vector2(), 0, "missile")
@@ -51,7 +51,7 @@ class SpecialWeaponTests(unittest.TestCase):
         self.assertTrue(expired)
 
     def test_explosion_main_target_once_and_other_targets(self):
-        game = Game()
+        game = Game(level=2)
         game.enemies = [Enemy(1, Vector2(200, 200), hp=120), Enemy(2, Vector2(245, 200), hp=120)]
         game.meteors.clear()
         game.input.aim.update(200, 200)
@@ -61,7 +61,7 @@ class SpecialWeaponTests(unittest.TestCase):
         self.assertFalse(shot.alive)
 
     def test_arc_cone_boundaries_chain_and_damage(self):
-        game = Game()
+        game = Game(level=2)
         game.player.pos.update(400, 400)
         game.player.direction.update(1, 0)
         enemies = [Enemy(1, Vector2(600, 600), hp=50), Enemy(2, Vector2(700, 600), hp=50),
@@ -84,7 +84,7 @@ class SpecialWeaponTests(unittest.TestCase):
         self.assertIsInstance(result, ArcAttack)
         self.assertFalse(result.targets)
         self.assertIsNone(weapons.try_fire(.1, Player()))
-        game = Game()
+        game = Game(level=2)
         boss = Boss(1, game.difficulty)
         boss.pos.update(640, 180)
         self.assertFalse(arc_chain(game.player, boss.pos, [boss]))
@@ -97,7 +97,7 @@ class SpecialWeaponTests(unittest.TestCase):
                 self.asserted = tuple(candidates)
                 return candidates[self.index]
         for index, kind in enumerate(("health", "missile", "arc")):
-            game = Game()
+            game = Game(level=2)
             game.phase = "boss_fight"
             game.time = 7
             game.rng = ChoiceRandom()
@@ -109,7 +109,7 @@ class SpecialWeaponTests(unittest.TestCase):
 
     def test_key_hold_never_queues_second_activation(self):
         import pygame
-        game = Game()
+        game = Game(level=2)
         game.weapons.charges["arc"] = 3
         press = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_e)
         game.handle_events([press, press, press])

@@ -9,10 +9,10 @@ from game import Game
 
 class MenuDifficultyTests(unittest.TestCase):
     def test_menu_buttons_restart_and_change_difficulty(self):
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         game.menu_action("level_select")
         game.menu_action("hard")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual(game.difficulty.id, "hard")
         game.update(1)
         game.pause()
@@ -24,7 +24,7 @@ class MenuDifficultyTests(unittest.TestCase):
         self.assertFalse(game.enemies)
         game.menu_action("level_select")
         game.menu_action("easy")
-        game.menu_action("level_1")
+        game.menu_action("level_2")
         self.assertEqual(game.difficulty.hp(50), 40)
         game.menu_action("quit")
         self.assertFalse(game.running)
@@ -32,7 +32,7 @@ class MenuDifficultyTests(unittest.TestCase):
     def test_difficulty_changes_actual_enemy_motion_and_shooting(self):
         results = []
         for difficulty in ("easy", "standard", "hard"):
-            game = Game(difficulty)
+            game = Game(difficulty, level=2)
             enemy = Enemy.create(1, "shooter", (640, 180), game.difficulty, 0)
             enemy.begin_hold(0)
             before = enemy.pos.copy()
@@ -52,7 +52,7 @@ class MenuDifficultyTests(unittest.TestCase):
         self.assertEqual([r[4] for r in results], [7, 10, 12])
 
     def test_mouse_menu_hit_and_focus_does_not_resume(self):
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         game.handle_events([pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 400))])
         self.assertEqual(game.state, "level_select")
         game.menu_action("hard")

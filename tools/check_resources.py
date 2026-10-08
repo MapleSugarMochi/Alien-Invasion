@@ -23,7 +23,7 @@ def main():
         renderer = Renderer()
         atlas = pygame.image.load(str(ROOT / "assets/images/sprite-atlas.png"))
         assert atlas.get_at((0, 0)).a == 0
-        game = Game(menu=True)
+        game = Game(menu=True, level=2)
         renderer.draw(surface, game)
         for index, name in enumerate(renderer.resources.images):
             pos = Vector2(145 + index % 5 * 245, 95 + index // 5 * 190)

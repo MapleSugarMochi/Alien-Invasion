@@ -26,11 +26,12 @@ class LevelTests(unittest.TestCase):
                         click_button(game, difficulty)
                         click_button(game, f"level_{level}")
                         self.assertEqual((game.state, game.level, game.difficulty.id, game.wave.number),
-                                         ("playing", level, difficulty, 1))
+                                         ("playing", level, "standard" if level == 1 else difficulty, 1))
                         self.assertFalse(game.input.fire)
                         self.assertFalse(game.input.keys)
-                        self.assertEqual(game.journal, [{"time": 0.0, "event": "session_start",
-                                                       "difficulty": difficulty, "level": level}])
+                        self.assertEqual(game.journal[0], {"time": 0.0, "event": "session_start",
+                                                          "difficulty": difficulty, "level": level})
+                        self.assertEqual(game.tutorial is not None, level == 1)
 
     def test_level_keyboard_shortcuts_return_and_repeat(self):
         for level, key in zip(LEVELS, (pygame.K_1, pygame.K_2, pygame.K_3)):
@@ -105,27 +106,22 @@ class LevelTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Game(level=4)
 
-    def test_level_one_and_two_preserve_original_content(self):
-        runs = []
-        for level in (1, 2):
-            game = Game(menu=True)
-            click_button(game, "level_select")
-            click_button(game, f"level_{level}")
-            game.rng.seed(5)
-            game.input.fire = True
-            for _ in range(600):
-                game.update(1 / 60)
-            runs.append((game.state, game.time, game.player.hp, game.score,
-                         game.wave.number, game.phase, game.journal[1:]))
-            self.assertEqual(game.level_config.waves, WAVES)
-            self.assertEqual(game.level_config.boss_base_hp, 2400)
-        self.assertEqual(runs[0], runs[1])
+    def test_level_two_preserves_original_configuration(self):
+        game = Game(menu=True)
+        click_button(game, "level_select")
+        click_button(game, "level_2")
+        self.assertEqual(game.level_config.waves, WAVES)
+        self.assertEqual(game.level_config.boss_base_hp, 2400)
+        self.assertIsNone(game.tutorial)
+        game.update(1.8)
+        self.assertEqual([e["kind"] for e in game.journal if e["event"] == "enemy_spawn"],
+                         ["scout", "scout", "scout"])
 
     def test_level_configuration_reaches_every_wave_and_boss_without_leaking(self):
         for difficulty, base_boss_hp in (("easy", 1920), ("standard", 2400), ("hard", 3000)):
-            # 同一实例反复切换，验证关卡 3 的增量不会污染后续关卡 2／1。
+            # 同一实例反复切换，验证关卡 3 的增量不会污染后续关卡 2。
             game = Game(menu=True)
-            for level in (3, 2, 1, 3):
+            for level in (3, 2, 3):
                 with self.subTest(difficulty=difficulty, level=level):
                     game.start_session(difficulty, level)
                     game.next_meteor = game.next_drop = float("inf")

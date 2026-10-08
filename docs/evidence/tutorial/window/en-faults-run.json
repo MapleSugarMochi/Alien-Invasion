@@ -1,0 +1,1664 @@
+{
+  "status": "PASS",
+  "language": "en",
+  "remapped": false,
+  "state": "tutorial_complete",
+  "steps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "time": 98.633,
+  "retries": 4,
+  "injected_mistakes": [
+    "arc_out_of_range",
+    "combat_death",
+    "meteor_destroyed",
+    "missile_empty",
+    "supply_expired"
+  ],
+  "final_combat_counts": {
+    "scout": 9,
+    "shooter": 2,
+    "heavy": 1
+  },
+  "pause_settings_frozen": true,
+  "display_driver": "windows",
+  "verification": "public injected input; full rules; accelerated wall clock; no progress/health/charge writes",
+  "events": [
+    {
+      "time": 0.0,
+      "event": "session_start",
+      "difficulty": "hard",
+      "level": 1
+    },
+    {
+      "time": 0.0,
+      "event": "tutorial_step_start",
+      "step": 1,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 0.0,
+      "event": "tutorial_objective",
+      "step": 1,
+      "objective": "movement_instructions_read",
+      "progress": 0
+    },
+    {
+      "time": 0.0,
+      "event": "tutorial_step_end",
+      "step": 1
+    },
+    {
+      "time": 0.0,
+      "event": "tutorial_step_start",
+      "step": 2,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 0.0,
+      "event": "tutorial_target",
+      "step": 2,
+      "id": 1,
+      "kind": "scout"
+    },
+    {
+      "time": 0.483333,
+      "event": "kill",
+      "id": 1,
+      "kind": "scout"
+    },
+    {
+      "time": 0.483333,
+      "event": "tutorial_objective",
+      "step": 2,
+      "objective": "bullet_target",
+      "progress": 1
+    },
+    {
+      "time": 0.483333,
+      "event": "tutorial_target",
+      "step": 2,
+      "id": 2,
+      "kind": "scout"
+    },
+    {
+      "time": 0.916667,
+      "event": "kill",
+      "id": 2,
+      "kind": "scout"
+    },
+    {
+      "time": 0.916667,
+      "event": "tutorial_objective",
+      "step": 2,
+      "objective": "bullet_target",
+      "progress": 2
+    },
+    {
+      "time": 0.916667,
+      "event": "tutorial_target",
+      "step": 2,
+      "id": 3,
+      "kind": "scout"
+    },
+    {
+      "time": 1.433333,
+      "event": "kill",
+      "id": 3,
+      "kind": "scout"
+    },
+    {
+      "time": 1.433333,
+      "event": "tutorial_objective",
+      "step": 2,
+      "objective": "bullet_target",
+      "progress": 3
+    },
+    {
+      "time": 1.85,
+      "event": "tutorial_objective",
+      "step": 2,
+      "objective": "release_fire",
+      "progress": 3
+    },
+    {
+      "time": 1.85,
+      "event": "tutorial_step_end",
+      "step": 2
+    },
+    {
+      "time": 1.85,
+      "event": "tutorial_step_start",
+      "step": 3,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 2.65,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 3.25,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 4.25,
+      "event": "tutorial_retry",
+      "step": 3,
+      "reason": "tutorial_meteor_shot",
+      "count": 1
+    },
+    {
+      "time": 4.25,
+      "event": "tutorial_step_start",
+      "step": 3,
+      "retry": true,
+      "hp": 100
+    },
+    {
+      "time": 5.05,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 5.65,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 11.5,
+      "event": "tutorial_objective",
+      "step": 3,
+      "objective": "meteor_dodged",
+      "progress": 1
+    },
+    {
+      "time": 12.3,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 12.9,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 18.75,
+      "event": "tutorial_objective",
+      "step": 3,
+      "objective": "meteor_dodged",
+      "progress": 2
+    },
+    {
+      "time": 19.55,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 20.15,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 26.0,
+      "event": "tutorial_objective",
+      "step": 3,
+      "objective": "meteor_dodged",
+      "progress": 3
+    },
+    {
+      "time": 26.0,
+      "event": "tutorial_step_end",
+      "step": 3
+    },
+    {
+      "time": 26.0,
+      "event": "tutorial_step_start",
+      "step": 4,
+      "retry": false,
+      "hp": 75
+    },
+    {
+      "time": 26.0,
+      "event": "tutorial_supply",
+      "step": 4,
+      "kind": "health",
+      "id": 8
+    },
+    {
+      "time": 32.1,
+      "event": "tutorial_supply",
+      "step": 4,
+      "kind": "health",
+      "id": 9
+    },
+    {
+      "time": 32.55,
+      "event": "tutorial_objective",
+      "step": 4,
+      "objective": "pickup_health",
+      "progress": 1
+    },
+    {
+      "time": 32.55,
+      "event": "pickup",
+      "kind": "health"
+    },
+    {
+      "time": 32.55,
+      "event": "tutorial_step_end",
+      "step": 4
+    },
+    {
+      "time": 32.55,
+      "event": "tutorial_step_start",
+      "step": 5,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 32.55,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 10
+    },
+    {
+      "time": 33.0,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 1
+    },
+    {
+      "time": 33.0,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 33.0,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 11
+    },
+    {
+      "time": 33.433333,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 2
+    },
+    {
+      "time": 33.433333,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 33.433333,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 12
+    },
+    {
+      "time": 33.866667,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 3
+    },
+    {
+      "time": 33.866667,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 33.866667,
+      "event": "tutorial_target",
+      "step": 5,
+      "id": 13,
+      "kind": "scout"
+    },
+    {
+      "time": 33.866667,
+      "event": "tutorial_target",
+      "step": 5,
+      "id": 14,
+      "kind": "scout"
+    },
+    {
+      "time": 33.866667,
+      "event": "weapon_activate",
+      "kind": "missile"
+    },
+    {
+      "time": 33.866667,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "activate_missile",
+      "progress": 3
+    },
+    {
+      "time": 38.866667,
+      "event": "tutorial_retry",
+      "step": 5,
+      "reason": "tutorial_skill_retry",
+      "count": 2
+    },
+    {
+      "time": 38.866667,
+      "event": "tutorial_step_start",
+      "step": 5,
+      "retry": true,
+      "hp": 100
+    },
+    {
+      "time": 38.866667,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 15
+    },
+    {
+      "time": 39.316667,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 1
+    },
+    {
+      "time": 39.316667,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 39.316667,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 16
+    },
+    {
+      "time": 39.75,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 2
+    },
+    {
+      "time": 39.75,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 39.75,
+      "event": "tutorial_supply",
+      "step": 5,
+      "kind": "missile",
+      "id": 17
+    },
+    {
+      "time": 40.183333,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "pickup_missile",
+      "progress": 3
+    },
+    {
+      "time": 40.183333,
+      "event": "pickup",
+      "kind": "missile"
+    },
+    {
+      "time": 40.183333,
+      "event": "tutorial_target",
+      "step": 5,
+      "id": 18,
+      "kind": "scout"
+    },
+    {
+      "time": 40.183333,
+      "event": "tutorial_target",
+      "step": 5,
+      "id": 19,
+      "kind": "scout"
+    },
+    {
+      "time": 40.183333,
+      "event": "weapon_activate",
+      "kind": "missile"
+    },
+    {
+      "time": 40.183333,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "activate_missile",
+      "progress": 3
+    },
+    {
+      "time": 41.216667,
+      "event": "kill",
+      "id": 18,
+      "kind": "scout"
+    },
+    {
+      "time": 41.216667,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "missile_hit",
+      "progress": 3
+    },
+    {
+      "time": 41.316667,
+      "event": "kill",
+      "id": 19,
+      "kind": "scout"
+    },
+    {
+      "time": 41.316667,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "missile_hit",
+      "progress": 3
+    },
+    {
+      "time": 45.183333,
+      "event": "tutorial_objective",
+      "step": 5,
+      "objective": "weapon_restored",
+      "progress": 3
+    },
+    {
+      "time": 45.183333,
+      "event": "tutorial_step_end",
+      "step": 5
+    },
+    {
+      "time": 45.183333,
+      "event": "tutorial_step_start",
+      "step": 6,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 45.183333,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 20
+    },
+    {
+      "time": 45.633333,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 1
+    },
+    {
+      "time": 45.633333,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 45.633333,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 21
+    },
+    {
+      "time": 46.066667,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 2
+    },
+    {
+      "time": 46.066667,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 46.066667,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 22
+    },
+    {
+      "time": 46.5,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 3
+    },
+    {
+      "time": 46.5,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 46.5,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 23,
+      "kind": "shooter"
+    },
+    {
+      "time": 46.5,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 24,
+      "kind": "shooter"
+    },
+    {
+      "time": 46.5,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 25,
+      "kind": "shooter"
+    },
+    {
+      "time": 47.683333,
+      "event": "weapon_activate",
+      "kind": "arc"
+    },
+    {
+      "time": 47.683333,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "activate_arc",
+      "progress": 3
+    },
+    {
+      "time": 52.683333,
+      "event": "tutorial_retry",
+      "step": 6,
+      "reason": "tutorial_skill_retry",
+      "count": 3
+    },
+    {
+      "time": 52.683333,
+      "event": "tutorial_step_start",
+      "step": 6,
+      "retry": true,
+      "hp": 100
+    },
+    {
+      "time": 52.683333,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 26
+    },
+    {
+      "time": 53.133333,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 1
+    },
+    {
+      "time": 53.133333,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 53.133333,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 27
+    },
+    {
+      "time": 53.566667,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 2
+    },
+    {
+      "time": 53.566667,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 53.566667,
+      "event": "tutorial_supply",
+      "step": 6,
+      "kind": "arc",
+      "id": 28
+    },
+    {
+      "time": 54.0,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "pickup_arc",
+      "progress": 3
+    },
+    {
+      "time": 54.0,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 54.0,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 29,
+      "kind": "shooter"
+    },
+    {
+      "time": 54.0,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 30,
+      "kind": "shooter"
+    },
+    {
+      "time": 54.0,
+      "event": "tutorial_target",
+      "step": 6,
+      "id": 31,
+      "kind": "shooter"
+    },
+    {
+      "time": 55.25,
+      "event": "weapon_activate",
+      "kind": "arc"
+    },
+    {
+      "time": 55.25,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "activate_arc",
+      "progress": 3
+    },
+    {
+      "time": 55.266667,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "arc_three_targets",
+      "progress": 3
+    },
+    {
+      "time": 55.466667,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "arc_three_targets",
+      "progress": 3
+    },
+    {
+      "time": 55.666667,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "arc_three_targets",
+      "progress": 3
+    },
+    {
+      "time": 55.666667,
+      "event": "kill",
+      "id": 29,
+      "kind": "shooter"
+    },
+    {
+      "time": 55.866667,
+      "event": "kill",
+      "id": 30,
+      "kind": "shooter"
+    },
+    {
+      "time": 56.066667,
+      "event": "kill",
+      "id": 31,
+      "kind": "shooter"
+    },
+    {
+      "time": 60.25,
+      "event": "tutorial_objective",
+      "step": 6,
+      "objective": "weapon_restored",
+      "progress": 3
+    },
+    {
+      "time": 60.25,
+      "event": "tutorial_step_end",
+      "step": 6
+    },
+    {
+      "time": 60.25,
+      "event": "tutorial_step_start",
+      "step": 7,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 60.25,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 32,
+      "kind": "heavy"
+    },
+    {
+      "time": 61.85,
+      "event": "kill",
+      "id": 32,
+      "kind": "heavy"
+    },
+    {
+      "time": 61.85,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "energy_target",
+      "progress": 1
+    },
+    {
+      "time": 61.85,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 33,
+      "kind": "heavy"
+    },
+    {
+      "time": 63.283333,
+      "event": "kill",
+      "id": 33,
+      "kind": "heavy"
+    },
+    {
+      "time": 63.283333,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "energy_target",
+      "progress": 2
+    },
+    {
+      "time": 63.283333,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 34,
+      "kind": "heavy"
+    },
+    {
+      "time": 64.733333,
+      "event": "kill",
+      "id": 34,
+      "kind": "heavy"
+    },
+    {
+      "time": 64.733333,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "energy_target",
+      "progress": 3
+    },
+    {
+      "time": 64.733333,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 35,
+      "kind": "heavy"
+    },
+    {
+      "time": 66.166667,
+      "event": "kill",
+      "id": 35,
+      "kind": "heavy"
+    },
+    {
+      "time": 66.166667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "energy_target",
+      "progress": 4
+    },
+    {
+      "time": 66.166667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 36,
+      "kind": "heavy"
+    },
+    {
+      "time": 67.616667,
+      "event": "kill",
+      "id": 36,
+      "kind": "heavy"
+    },
+    {
+      "time": 67.616667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "energy_target",
+      "progress": 5
+    },
+    {
+      "time": 67.616667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 37,
+      "kind": "scout"
+    },
+    {
+      "time": 67.616667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 38,
+      "kind": "scout"
+    },
+    {
+      "time": 67.616667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 39,
+      "kind": "scout"
+    },
+    {
+      "time": 67.616667,
+      "event": "support_start"
+    },
+    {
+      "time": 67.616667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_started",
+      "progress": 5
+    },
+    {
+      "time": 67.616667,
+      "event": "support_round",
+      "round": 1,
+      "targets": [
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "time": 67.866667,
+      "event": "kill",
+      "id": 38,
+      "kind": "scout"
+    },
+    {
+      "time": 67.866667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 40,
+      "kind": "scout"
+    },
+    {
+      "time": 68.016667,
+      "event": "support_launch",
+      "round": 1,
+      "targets": [
+        37,
+        40,
+        39
+      ]
+    },
+    {
+      "time": 68.266667,
+      "event": "support_hit",
+      "round": 1,
+      "targets": [
+        37,
+        40,
+        39
+      ]
+    },
+    {
+      "time": 68.266667,
+      "event": "kill",
+      "id": 37,
+      "kind": "scout"
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 68.266667,
+      "event": "kill",
+      "id": 40,
+      "kind": "scout"
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 68.266667,
+      "event": "kill",
+      "id": 39,
+      "kind": "scout"
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 41,
+      "kind": "scout"
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 42,
+      "kind": "scout"
+    },
+    {
+      "time": 68.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 43,
+      "kind": "scout"
+    },
+    {
+      "time": 69.116667,
+      "event": "support_round",
+      "round": 2,
+      "targets": [
+        41,
+        42,
+        43
+      ]
+    },
+    {
+      "time": 69.516667,
+      "event": "support_launch",
+      "round": 2,
+      "targets": [
+        41,
+        42,
+        43
+      ]
+    },
+    {
+      "time": 69.766667,
+      "event": "support_hit",
+      "round": 2,
+      "targets": [
+        41,
+        42,
+        43
+      ]
+    },
+    {
+      "time": 69.766667,
+      "event": "kill",
+      "id": 41,
+      "kind": "scout"
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 69.766667,
+      "event": "kill",
+      "id": 42,
+      "kind": "scout"
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 69.766667,
+      "event": "kill",
+      "id": 43,
+      "kind": "scout"
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 44,
+      "kind": "scout"
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 45,
+      "kind": "scout"
+    },
+    {
+      "time": 69.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 46,
+      "kind": "scout"
+    },
+    {
+      "time": 70.616667,
+      "event": "support_round",
+      "round": 3,
+      "targets": [
+        44,
+        45,
+        46
+      ]
+    },
+    {
+      "time": 71.016667,
+      "event": "support_launch",
+      "round": 3,
+      "targets": [
+        44,
+        45,
+        46
+      ]
+    },
+    {
+      "time": 71.266667,
+      "event": "support_hit",
+      "round": 3,
+      "targets": [
+        44,
+        45,
+        46
+      ]
+    },
+    {
+      "time": 71.266667,
+      "event": "kill",
+      "id": 44,
+      "kind": "scout"
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 71.266667,
+      "event": "kill",
+      "id": 45,
+      "kind": "scout"
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 71.266667,
+      "event": "kill",
+      "id": 46,
+      "kind": "scout"
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 47,
+      "kind": "scout"
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 48,
+      "kind": "scout"
+    },
+    {
+      "time": 71.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 49,
+      "kind": "scout"
+    },
+    {
+      "time": 72.116667,
+      "event": "support_round",
+      "round": 4,
+      "targets": [
+        47,
+        48,
+        49
+      ]
+    },
+    {
+      "time": 72.516667,
+      "event": "support_launch",
+      "round": 4,
+      "targets": [
+        47,
+        48,
+        49
+      ]
+    },
+    {
+      "time": 72.766667,
+      "event": "support_hit",
+      "round": 4,
+      "targets": [
+        47,
+        48,
+        49
+      ]
+    },
+    {
+      "time": 72.766667,
+      "event": "kill",
+      "id": 47,
+      "kind": "scout"
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 72.766667,
+      "event": "kill",
+      "id": 48,
+      "kind": "scout"
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 72.766667,
+      "event": "kill",
+      "id": 49,
+      "kind": "scout"
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 50,
+      "kind": "scout"
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 51,
+      "kind": "scout"
+    },
+    {
+      "time": 72.766667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 52,
+      "kind": "scout"
+    },
+    {
+      "time": 73.616667,
+      "event": "support_round",
+      "round": 5,
+      "targets": [
+        50,
+        51,
+        52
+      ]
+    },
+    {
+      "time": 74.016667,
+      "event": "support_launch",
+      "round": 5,
+      "targets": [
+        50,
+        51,
+        52
+      ]
+    },
+    {
+      "time": 74.266667,
+      "event": "support_hit",
+      "round": 5,
+      "targets": [
+        50,
+        51,
+        52
+      ]
+    },
+    {
+      "time": 74.266667,
+      "event": "kill",
+      "id": 50,
+      "kind": "scout"
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 74.266667,
+      "event": "kill",
+      "id": 51,
+      "kind": "scout"
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 74.266667,
+      "event": "kill",
+      "id": 52,
+      "kind": "scout"
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_objective",
+      "step": 7,
+      "objective": "support_hit",
+      "progress": 5
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 53,
+      "kind": "scout"
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 54,
+      "kind": "scout"
+    },
+    {
+      "time": 74.266667,
+      "event": "tutorial_target",
+      "step": 7,
+      "id": 55,
+      "kind": "scout"
+    },
+    {
+      "time": 75.116667,
+      "event": "support_end"
+    },
+    {
+      "time": 75.116667,
+      "event": "tutorial_step_end",
+      "step": 7
+    },
+    {
+      "time": 75.116667,
+      "event": "tutorial_step_start",
+      "step": 8,
+      "retry": false,
+      "hp": 100
+    },
+    {
+      "time": 75.116667,
+      "event": "enemy_spawn",
+      "id": 56,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 76.183333,
+      "event": "kill",
+      "id": 56,
+      "kind": "scout"
+    },
+    {
+      "time": 76.316667,
+      "event": "enemy_spawn",
+      "id": 57,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 77.433333,
+      "event": "kill",
+      "id": 57,
+      "kind": "scout"
+    },
+    {
+      "time": 77.516667,
+      "event": "enemy_spawn",
+      "id": 58,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 78.433333,
+      "event": "kill",
+      "id": 58,
+      "kind": "scout"
+    },
+    {
+      "time": 78.433333,
+      "event": "tutorial_hint",
+      "step": 8,
+      "hint": "low_hp"
+    },
+    {
+      "time": 78.716667,
+      "event": "enemy_spawn",
+      "id": 59,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 79.633333,
+      "event": "kill",
+      "id": 59,
+      "kind": "scout"
+    },
+    {
+      "time": 79.916667,
+      "event": "enemy_spawn",
+      "id": 60,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 80.816667,
+      "event": "kill",
+      "id": 60,
+      "kind": "scout"
+    },
+    {
+      "time": 80.816667,
+      "event": "tutorial_retry",
+      "step": 8,
+      "reason": "tutorial_reset",
+      "count": 4
+    },
+    {
+      "time": 80.816667,
+      "event": "tutorial_step_start",
+      "step": 8,
+      "retry": true,
+      "hp": 100
+    },
+    {
+      "time": 80.816667,
+      "event": "enemy_spawn",
+      "id": 61,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 81.483333,
+      "event": "kill",
+      "id": 61,
+      "kind": "scout"
+    },
+    {
+      "time": 82.016667,
+      "event": "enemy_spawn",
+      "id": 62,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 82.666667,
+      "event": "kill",
+      "id": 62,
+      "kind": "scout"
+    },
+    {
+      "time": 83.216667,
+      "event": "enemy_spawn",
+      "id": 63,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 84.083333,
+      "event": "kill",
+      "id": 63,
+      "kind": "scout"
+    },
+    {
+      "time": 84.416667,
+      "event": "enemy_spawn",
+      "id": 64,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 85.1,
+      "event": "kill",
+      "id": 64,
+      "kind": "scout"
+    },
+    {
+      "time": 85.616667,
+      "event": "enemy_spawn",
+      "id": 65,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 86.333333,
+      "event": "kill",
+      "id": 65,
+      "kind": "scout"
+    },
+    {
+      "time": 86.816667,
+      "event": "enemy_spawn",
+      "id": 66,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 87.566667,
+      "event": "kill",
+      "id": 66,
+      "kind": "scout"
+    },
+    {
+      "time": 87.566667,
+      "event": "wave_end",
+      "wave": 1
+    },
+    {
+      "time": 87.816667,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 90.566667,
+      "event": "enemy_spawn",
+      "id": 68,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 91.283333,
+      "event": "kill",
+      "id": 68,
+      "kind": "scout"
+    },
+    {
+      "time": 91.966667,
+      "event": "enemy_spawn",
+      "id": 69,
+      "kind": "shooter",
+      "wave": 2
+    },
+    {
+      "time": 92.466667,
+      "event": "tutorial_hint",
+      "step": 8,
+      "hint": "enemy_fire"
+    },
+    {
+      "time": 93.366667,
+      "event": "kill",
+      "id": 69,
+      "kind": "shooter"
+    },
+    {
+      "time": 93.366667,
+      "event": "enemy_spawn",
+      "id": 70,
+      "kind": "heavy",
+      "wave": 2
+    },
+    {
+      "time": 94.466667,
+      "event": "pickup",
+      "kind": "arc"
+    },
+    {
+      "time": 94.766667,
+      "event": "enemy_spawn",
+      "id": 71,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 94.816667,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 95.8,
+      "event": "kill",
+      "id": 70,
+      "kind": "heavy"
+    },
+    {
+      "time": 96.166667,
+      "event": "enemy_spawn",
+      "id": 73,
+      "kind": "shooter",
+      "wave": 2
+    },
+    {
+      "time": 96.233333,
+      "event": "kill",
+      "id": 71,
+      "kind": "scout"
+    },
+    {
+      "time": 97.283333,
+      "event": "kill",
+      "id": 73,
+      "kind": "shooter"
+    },
+    {
+      "time": 97.566667,
+      "event": "enemy_spawn",
+      "id": 74,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 97.966667,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 98.566667,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 98.633333,
+      "event": "kill",
+      "id": 74,
+      "kind": "scout"
+    },
+    {
+      "time": 98.633333,
+      "event": "wave_end",
+      "wave": 2
+    },
+    {
+      "time": 98.633333,
+      "event": "tutorial_objective",
+      "step": 8,
+      "objective": "two_waves_survived",
+      "progress": 0
+    },
+    {
+      "time": 98.633333,
+      "event": "tutorial_step_end",
+      "step": 8
+    },
+    {
+      "time": 98.633333,
+      "event": "tutorial_complete",
+      "steps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "retries": 4
+    },
+    {
+      "time": 98.633333,
+      "event": "tutorial_complete",
+      "score": 7000,
+      "kills": 41
+    }
+  ]
+}

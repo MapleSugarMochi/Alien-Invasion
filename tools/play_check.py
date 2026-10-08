@@ -23,7 +23,7 @@ from render import Renderer
 from settings import WIDTH, HEIGHT, LEVELS
 
 
-def pilot(game):
+def battle_pilot(game):
     # 下半场持续移动避开瞄准弹；只有公开移动/瞄准/开火输入。
     phase = (game.time * 300) % 1840
     desired = Vector2(180 + (phase if phase < 920 else 1840 - phase), 610)
@@ -81,6 +81,14 @@ def pilot(game):
                             pygame.event.Event(pygame.KEYUP, key=key)])
 
 
+def pilot(game):
+    if game.tutorial:
+        from tools.tutorial_pilot import tutorial_pilot
+        tutorial_pilot(game)
+    else:
+        battle_pilot(game)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--difficulty", default="standard", choices=("easy", "standard", "hard"))
@@ -113,7 +121,7 @@ def main():
         clock = pygame.time.Clock()
         wall_start = time.perf_counter()
         compute_times = []
-        while game.state == "playing" and game.time < args.seconds:
+        while game.state == "playing" and game.ui_time < args.seconds:
             dt = clock.tick(60) / 1000 if args.realtime else 1 / 60
             compute_start = time.perf_counter()
             if any(e.type == pygame.QUIT for e in pygame.event.get()):
@@ -127,7 +135,8 @@ def main():
                 renderer.draw(surface, game)
                 pygame.display.flip()
                 if game.phase != last_phase:
-                    pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.phase}.png")
+                    # 同一阶段会在每一波出现；独立文件避免快速覆盖被系统占用的截图。
+                    pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.phase}-{frames}.png")
                 last_phase = game.phase
                 if game.weapons.active not in saved_weapons:
                     pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-{game.weapons.active}.png")
@@ -140,6 +149,9 @@ def main():
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
         result = {"level": game.level, "difficulty": args.difficulty, "language": game.language, "mode": args.mode, "seed": args.seed,
+                  "effective_difficulty": game.difficulty.id,
+                  "tutorial_steps": game.tutorial.completed if game.tutorial else None,
+                  "tutorial_retries": game.tutorial.retries if game.tutorial else None,
                   "state": game.state, "phase": game.phase, "time": round(game.time, 3),
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),
