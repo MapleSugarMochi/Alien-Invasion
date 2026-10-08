@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "levels": [
+    1,
+    2,
+    3
+  ],
+  "difficulty": "standard",
+  "seed": 5,
+  "matching_battle_events": true,
+  "matching_results": {
+    "state": "victory",
+    "time": 162.0,
+    "hp": 100,
+    "score": 27400,
+    "kills": 109,
+    "spawned": 118,
+    "frames": 9720
+  },
+  "defeat": {
+    "level": 3,
+    "time": 29.45,
+    "state": "defeat"
+  },
+  "verification": "automatic input; full rules; accelerated wall clock"
+}

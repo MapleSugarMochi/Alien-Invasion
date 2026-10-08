@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "driver": "windows",
+  "languages": [
+    "en",
+    "zh-CN"
+  ],
+  "levels": [
+    1,
+    2,
+    3
+  ],
+  "screenshots": 8,
+  "checks": "three cards, no controls table, text bounds, mouse entry, chosen difficulty, movement, shooting, pause/settings frozen, restart, keyboard entry, result retry, main menu, quit"
+}

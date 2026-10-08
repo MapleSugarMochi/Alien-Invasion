@@ -1,4 +1,5 @@
 """真实 SDL 窗口中的可重复输入检查；不代替人工手感验收。"""
+import argparse
 import os
 from pathlib import Path
 import sys
@@ -14,22 +15,26 @@ from settings import HEIGHT, WIDTH
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=ROOT / "docs/evidence")
+    args = parser.parse_args()
     pygame.init()
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Alien Invasion — window check")
         game, renderer = Game(), Renderer()
-        evidence = ROOT / "docs/evidence"
+        evidence = args.output
         evidence.mkdir(parents=True, exist_ok=True)
         menu_game = Game(menu=True)
         renderer.draw(surface, menu_game)
         pygame.display.flip()
         pygame.image.save(surface, evidence / "p5-menu.png")
         menu_game.handle_events([pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 400))])
-        assert menu_game.state == "setup"
+        assert menu_game.state == "level_select"
         renderer.draw(surface, menu_game)
         pygame.display.flip()
-        pygame.image.save(surface, evidence / "p5-setup.png")
+        pygame.image.save(surface, evidence / "levels.png")
+        menu_game.menu_action("easy")
         menu_game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_1),
                                  pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN)])
         assert menu_game.state == "playing" and menu_game.difficulty.id == "easy"
@@ -72,7 +77,7 @@ def main():
         assert game.time == frozen
         renderer.draw(surface, game)
         pygame.display.flip()
-        output = ROOT / "docs/evidence/p2-paused.png"
+        output = evidence / "p2-paused.png"
         pygame.image.save(surface, output)
         game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)])
         assert not game.input.fire
@@ -80,7 +85,7 @@ def main():
         game.enemies = [Enemy(1, Vector2(640, 180))]
         renderer.draw(surface, game)
         pygame.display.flip()
-        output = ROOT / "docs/evidence/p2-window.png"
+        output = evidence / "p2-window.png"
         output.parent.mkdir(parents=True, exist_ok=True)
         pygame.image.save(surface, output)
         for _ in range(90):

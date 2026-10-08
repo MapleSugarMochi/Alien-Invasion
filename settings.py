@@ -6,6 +6,8 @@ import math
 ROOT = Path(__file__).resolve().parent
 WIDTH, HEIGHT, HUD_HEIGHT = 1280, 720, 64
 FPS = 60
+# 三个关卡入口暂时共用 WAVES 与母舰规则；编号不改变战斗参数。
+LEVELS = (1, 2, 3)
 PLAYER_SPEED, PLAYER_RADIUS, PLAYER_HP = 340.0, 14, 100
 BACKGROUND = (5, 10, 23)
 CYAN = (84, 225, 245)

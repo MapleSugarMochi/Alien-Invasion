@@ -65,3 +65,5 @@ Alien Invasion 是个人独立游戏开发项目。
 - 制作候选源码包：`.\.venv\Scripts\python.exe tools/build_release.py`。
 - 双语窗口与输入检查：`.\.venv\Scripts\python.exe tools/check_language.py`。
 - 设置、改键、音量拖动与保存检查：`.\.venv\Scripts\python.exe tools/check_settings.py`。
+- 三关卡入口与双语窗口检查：`.\.venv\Scripts\python.exe tools/check_levels.py`。
+- 指定关卡的完整自动流程：`.\.venv\Scripts\python.exe tools/play_check.py --level 2 --output docs/evidence/levels/flow-level-2`（`--level` 可选 1／2／3）。

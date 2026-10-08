@@ -44,21 +44,19 @@ class Renderer:
         surface.fill(BACKGROUND)
         for x, y, speed in self.stars:
             pygame.draw.circle(surface, (90, 120, 153), (x, int((y + game.time * speed) % HEIGHT)), 1)
-        if game.state in ("main_menu", "setup", "settings"):
-            title = tr({"main_menu": "title", "setup": "setup_title", "settings": "settings_title"}[game.state])
+        if game.state in ("main_menu", "level_select", "settings"):
+            title = tr({"main_menu": "title", "level_select": "levels_title", "settings": "settings_title"}[game.state])
             heading = self.large_font.render(title, True, CYAN)
             surface.blit(heading, heading.get_rect(center=(640, 155 if game.state == "main_menu" else 70)))
             if game.state == "main_menu":
                 self.sprite(surface, "player", Vector2(640, 290))
                 self.text(surface, tr("tagline"), (640, 205), anchor="midtop")
-            else:
+            elif game.state == "settings":
                 self.draw_controls(surface, game)
-                if game.state == "settings":
-                    self.draw_settings(surface, game)
-                else:
-                    rules = ("rule_goal", "rule_health", "rule_supplies", "rule_weapons", "rule_support", "rule_focus")
-                    for index, key in enumerate(rules):
-                        self.text(surface, tr(key), (690, 170 + index * 40))
+                self.draw_settings(surface, game)
+            else:
+                self.text(surface, tr("level_hint"), (640, 135), anchor="midtop")
+                self.text(surface, tr("difficulty"), (350, 557), CYAN, anchor="topright")
             self.draw_buttons(surface, game)
             return
         for enemy in game.enemies:
@@ -129,7 +127,7 @@ class Renderer:
         pygame.draw.rect(surface, (23, 46, 66), (24, 52, 200, 4))
         pygame.draw.rect(surface, (117, 237, 158), (24, 52, game.player.hp * 2, 4))
         phase_key = "boss_approach" if game.phase == "boss_warning" else game.phase
-        self.text(surface, tr("wave_status", number=game.wave.number, phase=tr(phase_key)), (24, 83))
+        self.text(surface, tr("wave_status", level=game.level, number=game.wave.number, phase=tr(phase_key)), (24, 83))
         self.text(surface, tr(game.difficulty.id), (WIDTH - 24, 82), anchor="topright")
         aim = game.input.display_aim
         for offset in (-1, 1):
@@ -148,10 +146,20 @@ class Renderer:
 
     def draw_buttons(self, surface, game):
         for action, label, rect in game.buttons():
-            active = (game.state == "setup" and action == game.selected_difficulty or
+            active = (game.state == "level_select" and action == game.selected_difficulty or
                       action == "language_" + game.language or rect.collidepoint(game.hover))
             pygame.draw.rect(surface, (24, 63, 80) if active else (17, 33, 52), rect, border_radius=8)
             pygame.draw.rect(surface, CYAN if active else (63, 94, 113), rect, 2, border_radius=8)
+            if game.state == "level_select" and action.startswith("level_"):
+                number = int(action.removeprefix("level_"))
+                heading = self.large_font.render(f"{number:02}", True, CYAN)
+                surface.blit(heading, heading.get_rect(center=(rect.centerx, rect.top + 55)))
+                self.sprite(surface, "player", (rect.centerx, rect.top + 140))
+                self.text(surface, label, (rect.centerx, rect.top + 200), anchor="midtop")
+                entry = pygame.Rect(rect.left + 24, rect.bottom - 68, rect.width - 48, 44)
+                pygame.draw.rect(surface, (28, 73, 90) if active else (24, 47, 65), entry, border_radius=6)
+                self.text(surface, game.text("enter_level"), entry.center, CYAN, anchor="center")
+                continue
             text = self.font.render(label, True, CYAN if active else (205, 222, 237))
             surface.blit(text, text.get_rect(center=rect.center))
 
@@ -176,7 +184,7 @@ class Renderer:
                 surface.blit(tint, rect)
             self.text(surface, label, (98, rect.y + 5))
             self.text(surface, game.text("key_prompt") if selected else key, (rect.centerx, rect.y + 5), anchor="midtop")
-        self.text(surface, game.text("edit_hint" if game.state == "settings" else "setup_hint"), (80, 570))
+        self.text(surface, game.text("edit_hint"), (80, 570))
 
     def draw_settings(self, surface, game):
         pygame.draw.rect(surface, (13, 26, 43), (670, 132, 550, 420), border_radius=12)

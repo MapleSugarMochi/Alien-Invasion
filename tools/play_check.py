@@ -20,7 +20,7 @@ from pygame import Vector2
 from game import Game
 from localization import DEFAULT_LANGUAGE, TEXT
 from render import Renderer
-from settings import WIDTH, HEIGHT
+from settings import WIDTH, HEIGHT, LEVELS
 
 
 def pilot(game):
@@ -84,6 +84,7 @@ def pilot(game):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--difficulty", default="standard", choices=("easy", "standard", "hard"))
+    parser.add_argument("--level", type=int, default=1, choices=LEVELS)
     parser.add_argument("--language", default=DEFAULT_LANGUAGE, choices=tuple(TEXT))
     parser.add_argument("--seed", type=int, default=5)
     parser.add_argument("--seconds", type=float, default=600)
@@ -98,9 +99,9 @@ def main():
         game, renderer = Game(args.difficulty, args.seed, menu=True, language=args.language), Renderer()
         renderer.draw(surface, game)
         pygame.display.flip()
-        game.menu_action("setup")
+        game.menu_action("level_select")
         game.menu_action(args.difficulty)
-        game.menu_action("start")
+        game.menu_action(f"level_{args.level}")
         # 注入随机源仅为复现随机序列；游戏数值与流程不变。
         game.rng.seed(args.seed)
         frames = 0
@@ -138,7 +139,7 @@ def main():
         renderer.draw(surface, game)
         pygame.display.flip()
         pygame.image.save(surface, output / f"{args.difficulty}-{args.mode}-result.png")
-        result = {"difficulty": args.difficulty, "language": game.language, "mode": args.mode, "seed": args.seed,
+        result = {"level": game.level, "difficulty": args.difficulty, "language": game.language, "mode": args.mode, "seed": args.seed,
                   "state": game.state, "phase": game.phase, "time": round(game.time, 3),
                   "hp": game.player.hp, "score": game.score, "kills": game.kills,
                   "spawned": len([e for e in game.journal if e["event"] == "enemy_spawn"]),

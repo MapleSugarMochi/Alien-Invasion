@@ -29,7 +29,7 @@ class LanguageTests(unittest.TestCase):
             Game(language="unsupported")
 
     def test_language_selection_is_only_available_in_settings(self):
-        for state in ("main_menu", "setup", "paused", "victory", "defeat", "playing"):
+        for state in ("main_menu", "level_select", "paused", "victory", "defeat", "playing"):
             with self.subTest(state=state):
                 game = Game(menu=True)
                 game.state = state
@@ -46,7 +46,7 @@ class LanguageTests(unittest.TestCase):
             self.assertEqual(before, [(action, rect) for action, _, rect in game.buttons()])
 
     def test_f1_does_not_switch_language_in_any_screen(self):
-        for state in ("main_menu", "setup", "settings", "playing", "paused", "victory", "defeat"):
+        for state in ("main_menu", "level_select", "settings", "playing", "paused", "victory", "defeat"):
             with self.subTest(state=state):
                 game = Game()
                 game.state = state
@@ -60,25 +60,25 @@ class LanguageTests(unittest.TestCase):
         game.menu_action("settings")
         game.menu_action("language_zh-CN")
         game.menu_action("settings_back")
-        game.menu_action("setup")
+        game.menu_action("level_select")
         game.menu_action("hard")
-        game.menu_action("start")
+        game.menu_action("level_1")
         self.assertEqual((game.language, game.difficulty.id), ("zh-CN", "hard"))
         game.pause()
         game.menu_action("settings")
         game.menu_action("settings_back")
         game.menu_action("restart")
-        self.assertEqual((game.language, game.state), ("zh-CN", "setup"))
-        game.menu_action("start")
+        self.assertEqual((game.language, game.state), ("zh-CN", "level_select"))
+        game.menu_action("level_1")
         for result in ("victory", "defeat"):
             game.finish(result)
             game.menu_action("restart")
             self.assertEqual(game.language, "zh-CN")
-            game.menu_action("start")
+            game.menu_action("level_1")
         game.menu_action("menu")
-        game.menu_action("setup")
+        game.menu_action("level_select")
         game.menu_action("easy")
-        game.menu_action("start")
+        game.menu_action("level_1")
         self.assertEqual((game.language, game.difficulty.id), ("zh-CN", "easy"))
         self.assertEqual(Game(menu=True).language, "en")
 

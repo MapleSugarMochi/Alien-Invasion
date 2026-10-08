@@ -1,0 +1,332 @@
+{
+  "level": 3,
+  "difficulty": "standard",
+  "language": "en",
+  "mode": "idle",
+  "seed": 5,
+  "state": "defeat",
+  "phase": "rest",
+  "time": 29.45,
+  "hp": 0,
+  "score": 0,
+  "kills": 0,
+  "spawned": 16,
+  "weapon_activations": [],
+  "support_activations": 0,
+  "events": [
+    {
+      "time": 0.0,
+      "event": "session_start",
+      "difficulty": "standard",
+      "level": 3
+    },
+    {
+      "time": 0.0,
+      "event": "enemy_spawn",
+      "id": 1,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 0.9,
+      "event": "enemy_spawn",
+      "id": 2,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 1.8,
+      "event": "enemy_spawn",
+      "id": 3,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 2.7,
+      "event": "enemy_spawn",
+      "id": 4,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 3.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 3.6,
+      "event": "enemy_spawn",
+      "id": 5,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 3.833333,
+      "event": "enemy_left",
+      "id": 1,
+      "kind": "scout"
+    },
+    {
+      "time": 4.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 4.5,
+      "event": "enemy_spawn",
+      "id": 7,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 4.733333,
+      "event": "enemy_left",
+      "id": 2,
+      "kind": "scout"
+    },
+    {
+      "time": 5.4,
+      "event": "enemy_spawn",
+      "id": 8,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 5.633333,
+      "event": "enemy_left",
+      "id": 3,
+      "kind": "scout"
+    },
+    {
+      "time": 6.3,
+      "event": "enemy_spawn",
+      "id": 9,
+      "kind": "scout",
+      "wave": 1
+    },
+    {
+      "time": 6.533333,
+      "event": "enemy_left",
+      "id": 4,
+      "kind": "scout"
+    },
+    {
+      "time": 7.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 7.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 7.433333,
+      "event": "enemy_left",
+      "id": 5,
+      "kind": "scout"
+    },
+    {
+      "time": 8.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 8.333333,
+      "event": "enemy_left",
+      "id": 7,
+      "kind": "scout"
+    },
+    {
+      "time": 9.233333,
+      "event": "enemy_left",
+      "id": 8,
+      "kind": "scout"
+    },
+    {
+      "time": 10.133333,
+      "event": "enemy_left",
+      "id": 9,
+      "kind": "scout"
+    },
+    {
+      "time": 10.133333,
+      "event": "wave_end",
+      "wave": 1
+    },
+    {
+      "time": 11.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 12.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 13.133333,
+      "event": "enemy_spawn",
+      "id": 13,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 14.0,
+      "event": "drop",
+      "kind": "arc"
+    },
+    {
+      "time": 14.033333,
+      "event": "enemy_spawn",
+      "id": 15,
+      "kind": "shooter",
+      "wave": 2
+    },
+    {
+      "time": 14.933333,
+      "event": "enemy_spawn",
+      "id": 16,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 15.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 15.833333,
+      "event": "enemy_spawn",
+      "id": 17,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 16.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 16.733333,
+      "event": "enemy_spawn",
+      "id": 19,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 17.366667,
+      "event": "enemy_left",
+      "id": 13,
+      "kind": "scout"
+    },
+    {
+      "time": 17.633333,
+      "event": "enemy_spawn",
+      "id": 20,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 19.166667,
+      "event": "enemy_left",
+      "id": 16,
+      "kind": "scout"
+    },
+    {
+      "time": 19.166667,
+      "event": "enemy_spawn",
+      "id": 21,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 19.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 20.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 20.066667,
+      "event": "enemy_left",
+      "id": 17,
+      "kind": "scout"
+    },
+    {
+      "time": 20.066667,
+      "event": "enemy_spawn",
+      "id": 23,
+      "kind": "scout",
+      "wave": 2
+    },
+    {
+      "time": 20.966667,
+      "event": "enemy_left",
+      "id": 19,
+      "kind": "scout"
+    },
+    {
+      "time": 21.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 21.866667,
+      "event": "enemy_left",
+      "id": 20,
+      "kind": "scout"
+    },
+    {
+      "time": 23.4,
+      "event": "enemy_left",
+      "id": 21,
+      "kind": "scout"
+    },
+    {
+      "time": 23.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 24.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 24.3,
+      "event": "enemy_left",
+      "id": 23,
+      "kind": "scout"
+    },
+    {
+      "time": 27.4,
+      "event": "meteor_warning"
+    },
+    {
+      "time": 28.0,
+      "event": "drop",
+      "kind": "health"
+    },
+    {
+      "time": 28.0,
+      "event": "meteor_spawn"
+    },
+    {
+      "time": 28.416667,
+      "event": "enemy_left",
+      "id": 15,
+      "kind": "shooter"
+    },
+    {
+      "time": 28.416667,
+      "event": "wave_end",
+      "wave": 2
+    },
+    {
+      "time": 29.45,
+      "event": "defeat",
+      "score": 0,
+      "kills": 0
+    }
+  ],
+  "verification": "automatic input; full rules; accelerated wall clock",
+  "python": "3.13.9",
+  "pygame": "2.6.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "wall_seconds": 0.286,
+  "frames": 1767,
+  "average_fps": null,
+  "compute_ms_p95": 0.063
+}

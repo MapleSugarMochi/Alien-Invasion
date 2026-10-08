@@ -10,7 +10,7 @@ from geometry import moving_hit
 from localization import DEFAULT_LANGUAGE, TEXT, translate
 from preferences import DEFAULT_BINDINGS, Preferences, key_name, valid_key
 from weapons import ArcAttack, Missile, Projectile, SupportController, WeaponController
-from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, WIDTH
+from settings import DIFFICULTIES, HEIGHT, HUD_HEIGHT, LEVELS, WIDTH
 from waves import WaveController
 
 
@@ -40,9 +40,11 @@ class InputState:
 
 
 class Game:
-    def __init__(self, difficulty="standard", seed=None, menu=False, language=DEFAULT_LANGUAGE, preferences=None) -> None:
+    def __init__(self, difficulty="standard", seed=None, menu=False, language=DEFAULT_LANGUAGE, preferences=None, level=1) -> None:
         if language not in TEXT:
             raise ValueError(f"Unsupported language: {language}")
+        if level not in LEVELS:
+            raise ValueError(f"Unsupported level: {level}")
         self.preferences = preferences if preferences is not None else Preferences(language=language)
         self.running = True
         self.state = "main_menu" if menu else "playing"
@@ -69,6 +71,7 @@ class Game:
         self.journal = []
         self.boss = None
         self.selected_difficulty = difficulty
+        self.level = level
         self.hover = Vector2(-1, -1)
         self.commands = []
         self.arc_effects = []
@@ -111,16 +114,17 @@ class Game:
 
     def restart(self):
         self.reset_session(self.difficulty.id, menu=True)
-        self.state = "setup"
+        self.state = "level_select"
 
-    def reset_session(self, difficulty, menu=False):
+    def reset_session(self, difficulty, menu=False, level=None):
         preferences = self.preferences
+        level = self.level if level is None else level
         self.support.cancel()
-        self.__init__(difficulty, menu=menu, preferences=preferences)
+        self.__init__(difficulty, menu=menu, preferences=preferences, level=level)
 
-    def start_session(self, difficulty):
-        self.reset_session(difficulty)
-        self.record("session_start", difficulty=difficulty)
+    def start_session(self, difficulty, level=None):
+        self.reset_session(difficulty, level=level)
+        self.record("session_start", difficulty=difficulty, level=self.level)
 
     def to_menu(self):
         self.reset_session(self.difficulty.id, menu=True)
@@ -152,7 +156,7 @@ class Game:
         setattr(self, attribute, round(max(0, min(1, (x - rect.left) / rect.width)), 2))
 
     def open_settings(self):
-        if self.state not in ("main_menu", "paused", "setup"):
+        if self.state not in ("main_menu", "paused", "level_select"):
             return
         self.settings_return_state = self.state
         self.state = "settings"
@@ -169,36 +173,39 @@ class Game:
     def buttons(self):
         """点击范围与显示共用，避免不同界面的命中区漂移。"""
         options = {
-            "main_menu": [("setup", "start_game"), ("settings", "settings"), ("quit", "quit")],
-            "setup": [("easy", "easy"), ("standard", "standard"), ("hard", "hard"),
-                      ("start", "start_battle"), ("settings", "settings"), ("menu", "menu")],
+            "main_menu": [("level_select", "start_game"), ("settings", "settings"), ("quit", "quit")],
+            "level_select": [(f"level_{number}", "level_name") for number in LEVELS] +
+                            [("easy", "easy"), ("standard", "standard"), ("hard", "hard"), ("menu", "menu")],
             "paused": [("resume", "resume"), ("restart", "restart"), ("settings", "settings"), ("menu", "menu")],
             "settings": [("language_en", "english"), ("language_zh-CN", "chinese"),
                          ("reset_keys", "reset_keys"), ("settings_back", "back")],
             "victory": [("restart", "play_again"), ("menu", "menu")],
             "defeat": [("restart", "retry"), ("menu", "menu")],
         }.get(self.state, [])
-        if self.state == "setup":
-            rects = [pygame.Rect(690 + i * 170, 435, 150, 48) for i in range(3)]
-            rects += [pygame.Rect(700, 505, 480, 48), pygame.Rect(700, 568, 230, 48), pygame.Rect(950, 568, 230, 48)]
+        if self.state == "level_select":
+            rects = [pygame.Rect(100 + i * 370, 190, 340, 310) for i in range(len(LEVELS))]
+            rects += [pygame.Rect(390 + i * 170, 545, 150, 48) for i in range(3)]
+            rects += [pygame.Rect(440, 625, 400, 48)]
         elif self.state == "settings":
             rects = [pygame.Rect(700, 205, 230, 48), pygame.Rect(950, 205, 230, 48),
                      pygame.Rect(80, 625, 250, 48), pygame.Rect(920, 625, 280, 48)]
         else:
             rects = [pygame.Rect(440, 380 + i * 65, 400, 48) for i in range(len(options))]
-        buttons = [(action, self.text(key), rect) for (action, key), rect in zip(options, rects)]
+        buttons = [(action, self.text(key, number=int(action.removeprefix("level_")))
+                    if key == "level_name" else self.text(key), rect)
+                   for (action, key), rect in zip(options, rects)]
         return buttons
 
     def menu_action(self, action):
         if action in DIFFICULTIES:
-            if self.state == "setup":
+            if self.state == "level_select":
                 self.selected_difficulty = action
-        elif action == "setup":
+        elif action == "level_select":
             if self.state == "main_menu":
-                self.state = "setup"
-        elif action == "start":
-            if self.state == "setup":
-                self.start_session(self.selected_difficulty)
+                self.state = "level_select"
+        elif action in {f"level_{number}" for number in LEVELS}:
+            if self.state == "level_select":
+                self.start_session(self.selected_difficulty, int(action.removeprefix("level_")))
         elif action == "resume":
             self.resume()
         elif action == "restart":
@@ -280,11 +287,11 @@ class Game:
                         self.close_settings()
                     continue
                 if self.state == "main_menu" and event.key == pygame.K_RETURN:
-                    self.menu_action("setup")
-                elif self.state == "setup" and event.key in (pygame.K_1, pygame.K_2, pygame.K_3):
-                    self.menu_action({pygame.K_1: "easy", pygame.K_2: "standard", pygame.K_3: "hard"}[event.key])
-                elif self.state == "setup" and event.key == pygame.K_RETURN:
-                    self.menu_action("start")
+                    self.menu_action("level_select")
+                elif self.state == "level_select" and event.key in (pygame.K_1, pygame.K_2, pygame.K_3):
+                    self.menu_action(f"level_{event.key - pygame.K_1 + 1}")
+                elif self.state == "level_select" and event.key == pygame.K_RETURN:
+                    self.menu_action(f"level_{self.level}")
                 elif self.state == "playing":
                     fresh = event.key not in self.input.keys
                     self.input.keys.add(event.key)
@@ -297,7 +304,7 @@ class Game:
                             self.pause()
                 elif self.state == "paused" and event.key == self.preferences.bindings["pause"]:
                     self.resume()
-                elif self.state == "setup" and event.key == pygame.K_ESCAPE:
+                elif self.state == "level_select" and event.key == pygame.K_ESCAPE:
                     self.to_menu()
                 elif self.state in ("defeat", "victory") and event.key == pygame.K_r:
                     self.restart()

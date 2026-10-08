@@ -1,4 +1,5 @@
 """真实 SDL 窗口检查双语显示、设置页语言选择；保存截图并检查文字边界。"""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -17,13 +18,16 @@ from settings import HEIGHT, WIDTH
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=ROOT / "docs/evidence/settings/language")
+    args = parser.parse_args()
     pygame.init()
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         assert pygame.display.get_driver() != "dummy", "需要真实 SDL 窗口"
         pygame.display.set_caption("Alien Invasion - language check")
         renderer = Renderer()
-        output = ROOT / "docs/evidence/settings/language"
+        output = args.output
         output.mkdir(parents=True, exist_ok=True)
         bounds = surface.get_rect()
         draw_text = renderer.text
@@ -49,7 +53,7 @@ def main():
                 game.handle_events([pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=rect.center)])
                 game.menu_action("settings_back")
             assert game.language == language
-            for state in ("main_menu", "setup", "settings", "playing", "paused", "victory", "defeat"):
+            for state in ("main_menu", "level_select", "settings", "playing", "paused", "victory", "defeat"):
                 game.state = state
                 renderer.draw(surface, game)
                 for _, label, rect in game.buttons():
@@ -77,8 +81,8 @@ def main():
             pygame.image.save(surface, output / f"{language}-boss.png")
             game.to_menu()
             assert game.language == language
-        game.menu_action("setup")
-        game.menu_action("start")
+        game.menu_action("level_select")
+        game.menu_action("level_1")
         game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_F1),
                             pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d),
                             pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=(640, 180))])
@@ -93,7 +97,7 @@ def main():
         game.update(1)
         assert game.time == frozen
         game.menu_action("restart")
-        assert game.language == "zh-CN" and game.time == 0 and game.state == "setup"
+        assert game.language == "zh-CN" and game.time == 0 and game.state == "level_select"
         game.handle_events([pygame.event.Event(pygame.QUIT)])
         assert not game.running
         result = {"status": "PASS", "driver": pygame.display.get_driver(),

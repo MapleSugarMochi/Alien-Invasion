@@ -1,4 +1,5 @@
 """真实窗口验证设置、改键、共享键、柔和闪烁、拖动、重置与磁盘重载。"""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -17,13 +18,16 @@ from settings import HEIGHT, WIDTH
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, default=ROOT / "docs/evidence/settings")
+    args = parser.parse_args()
     pygame.init()
     try:
         surface = pygame.display.set_mode((WIDTH, HEIGHT))
         assert pygame.display.get_driver() == "windows", "本检查需要 Windows 真实窗口"
         pygame.display.set_caption("Alien Invasion - settings check")
         renderer = Renderer()
-        output = ROOT / "docs/evidence/settings"
+        output = args.output
         output.mkdir(parents=True, exist_ok=True)
         original_text = renderer.text
         text_count = 0
@@ -50,7 +54,7 @@ def main():
             for _, label, rect in game.buttons():
                 assert rect.inflate(-16, -4).contains(renderer.font.render(label, True, (255, 255, 255)).get_rect(center=rect.center)), label
             for action, _, label, rect in game.control_rows():
-                if game.state in ("setup", "settings"):
+                if game.state == "settings":
                     message = game.text("key_prompt") if action == game.editing_binding else label
                     assert rect.inflate(-12, -4).contains(renderer.font.render(message, True, (255, 255, 255)).get_rect(center=rect.center)), message
             pygame.display.flip()
@@ -101,10 +105,10 @@ def main():
             game = Game(menu=True, preferences=Preferences.load(path))
             assert game.language == "zh-CN" and game.sfx_volume == .25
             assert game.preferences.conflicts() == {"move_right", "missile"}
-            button(game, "setup")
+            button(game, "level_select")
             button(game, "hard")
             capture(game, "choose-difficulty")
-            button(game, "start")
+            button(game, "level_1")
             game.weapons.charges["missile"] = 3
             old = game.player.pos.copy()
             game.handle_events([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_z),
@@ -124,9 +128,9 @@ def main():
             button(game, "settings_back")
             assert game.state == "paused"
             button(game, "restart")
-            assert game.state == "setup"
+            assert game.state == "level_select"
             button(game, "easy")
-            button(game, "start")
+            button(game, "level_1")
             assert game.difficulty.id == "easy"
             game.pause()
             button(game, "settings")
